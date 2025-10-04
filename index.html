@@ -16,7 +16,7 @@
     img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover}
     .k-section h3{font-size:1.125rem;font-weight:600;color:#0f172a}
     .k-section h4{font-weight:600;color:#0f172a}
-    .chip{border:1px solid rgb(226 232 240);border-radius:.75rem;padding:.25rem .5rem;font-size:.75rem}
+    .chip{border:1px solid rgb(226 232 240);border-radius:.75rem;padding:.25rem .5rem;font-size:.75rem;cursor:pointer}
     .hint{background:#f8fafc;border:1px solid #e2e8f0}
     .link{color:#0369a1;text-decoration:underline}
   </style>
@@ -303,6 +303,7 @@
             <input id="q" type="search" placeholder="Suche (z. B. 'whiskey', 'mittelalter', 'kostenlos')"
                    class="w-full sm:w-1/2 rounded-lg border border-slate-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300" />
             <div class="flex gap-2 flex-wrap">
+              <button data-cat="must" class="chip">⭐ Must-Sees</button>
               <button data-cat="brau" class="chip">🍺 Brauerei/Whiskey</button>
               <button data-cat="hist" class="chip">🏰 Geschichte</button>
               <button data-cat="kunst" class="chip">🎨 Kunst</button>
@@ -317,9 +318,29 @@
           </div>
         </div>
 
-        <!-- CATEGORIES -->
+        <!-- CATEGORIES (erweitert) -->
         <div id="list" class="space-y-8 text-sm text-slate-800">
-          <!-- Brauerei & Whiskey -->
+
+          <!-- ⭐ MUST-SEES -->
+          <div data-cat="must" class="space-y-2">
+            <h4>⭐ Must-Sees (kompakt)</h4>
+            <ul class="list-disc ml-5">
+              <li><a class="link" href="https://www.tcd.ie/library/old-library/">Book of Kells & Old Library (Trinity)</a></li>
+              <li><a class="link" href="https://www.guinness-storehouse.com">Guinness Storehouse + Gravity Bar</a></li>
+              <li><a class="link" href="https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/">Kilmainham Gaol</a></li>
+              <li><a class="link" href="https://www.nationalgallery.ie">National Gallery of Ireland</a></li>
+              <li><a class="link" href="https://chesterbeatty.ie">Chester Beatty (im Dublin Castle)</a></li>
+              <li><a class="link" href="https://www.stpatrickscathedral.ie">St Patrick’s Cathedral</a> & <a class="link" href="https://christchurchcathedral.ie/">Christ Church Cathedral</a></li>
+              <li><a class="link" href="https://epicchq.com">EPIC – Irish Emigration Museum</a></li>
+              <li><a class="link" href="https://www.crokepark.ie/attractions-tours/gaa-museum-stadium-tour">Croke Park Skyline & GAA Museum</a></li>
+              <li><a class="link" href="https://www.visitdublin.com/see-do/details/howth-cliff-walk">Howth Cliff Walk</a></li>
+              <li><a class="link" href="https://www.heritageireland.ie/visit/places-to-visit/dublin-castle/">Dublin Castle (State Apartments)</a></li>
+              <li><a class="link" href="https://www.imma.ie">IMMA – Irish Museum of Modern Art</a></li>
+              <li><a class="link" href="https://www.dublinzoo.ie">Dublin Zoo (Phoenix Park)</a></li>
+            </ul>
+          </div>
+
+          <!-- 🍺 Brauerei & Whiskey -->
           <div data-cat="brau" class="space-y-2">
             <h4>🍺 Brauerei & Whiskey</h4>
             <ul class="list-disc ml-5">
@@ -328,94 +349,116 @@
               <li><a class="link" href="https://teelingdistillery.com">Teeling Distillery</a> — 1,5 h, aktive Brennerei.</li>
               <li><a class="link" href="https://roeandcowhiskey.com">Roe & Co Distillery</a> — 1,5 h, Cocktail-Experience.</li>
               <li><a class="link" href="https://irishwhiskeymuseum.ie">Irish Whiskey Museum</a> — 1 h, Überblick & Tasting.</li>
+              <li><a class="link" href="https://www.pearselyonsdistillery.com/">Pearse Lyons Distillery</a> — Boutique-Brennerei in St. James.</li>
+              <li><a class="link" href="https://www.guinnessopengate.com/">Guinness Open Gate Brewery</a> — Experimental-Biere (Taproom).</li>
             </ul>
           </div>
 
-          <!-- Geschichte -->
+          <!-- 🏰 Geschichte, Politik & Identität -->
           <div data-cat="hist" class="space-y-2">
             <h4>🏰 Geschichte, Politik & Identität</h4>
             <ul class="list-disc ml-5">
               <li><a class="link" href="https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/">Kilmainham Gaol</a> — 1,5 h, früh buchen.</li>
               <li><a class="link" href="https://gpowitnesshistory.ie">GPO Witness History</a> — 1 h, 1916 Rising.</li>
               <li><a class="link" href="https://epicchq.com">EPIC Museum</a> — 1,5 h, Docklands.</li>
-              <li><a class="link" href="https://jeaniejohnston.ie">Jeanie Johnston</a> — 1 h, Famine Ship.</li>
-              <li><a class="link" href="https://heritageireland.ie/visit/places-to-visit/dublin-castle/">Dublin Castle</a> — 1 h, State Apartments.</li>
+              <li><a class="link" href="https://jeaniejohnston.ie">Jeanie Johnston (Famine Ship)</a> — 1 h.</li>
+              <li><a class="link" href="https://www.museum.ie/en-IE/Museums/Decorative-Arts-History">National Museum – Decorative Arts & History (Collins Barracks)</a>.</li>
+              <li><a class="link" href="https://www.museum.ie/en-IE/Museums/Archaeology">National Museum – Archaeology (Kildare St.)</a>.</li>
+              <li><a class="link" href="https://www.glasnevinmuseum.ie/">Glasnevin Cemetery Museum</a> — Geschichts-Touren durch den Friedhof.</li>
+              <li><a class="link" href="https://14henriettastreet.ie/">14 Henrietta Street</a> — Tenement-Museum (stark empfohlen).</li>
+              <li><a class="link" href="https://www.richmondbarracks.ie/">Richmond Barracks</a> — Militär- & Stadtgeschichte.</li>
+              <li><a class="link" href="https://www.crokepark.ie/attractions-tours/gaa-museum-stadium-tour">Croke Park Stadion-Tour</a> — Irische Sportkultur.</li>
+              <li><a class="link" href="https://www.stpatrickscathedral.ie">St Patrick’s Cathedral</a> & <a class="link" href="https://christchurchcathedral.ie/">Christ Church</a> — Sakralbauten.</li>
+              <li><a class="link" href="https://www.casinosanmarino.ie/" onclick="return false;">Casino Marino</a> — neoklassizistisches „Mini-Palais“ (Website teils instabil).</li>
             </ul>
           </div>
 
-          <!-- Kunst -->
+          <!-- 🎨 Kunst & Sammlungen -->
           <div data-cat="kunst" class="space-y-2">
             <h4>🎨 Kunst & Sammlungen (teils kostenlos)</h4>
             <ul class="list-disc ml-5">
               <li><a class="link" href="https://www.nationalgallery.ie">National Gallery of Ireland</a> — frei.</li>
               <li><a class="link" href="https://chesterbeatty.ie">Chester Beatty</a> — frei.</li>
-              <li><a class="link" href="https://www.hughlane.ie">Hugh Lane Gallery</a> — frei.</li>
-              <li><a class="link" href="https://imma.ie">IMMA</a> — meist frei, Wechselausstellungen.</li>
-              <li><a class="link" href="https://smockalley.com">Smock Alley Theatre</a> — Spielplan checken.</li>
+              <li><a class="link" href="https://www.hughlane.ie">Hugh Lane Gallery</a> — frei (Francis Bacon Studio).</li>
+              <li><a class="link" href="https://imma.ie">IMMA – Irish Museum of Modern Art</a> — Park + Ausstellungen.</li>
+              <li><a class="link" href="https://moli.ie/">MoLI – Museum of Literature Ireland</a> — Joyce & irische Literatur.</li>
+              <li><a class="link" href="https://www.nch.ie/">National Concert Hall</a> — Konzertprogramm checken.</li>
+              <li><a class="link" href="https://littlemuseum.ie/">The Little Museum of Dublin</a> — 30-Min-Guided Tour, witzig & kompakt.</li>
             </ul>
           </div>
 
-          <!-- Bibliotheken / Lernen -->
+          <!-- 📚 Bücher & Bibliotheken -->
           <div data-cat="bibl" class="space-y-2">
             <h4>📚 Bücher & Bibliotheken</h4>
             <ul class="list-disc ml-5">
               <li><a class="link" href="https://www.tcd.ie/library/old-library/">Book of Kells & Old Library (Trinity)</a> — Timeslots.</li>
               <li><a class="link" href="https://marshlibrary.ie">Marsh’s Library</a> — seit 1707, Zeitkapsel.</li>
               <li><a class="link" href="https://www.nli.ie">National Library of Ireland</a> — Yeats-Ausstellung.</li>
+              <li><a class="link" href="https://jamesjoyce.ie/">James Joyce Centre</a> — Führungen & Lesungen.</li>
             </ul>
           </div>
 
-          <!-- Natur -->
+          <!-- 🏞️ Natur, Parks & Aussicht -->
           <div data-cat="natur" class="space-y-2">
             <h4>🏞️ Natur, Parks & Aussicht</h4>
             <ul class="list-disc ml-5">
-              <li>Phoenix Park — Leihrad, Hirsche.</li>
+              <li>Phoenix Park — Leihrad, Hirsche, <a class="link" href="https://www.dublinzoo.ie">Dublin Zoo</a>.</li>
               <li>St. Stephen’s Green — zentral, ruhig.</li>
               <li>Iveagh Gardens — „geheime“ Gärten.</li>
               <li><a class="link" href="https://botanicgardens.ie">National Botanic Gardens</a> — Gewächshäuser.</li>
-              <li>Howth Cliff Walk — 2–3 h, Seafood.</li>
-              <li>Dún Laoghaire & Forty Foot — Schwimmen.</li>
+              <li>Howth Cliff Walk — 2–3 h, Seafood; Boot zu <a class="link" href="https://islandferries.net/">Ireland’s Eye</a> (saisonal).</li>
+              <li><a class="link" href="https://www.dublinbaycruises.com/">Dublin Bay Cruises</a> — Howth ↔ Dún Laoghaire (saisonal).</li>
+              <li>Poolbeg Lighthouse & Great South Wall — ikonischer Spaziergang.</li>
+              <li>Sandymount Strand — Sonnenuntergang mit Blick auf die Bay.</li>
+              <li>Dalkey & Killiney Hill — kurze Hügelwanderung mit Aussicht.</li>
+              <li>Bray–Greystones Cliff Walk — Küstenweg (~2,5 h, DART).</li>
             </ul>
           </div>
 
-          <!-- Film -->
+          <!-- 🎥 Film & Serien -->
           <div data-cat="film" class="space-y-2">
             <h4>🎥 Film & Serien</h4>
             <ul class="list-disc ml-5">
               <li>„Once“ — Grafton St., St. Stephen’s Green.</li>
               <li>„Normal People“ — Trinity, Hugh Lane, NCAD.</li>
-              <li>„The Commitments“ — Northside, Cobblestone.</li>
+              <li>„The Commitments“ — Northside, The Cobblestone.</li>
               <li>„The Tudors“ — Dublin Castle, IMMA.</li>
               <li><a class="link" href="https://gameofthronesstudiotour.com/">Game of Thrones Studio Tour (Banbridge)</a> — ab Dublin als Tagestrip.</li>
+              <li>Street-Art-Tour in den Liberties / Smithfield (diverse Anbieter).</li>
             </ul>
           </div>
 
-          <!-- Food -->
+          <!-- 🍴 Essen, Märkte & Pubs -->
           <div data-cat="food" class="space-y-2">
             <h4>🍴 Essen, Märkte & Pubs</h4>
             <ul class="list-disc ml-5">
               <li><a class="link" href="https://www.templebar.ie/markets">Temple Bar Saturday Market</a> — Streetfood.</li>
-              <li>George’s Street Arcade — Vintage & Snacks.</li>
-              <li>The Brazen Head — ältester Pub.</li>
-              <li>The Church Café Bar — spektakulär.</li>
+              <li><a class="link" href="https://www.blackrockmarket.ie/">Blackrock Market</a> — Vintage + Food (Wochenende).</li>
+              <li><a class="link" href="https://dlrcoco.ie/ga/parks-recreation/peoples-park">People’s Park Market (Dún Laoghaire)</a> — So.</li>
+              <li><a class="link" href="https://honest2goodness.ie/">Honest2Goodness Market</a> — Artisan & Deli (Sa).</li>
+              <li>George’s Street Arcade — Indoor-Markt, Vintage & Snacks.</li>
+              <li>The Brazen Head — ältester Pub (1198).</li>
+              <li>The Church Café Bar — spektakuläre Kulisse.</li>
               <li>Gallagher’s Boxty House — Irish Comfort Food.</li>
               <li>Bewley’s Grafton St. — Kaffee & Pastries.</li>
             </ul>
           </div>
 
-          <!-- Nightlife -->
+          <!-- 🌙 Musik & Nightlife -->
           <div data-cat="night" class="space-y-2">
             <h4>🌙 Musik & Nightlife</h4>
             <ul class="list-disc ml-5">
               <li>Whelan’s — Indie/Folk live.</li>
               <li>The Workman’s Club — Alternative + Rooftop.</li>
-              <li>Dicey’s Garden — Party, günstig.</li>
-              <li>The Cobblestone — Trad Sessions.</li>
+              <li>The Grand Social — Indie/Clubnights am Fluss.</li>
+              <li>The George — LGBTQ+ Club-Institution.</li>
+              <li>O’Donoghue’s — Trad-Sessions, sehr irisch.</li>
+              <li>The Cobblestone — Trad-Sessions (Smithfield).</li>
               <li>3Arena / Olympia Theatre — Konzerte.</li>
             </ul>
           </div>
 
-          <!-- Shopping -->
+          <!-- 🛍️ Shopping & Design -->
           <div data-cat="shop" class="space-y-2">
             <h4>🛍️ Shopping & Design</h4>
             <ul class="list-disc ml-5">
@@ -424,20 +467,26 @@
               <li>Powerscourt Townhouse — Boutiquen.</li>
               <li>Irish Design Shop — Handgemachtes.</li>
               <li>Avoca — Lifestyle & Restaurant.</li>
+              <li><a class="link" href="https://www.kildarevillage.com/">Kildare Village</a> — Designer-Outlet (Zug ~35–40 min).</li>
             </ul>
           </div>
 
-          <!-- Tagesausflüge -->
+          <!-- 🚌 Tagesausflüge -->
           <div data-cat="trip" class="space-y-2">
             <h4>🚌 Tagesausflüge ab Dublin</h4>
             <ul class="list-disc ml-5">
-              <li>Wicklow Mountains & Glendalough — Seen/Kloster (1 h).</li>
-              <li>Cliffs of Moher & Galway — Atlantik (3 h).</li>
-              <li>Belfast & Giant’s Causeway — UNESCO (2,5 h).</li>
-              <li>Boyne Valley / Newgrange — Steinzeit (1 h).</li>
-              <li>Kilkenny & Castle — Mittelalter (1,5 h).</li>
+              <li>Wicklow Mountains & Glendalough — Seen/Kloster (~1 h).</li>
+              <li>Cliffs of Moher & Galway — Atlantik (~3 h).</li>
+              <li>Belfast & Giant’s Causeway — UNESCO (~2,5 h).</li>
+              <li>Boyne Valley / Newgrange — Steinzeit (~1 h).</li>
+              <li>Kilkenny & Castle — Mittelalter (~1,5 h).</li>
+              <li><a class="link" href="https://www.malahidecastleandgardens.ie/">Malahide Castle & Gardens</a> — Küsten-Schloss + Park.</li>
+              <li><a class="link" href="https://www.newbridgehouseandfarm.com/">Newbridge House & Farm</a> — Herrenhaus + Farm.</li>
+              <li><a class="link" href="https://powerscourt.com/">Powerscourt Estate & Waterfall</a> — Garten + höchster Wasserfall Irlands.</li>
+              <li>Dalkey & Killiney — Meer, Spazierwege, Aussicht (DART).</li>
             </ul>
           </div>
+
         </div>
 
         <div class="mt-6 p-3 rounded-xl hint text-xs text-slate-600">
@@ -532,4 +581,3 @@
   </script>
 </body>
 </html>
-
