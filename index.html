@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dublin — 7-Tage Solo-Reise (Plan A & Plan B)</title>
+  <!-- Tailwind via CDN (keine Build-Tools nötig) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* iOS-Style Veredelungen */
+    .glass{background:rgba(255,255,255,.65);backdrop-filter:blur(10px)}
+    .card{border-radius:1rem;border:1px solid rgb(226 232 240);background:#fff;box-shadow:0 1px 2px rgba(16,24,40,.04);padding:1rem}
+    .timeline-line{position:absolute;left:6px;top:.25rem;bottom:.25rem;width:1px;background:rgb(226 232 240)}
+    .bullet{position:absolute;left:0;top:.375rem;height:.75rem;width:.75rem;border-radius:9999px;background:rgb(16 185 129);box-shadow:0 0 0 2px rgba(16,185,129,.15)}
+    .badge{font-size:.75rem;font-weight:600;color:#047857;background:#ECFDF5;border:1px solid #D1FAE5;border-radius:.375rem;padding:.125rem .5rem}
+    .tab-active{background:#0f172a;color:#fff}
+    .tab{border:1px solid rgb(226 232 240)}
+    img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover}
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 p-4 sm:p-6 font-sans">
+  <div class="max-w-5xl mx-auto">
+    <header class="mb-4 sm:mb-6">
+      <div class="flex items-center gap-4">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 glass rounded-2xl flex items-center justify-center shadow-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 3h8v4H8z" />
+          </svg>
+        </div>
+        <div>
+          <h1 class="text-xl sm:text-2xl font-semibold text-slate-900">Dublin — 7-Tage Solo-Reise</h1>
+          <p class="text-sm text-slate-500">Zwei Pläne: <span class="font-medium">Mit Reisepass (inkl. Nordirland)</span> · <span class="font-medium">Ohne Reisepass (Republik Irland)</span></p>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tabs -->
+    <nav class="sticky top-0 z-10 bg-gradient-to-b from-slate-50/80 to-slate-100/80 backdrop-blur rounded-xl p-1 mb-4 shadow-sm">
+      <div class="grid grid-cols-2 gap-1">
+        <button id="tabA" class="tab tab-active rounded-lg px-3 py-2 text-sm font-medium">Plan A — Reisepass</button>
+        <button id="tabB" class="tab rounded-lg px-3 py-2 text-sm font-medium">Plan B — ohne Reisepass</button>
+      </div>
+    </nav>
+
+    <!-- Übersicht -->
+    <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-md mb-4">
+      <h2 class="text-lg font-semibold text-slate-800 mb-2">Kurzinfos</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-slate-600">
+        <div class="p-3 rounded-lg bg-slate-50">Dauer<br><span class="font-medium text-slate-800">7 Tage</span></div>
+        <div class="p-3 rounded-lg bg-slate-50">Beste Reisezeit<br><span class="font-medium text-slate-800">Oktober (Herbst)</span></div>
+        <div class="p-3 rounded-lg bg-slate-50">Einreise<br><span class="font-medium text-slate-800">Reisepass nur für Nordirland notwendig</span></div>
+      </div>
+    </section>
+
+    <!-- CONTENT WRAPPER: Plan A -->
+    <div id="wrapA">
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
+        <div class="flex items-start justify-between mb-4 gap-3">
+          <div>
+            <h3 class="text-xl font-semibold text-slate-900">Plan A — Mit Reisepass (Dublin + Nordirland)</h3>
+            <p class="text-sm text-slate-500 mt-1">Enthält Game of Thrones Studio, Giant's Causeway & flexible Optionen. Perfekt für Abenteuerlustige.</p>
+          </div>
+          <div class="text-sm text-emerald-600 font-medium shrink-0">Kosten (ohne Flug): €1.050–1.250</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- Day Cards -->
+          <div class="space-y-3">
+            <!-- Day 1 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">1</span>
+                  <h5 class="text-base font-semibold text-slate-900">Ankunft & Abend in Temple Bar</h5>
+                </div>
+                <span class="text-xs text-slate-500">Alternative: Pub-Tour oder Live-Musik</span>
+              </div>
+              <div class="relative">
+                <div class="timeline-line"></div>
+                <div class="space-y-3">
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">17:00</span><div class="text-sm"><div class="font-medium text-slate-800">Hotel-Check-in</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">19:00</span><div class="text-sm"><div class="font-medium text-slate-800">Abendessen in Temple Bar</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">21:00</span><div class="text-sm"><div class="font-medium text-slate-800">Kneipen-Tour / Live-Musik</div></div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 2 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">2</span>
+                  <h5 class="text-base font-semibold text-slate-900">Trinity, St. Patrick’s & Guinness</h5>
+                </div>
+                <span class="text-xs text-slate-500">Alternative: Dublinia oder Christ Church</span>
+              </div>
+              <div class="relative">
+                <div class="timeline-line"></div>
+                <div class="space-y-3">
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">09:00</span><div class="text-sm"><div class="font-medium text-slate-800">Trinity College (Book of Kells)</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">12:00</span><div class="text-sm"><div class="font-medium text-slate-800">Lunch: The Bank on College Green</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">14:00</span><div class="text-sm"><div class="font-medium text-slate-800">St. Patrick’s Cathedral</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">17:00</span><div class="text-sm"><div class="font-medium text-slate-800">Guinness Storehouse & Gravity Bar</div></div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 3 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">3</span>
+                  <h5 class="text-base font-semibold text-slate-900">Game of Thrones Studio (Banbridge)</h5>
+                </div>
+                <span class="text-xs text-slate-500">Alternative: Abends Belfast-Bars</span>
+              </div>
+              <div class="relative">
+                <div class="timeline-line"></div>
+                <div class="space-y-3">
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">08:00</span><div class="text-sm"><div class="font-medium text-slate-800">Bus nach Banbridge</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">10:30</span><div class="text-sm"><div class="font-medium text-slate-800">Geführte Studio-Tour</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">14:00</span><div class="text-sm"><div class="font-medium text-slate-800">Mittagspause</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">16:00</span><div class="text-sm"><div class="font-medium text-slate-800">Rückfahrt nach Dublin</div></div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 4 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">4</span>
+                  <h5 class="text-base font-semibold text-slate-900">Giant’s Causeway & Belfast</h5>
+                </div>
+                <span class="text-xs text-slate-500">Alternative: Bushmills Distillery</span>
+              </div>
+              <div class="relative">
+                <div class="timeline-line"></div>
+                <div class="space-y-3">
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">07:30</span><div class="text-sm"><div class="font-medium text-slate-800">Abfahrt Richtung Norden</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">10:30</span><div class="text-sm"><div class="font-medium text-slate-800">Klippen-Spaziergang am Causeway</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">14:00</span><div class="text-sm"><div class="font-medium text-slate-800">Belfast Stadtrundgang</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">19:00</span><div class="text-sm"><div class="font-medium text-slate-800">Rückkehr nach Dublin</div></div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 5 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">5</span>
+                  <h5 class="text-base font-semibold text-slate-900">Wicklow & Glendalough</h5>
+                </div>
+                <span class="text-xs text-slate-500">Alternative: Monastery & Visitor Centre</span>
+              </div>
+              <div class="relative">
+                <div class="timeline-line"></div>
+                <div class="space-y-3">
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">09:00</span><div class="text-sm"><div class="font-medium text-slate-800">Tourstart Wicklow Mountains</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">13:00</span><div class="text-sm"><div class="font-medium text-slate-800">Wanderung am See</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">17:00</span><div class="text-sm"><div class="font-medium text-slate-800">Rückkehr nach Dublin</div></div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 6 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">6</span>
+                  <h5 class="text-base font-semibold text-slate-900">Cliffs of Moher & Galway</h5>
+                </div>
+              </div>
+              <div class="relative">
+                <div class="timeline-line"></div>
+                <div class="space-y-3">
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">07:00</span><div class="text-sm"><div class="font-medium text-slate-800">Abfahrt zu den Cliffs</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">12:00</span><div class="text-sm"><div class="font-medium text-slate-800">Lunch in Galway</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">19:00</span><div class="text-sm"><div class="font-medium text-slate-800">Rückkehr, Abendessen & Chill</div></div></div></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 7 -->
+            <div class="card">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">7</span>
+                  <h5 class="text-base font-semibold text-slate-900">Phoenix Park & Abreise</h5>
+                </div>
+              </div>
+              <div class="relative">
+                <div class="timeline-line"></div>
+                <div class="space-y-3">
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">09:00</span><div class="text-sm"><div class="font-medium text-slate-800">Fahrradtour im Phoenix Park</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">12:00</span><div class="text-sm"><div class="font-medium text-slate-800">Brunch</div></div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">16:00</span><div class="text-sm"><div class="font-medium text-slate-800">Transfer Flughafen</div></div></div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Images + Links -->
+          <div>
+            <h4 class="font-semibold mb-2">Bilder & Sehenswürdigkeiten</h4>
+            <div class="grid grid-cols-1 gap-3">
+              <img class="rounded-lg shadow multi" width="1200" height="750" alt="Trinity College Dublin" data-srcs="https://upload.wikimedia.org/wikipedia/commons/3/32/Trinity_College_Dublin_2018.jpg|https://upload.wikimedia.org/wikipedia/commons/6/6d/Trinity_College_Dublin_College_Green.jpg">
+              <img class="rounded-lg shadow multi" width="1200" height="750" alt="Giant's Causeway" data-srcs="https://upload.wikimedia.org/wikipedia/commons/f/f9/Giants_Causeway_view.jpg|https://upload.wikimedia.org/wikipedia/commons/0/0a/Giants_Causeway%2C_Ireland%2C_2012.jpg">
+              <img class="rounded-lg shadow multi" width="1200" height="750" alt="Game of Thrones Studio" data-srcs="https://upload.wikimedia.org/wikipedia/commons/0/02/Game_of_Thrones_Exhibition_Dublin.jpg|https://upload.wikimedia.org/wikipedia/commons/2/2e/Game_of_Thrones_Studio_Winterfell.jpg">
+              <img class="rounded-lg shadow multi" width="1200" height="750" alt="Cliffs of Moher" data-srcs="https://upload.wikimedia.org/wikipedia/commons/7/7e/Cliffs_of_Moher_2009.jpg|https://upload.wikimedia.org/wikipedia/commons/0/0d/Cliffs_of_Moher.jpg|https://upload.wikimedia.org/wikipedia/commons/0/0b/Cliffs_of_Moher_2016.jpg">
+            </div>
+
+            <h4 class="font-semibold mt-4 mb-2">Wichtige Links & Buchungen</h4>
+            <ul class="space-y-2 text-sm">
+              <li>GOT-Studio: <a class="text-sky-600 underline" href="https://gameofthronestours.com/studio-winterfell-dublin-booking/">gameofthronestours.com</a></li>
+              <li>Giant's Causeway: <a class="text-sky-600 underline" href="https://www.irishdaytours.ie/">irishdaytours.ie</a></li>
+              <li>Wicklow/Glendalough: <a class="text-sky-600 underline" href="https://www.paddywagontours.com/">paddywagontours.com</a></li>
+              <li>Cliffs of Moher: <a class="text-sky-600 underline" href="https://www.irishdaytours.ie/">irishdaytours.ie</a></li>
+            </ul>
+
+            <h4 class="font-semibold mt-5 mb-2 text-slate-900">Weitere nicht eingeplante Events</h4>
+            <div class="space-y-4">
+              <div>
+                <h5 class="text-sm font-semibold text-emerald-700">🎭 Kultur & Kunst</h5>
+                <ul class="list-disc ml-5 text-sm text-slate-700">
+                  <li><a href="https://ifi.ie/" class="text-sky-600 underline">Irish Film Institute – Arthouse Kino</a></li>
+                  <li><a href="https://www.museum.ie/en-ie/home" class="text-sky-600 underline">National Museum of Ireland</a></li>
+                </ul>
+              </div>
+              <div>
+                <h5 class="text-sm font-semibold text-amber-700">🍸 Nightlife</h5>
+                <ul class="list-disc ml-5 text-sm text-slate-700">
+                  <li><a href="https://www.whelanslive.com/" class="text-sky-600 underline">Whelan’s – Live Indie Musik</a></li>
+                  <li><a href="https://thechurch.ie/" class="text-sky-600 underline">The Church Café Bar – Nachtspot im ehemaligen Gotteshaus</a></li>
+                </ul>
+              </div>
+              <div>
+                <h5 class="text-sm font-semibold text-rose-700">🍴 Food & Märkte</h5>
+                <ul class="list-disc ml-5 text-sm text-slate-700">
+                  <li><a href="https://www.templebar.ie/markets" class="text-sky-600 underline">Food Market – Temple Bar Saturday Market</a></li>
+                  <li><a href="https://tasteofdublin.ie/" class="text-sky-600 underline">Taste of Dublin Event</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- CONTENT WRAPPER: Plan B (hidden by default) -->
+    <div id="wrapB" class="hidden">
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
+        <div class="flex items-start justify-between mb-4 gap-3">
+          <div>
+            <h3 class="text-xl font-semibold text-slate-900">Plan B — Ohne Reisepass (nur Republik Irland)</h3>
+            <p class="text-sm text-slate-500 mt-1">Fokus auf Dublin, Wicklow, Cliffs of Moher & Boyne Valley.</p>
+          </div>
+          <div class="text-sm text-amber-600 font-medium shrink-0">Kosten (ohne Flug): €1.050</div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="space-y-3">
+            <!-- 7 DayCards -->
+            <div class="card"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">1</span><h5 class="text-base font-semibold text-slate-900">Ankunft & Pubs</h5></div></div><div class="relative"><div class="timeline-line"></div><div class="space-y-3"><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">16:00</span><div class="text-sm"><div class="font-medium text-slate-800">Ankunft / Check-in</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">18:30</span><div class="text-sm"><div class="font-medium text-slate-800">Abendessen & Pub-Rundgang</div></div></div></div></div></div></div>
+            <div class="card"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">2</span><h5 class="text-base font-semibold text-slate-900">Dublin Klassiker</h5></div><span class="text-xs text-slate-500">Alternative: Dublinia / Christ Church</span></div><div class="relative"><div class="timeline-line"></div><div class="space-y-3"><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">09:00</span><div class="text-sm"><div class="font-medium text-slate-800">Trinity College</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">12:30</span><div class="text-sm"><div class="font-medium text-slate-800">Mittagessen</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">14:00</span><div class="text-sm"><div class="font-medium text-slate-800">Guinness Storehouse</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">17:00</span><div class="text-sm"><div class="font-medium text-slate-800">Dublin Castle</div></div></div></div></div></div></div>
+            <div class="card"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">3</span><h5 class="text-base font-semibold text-slate-900">Wicklow & Glendalough</h5></div><span class="text-xs text-slate-500">Alternative: Storytelling-Pub-Tour</span></div><div class="relative"><div class="timeline-line"></div><div class="space-y-3"><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">09:00</span><div class="text-sm"><div class="font-medium text-slate-800">Tourstart</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">14:00</span><div class="text-sm"><div class="font-medium text-slate-800">Panoramawanderung</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">17:00</span><div class="text-sm"><div class="font-medium text-slate-800">Rückkehr</div></div></div></div></div></div></div>
+            <div class="card"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">4</span><h5 class="text-base font-semibold text-slate-900">Cliffs of Moher & Galway</h5></div></div><div class="relative"><div class="timeline-line"></div><div class="space-y-3"><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">07:30</span><div class="text-sm"><div class="font-medium text-slate-800">Abfahrt Westküste</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">12:00</span><div class="text-sm"><div class="font-medium text-slate-800">Lunch in Galway</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">19:30</span><div class="text-sm"><div class="font-medium text-slate-800">Rückkehr</div></div></div></div></div></div></div>
+            <div class="card"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">5</span><h5 class="text-base font-semibold text-slate-900">Museen & Brücken</h5></div></div><div class="relative"><div class="timeline-line"></div><div class="space-y-3"><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">10:00</span><div class="text-sm"><div class="font-medium text-slate-800">EPIC The Irish Emigration Museum</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">15:00</span><div class="text-sm"><div class="font-medium text-slate-800">Dublinia Museum</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">17:00</span><div class="text-sm"><div class="font-medium text-slate-800">Ha’penny Bridge Spaziergang</div></div></div></div></div></div></div>
+            <div class="card"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">6</span><h5 class="text-base font-semibold text-slate-900">Boyne Valley</h5></div><span class="text-xs text-slate-500">Alternative: Whiskey-Tasting</span></div><div class="relative"><div class="timeline-line"></div><div class="space-y-3"><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">09:00</span><div class="text-sm"><div class="font-medium text-slate-800">Newgrange-Tour</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">12:00</span><div class="text-sm"><div class="font-medium text-slate-800">Lunch</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">17:00</span><div class="text-sm"><div class="font-medium text-slate-800">Rückkehr</div></div></div></div></div></div></div>
+            <div class="card"><div class="flex items-center justify-between mb-3"><div class="flex items-center gap-2"><span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">7</span><h5 class="text-base font-semibold text-slate-900">Park & Shopping</h5></div></div><div class="relative"><div class="timeline-line"></div><div class="space-y-3"><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">09:30</span><div class="text-sm"><div class="font-medium text-slate-800">Phoenix Park Spaziergang</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">12:00</span><div class="text-sm"><div class="font-medium text-slate-800">Brunch</div></div></div></div><div class="relative pl-8"><span class="bullet"></span><div class="flex items-start gap-3"><span class="badge">14:00</span><div class="text-sm"><div class="font-medium text-slate-800">Shopping / Abreise</div></div></div></div></div></div></div>
+          </div>
+
+          <!-- Images + Links -->
+          <div>
+            <h4 class="font-semibold mb-2">Bilder & Sehenswürdigkeiten</h4>
+            <div class="grid grid-cols-1 gap-3">
+              <img class="rounded-lg shadow multi" width="1200" height="750" alt="Cliffs of Moher" data-srcs="https://upload.wikimedia.org/wikipedia/commons/7/7e/Cliffs_of_Moher_2009.jpg|https://upload.wikimedia.org/wikipedia/commons/0/0d/Cliffs_of_Moher.jpg|https://upload.wikimedia.org/wikipedia/commons/0/0b/Cliffs_of_Moher_2016.jpg">
+              <img class="rounded-lg shadow multi" width="1200" height="750" alt="Temple Bar Dublin" data-srcs="https://upload.wikimedia.org/wikipedia/commons/6/60/Temple_Bar_Dublin_2014.jpg|https://upload.wikimedia.org/wikipedia/commons/b/b2/Temple_Bar%2C_Dublin%2C_Ireland_-_panoramio_%282%29.jpg">
+              <img class="rounded-lg shadow multi" width="1200" height="750" alt="EPIC The Irish Emigration Museum Dublin" data-srcs="https://upload.wikimedia.org/wikipedia/commons/8/86/EPIC_The_Irish_Emigration_Museum_%28Dublin%29.jpg|https://upload.wikimedia.org/wikipedia/commons/5/55/EPIC_Museum_Dublin.jpg">
+            </div>
+
+            <h4 class="font-semibold mt-4 mb-2">Wichtige Links & Buchungen</h4>
+            <ul class="space-y-2 text-sm">
+              <li>Wicklow/Glendalough: <a class="text-sky-600 underline" href="https://www.paddywagontours.com/">paddywagontours.com</a></li>
+              <li>Cliffs of Moher: <a class="text-sky-600 underline" href="https://www.irishdaytours.ie/">irishdaytours.ie</a></li>
+              <li>EPIC Museum: <a class="text-sky-600 underline" href="https://www.epicchq.com/">epicchq.com</a></li>
+              <li>Newgrange / Boyne Valley: <a class="text-sky-600 underline" href="https://www.historyirelandtour.com/">historyirelandtour.com</a></li>
+            </ul>
+
+            <h4 class="font-semibold mt-5 mb-2 text-slate-900">Weitere nicht eingeplante Events</h4>
+            <div class="space-y-4">
+              <div>
+                <h5 class="text-sm font-semibold text-emerald-700">🎭 Kultur & Kunst</h5>
+                <ul class="list-disc ml-5 text-sm text-slate-700">
+                  <li><a href="https://ifi.ie/" class="text-sky-600 underline">Irish Film Institute – Arthouse Kino</a></li>
+                  <li><a href="https://www.museum.ie/en-ie/home" class="text-sky-600 underline">National Museum of Ireland</a></li>
+                </ul>
+              </div>
+              <div>
+                <h5 class="text-sm font-semibold text-amber-700">🍸 Nightlife</h5>
+                <ul class="list-disc ml-5 text-sm text-slate-700">
+                  <li><a href="https://www.whelanslive.com/" class="text-sky-600 underline">Whelan’s – Live Indie Musik</a></li>
+                  <li><a href="https://thechurch.ie/" class="text-sky-600 underline">The Church Café Bar – Nachtspot im ehemaligen Gotteshaus</a></li>
+                </ul>
+              </div>
+              <div>
+                <h5 class="text-sm font-semibold text-rose-700">🍴 Food & Märkte</h5>
+                <ul class="list-disc ml-5 text-sm text-slate-700">
+                  <li><a href="https://www.templebar.ie/markets" class="text-sky-600 underline">Food Market – Temple Bar Saturday Market</a></li>
+                  <li><a href="https://tasteofdublin.ie/" class="text-sky-600 underline">Taste of Dublin Event</a></li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // Fallback-Loader: versucht mehrere Direkt-URLs, bis eine lädt
+    function initMultiImages() {
+      const imgs = document.querySelectorAll('img.multi[data-srcs]');
+      imgs.forEach(img => {
+        const list = (img.getAttribute('data-srcs') || '').split('|').filter(Boolean);
+        let i = 0;
+        function tryNext() {
+          if (i >= list.length) {
+            const wrap = document.createElement('div');
+            wrap.className = 'rounded-lg bg-slate-100 p-3 text-xs text-slate-500 shadow-inner';
+            wrap.textContent = 'Bild konnte nicht geladen werden: ' + (img.alt || '');
+            img.replaceWith(wrap);
+            return;
+          }
+          img.src = list[i++];
+        }
+        img.addEventListener('error', tryNext);
+        tryNext();
+      });
+    }
+
+    // Tabs A/B
+    function initTabs() {
+      const a = document.getElementById('tabA');
+      const b = document.getElementById('tabB');
+      const wrapA = document.getElementById('wrapA');
+      const wrapB = document.getElementById('wrapB');
+      function act(isA) {
+        if (isA) {
+          a.classList.add('tab-active'); b.classList.remove('tab-active');
+          wrapA.classList.remove('hidden'); wrapB.classList.add('hidden');
+        } else {
+          b.classList.add('tab-active'); a.classList.remove('tab-active');
+          wrapB.classList.remove('hidden'); wrapA.classList.add('hidden');
+        }
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+      a.addEventListener('click', () => act(true));
+      b.addEventListener('click', () => act(false));
+    }
+
+    document.addEventListener('DOMContentLoaded', () => { initTabs(); initMultiImages(); });
+  </script>
+</body>
+</html>
