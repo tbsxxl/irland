@@ -376,7 +376,7 @@
           <div class="hint rounded-xl p-3 text-sm text-slate-700">
             <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
               <input id="q" type="search" placeholder="Suche (z. B. 'whiskey', 'kostenlos', 'museum')"
-                     class="w-full sm:w-1/2 rounded-lg border border-slate-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300" />
+                     class="w-full sm:w-1/2 rounded-lg border border-slate-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300 color:white" />
               <div class="flex gap-2 flex-wrap">
                 <button data-cat="brau" class="chip">🍺 Brauerei/Whiskey</button>
                 <button data-cat="hist" class="chip">🏰 Geschichte</button>
@@ -674,9 +674,6 @@
       const map = L.map('map', { scrollWheelZoom: false }).setView([53.3465, -6.26], 13);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
 
-      L.marker([HOTEL.lat, HOTEL.lng], { title: HOTEL.name })
-        .addTo(map)
-        .bindPopup(`<b>${HOTEL.name}</b><br><a href="${HOTEL.url}" target="_blank" rel="noopener">Website</a>`);
 
       const layerGroup = L.layerGroup().addTo(map);
 
@@ -822,3 +819,4 @@
   </script>
 </body>
 </html>
+
