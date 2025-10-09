@@ -709,6 +709,22 @@
           }
         });
       }
+  // Hotel-Marker mit grünem SVG-Icon
+      const hotelIcon = L.divIcon({
+        className: 'hotel-pin',
+        html: `
+          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" fill="#10b981" stroke="white" stroke-width="1"/>
+            <circle cx="12" cy="9" r="2.8" fill="white"/>
+          </svg>`,
+        iconSize: [28,28],
+        iconAnchor: [14,28],
+        popupAnchor: [0,-24]
+      });
+
+      L.marker([HOTEL.lat, HOTEL.lng], { title: HOTEL.name, icon: hotelIcon })
+        .addTo(map)
+        .bindPopup(`<b>${HOTEL.name}</b><br><a href="${HOTEL.url}" target="_blank" rel="noopener">Website</a>`);
 
       // Chip-Toggles
       chips.forEach(chip => {
@@ -722,6 +738,57 @@
       q && q.addEventListener('input', refresh);
       nearHotel && nearHotel.addEventListener('change', refresh);
 
+
+
+  // --- GPS-Ortung ---
+      let userMarker = null;
+      let accuracyCircle = null;
+
+      function showLocationOnMap(e){
+        const { latitude, longitude, accuracy } = {
+          latitude: e.latitude ?? e.coords?.latitude ?? e.latlng?.lat,
+          longitude: e.longitude ?? e.coords?.longitude ?? e.latlng?.lng,
+          accuracy: e.accuracy ?? e.coords?.accuracy ?? 50
+        };
+
+        if (!userMarker){
+          userMarker = L.marker([latitude, longitude], { title: 'Mein Standort' })
+            .addTo(map).bindPopup('Du bist hier.');
+        } else {
+          userMarker.setLatLng([latitude, longitude]);
+        }
+
+        if (!accuracyCircle){
+          accuracyCircle = L.circle([latitude, longitude], { radius: accuracy, weight: 1, fillOpacity: .1 }).addTo(map);
+        } else {
+          accuracyCircle.setLatLng([latitude, longitude]);
+          accuracyCircle.setRadius(accuracy);
+        }
+
+        map.setView([latitude, longitude], Math.max(map.getZoom(), 15));
+      }
+
+      function locateOnce(){
+        map.once('locationfound', (e) => showLocationOnMap({ latlng: e.latlng, accuracy: e.accuracy }));
+        map.once('locationerror', () => {
+          if (navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(
+              (pos) => showLocationOnMap(pos),
+              () => alert('Standort konnte nicht ermittelt werden (Berechtigung?)'),
+              { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+            );
+          } else {
+            alert('Geolocation wird von deinem Browser nicht unterstützt.');
+          }
+        });
+        map.locate({ setView:false, maxZoom: 16, enableHighAccuracy: true, timeout: 7000 });
+      }
+
+      const locateBtn = document.getElementById('locateBtn');
+      locateBtn && locateBtn.addEventListener('click', locateOnce);
+
+
+      
       refresh(); // initial
       return map;
     }
@@ -755,3 +822,4 @@
   </script>
 </body>
 </html>
+
