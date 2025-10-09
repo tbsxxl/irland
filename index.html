@@ -15,8 +15,12 @@
     .timeline-line{position:absolute;left:6px;top:.25rem;bottom:.25rem;width:1px;background:rgb(226 232 240)}
     .bullet{position:absolute;left:0;top:.375rem;height:.75rem;width:.75rem;border-radius:9999px;background:rgb(16 185 129);box-shadow:0 0 0 2px rgba(16,185,129,.15)}
     .badge{font-size:.75rem;font-weight:600;color:#047857;background:#ECFDF5;border:1px solid #D1FAE5;border-radius:.375rem;padding:.125rem .5rem}
-    .tab-active{background:#0f172a;color: white}
-    .tab{border:1px solid rgb(226 232 240); color: #0f172a}
+    .tab-active{ background:#0f172a;       /* dunkelblau */
+  color:#fff;               /* weißer Text */
+  border-color:#0f172a}
+    .tab{ border:1px solid rgb(226 232 240);
+  background:#fff;
+  color:#0f172a;    }
     img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover}
     .k-section h3{font-size:1.125rem;font-weight:600;color:#0f172a}
     .k-section h4{font-weight:600;color:#0f172a}
@@ -24,7 +28,7 @@
     .hint{background:#f8fafc;border:1px solid #e2e8f0}
     .link{color:#0369a1;text-decoration:underline}
     .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgb(203 213 225);padding:.375rem .6rem;border-radius:.5rem;font-size:.75rem;background:#0f172a;color:#fff;border-color:#0f172a}
-    .btn:hover{background:#f1f5f9}
+    .btn:hover{background:#031a30}
     .badge-ghost{background:#eef2ff;border-color:#c7d2fe;color:#3730a3}
     .btn-ghost{background:#0f172a;color:#fff;border-color:#0f172a}
     #map{height:380px;border-radius:1rem;border:1px solid rgb(226 232 240)}
@@ -376,7 +380,7 @@
           <div class="hint rounded-xl p-3 text-sm text-slate-700">
             <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
               <input id="q" type="search" placeholder="Suche (z. B. 'whiskey', 'kostenlos', 'museum')"
-                     class="w-full sm:w-1/2 rounded-lg border border-slate-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300 color:white" />
+                     class="w-full sm:w-1/2 rounded-lg border border-slate-200 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300 color:white background:white" />
               <div class="flex gap-2 flex-wrap">
                 <button data-cat="brau" class="chip">🍺 Brauerei/Whiskey</button>
                 <button data-cat="hist" class="chip">🏰 Geschichte</button>
@@ -822,6 +826,7 @@
   </script>
 </body>
 </html>
+
 
 
 
