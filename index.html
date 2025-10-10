@@ -4,7 +4,6 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dublin — 7-Tage Solo-Reise (Plan & Entdecken)</title>
-  <meta name="color-scheme" content="light">
 
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -18,53 +17,76 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <style>
-    /* ---------- Light Theme (permanent) ---------- */
+    /* -------- Apple-inspirierte, dauerhaft helle Palette -------- */
     :root{
-      --bg-grad-a:#f8fafc; /* slate-50 */
-      --bg-grad-b:#eef2ff; /* indigo-50 */
+      --bg-grad-a:#f8fafc;  /* sehr helles Grau */
+      --bg-grad-b:#f1f5f9;  /* sanfter Verlauf */
       --card-bg:#ffffff;
       --card-brd:rgba(15,23,42,.06);
-      --card-sh:#0b12201a;
+      --card-sh:#0b122014;
+
+      --ink:#0f172a;        /* Primär-Text (Slate-900) */
+      --ink-2:#334155;      /* Sekundär-Text (Slate-700) */
+
+      --accent:#0ea5e9;     /* iOS-like Blau (Sky-500) */
+      --accent-2:#10b981;   /* iOS-like Grün (Emerald-500) */
+      --accent-soft:#e0f2fe;/* helles Blau für Fokusflächen */
+
       --chip-brd:#e5e7eb;
       --chip-on:#eef2ff;
-      --accent:#0ea5e9;   /* sky-500 */
-      --accent-2:#10b981; /* emerald-500 */
+      --chip-on-ring:#e0e7ff;
+
+      --pill-bg:#ffffff;
+
+      --hint-bg:#f8fafc;
+      --hint-brd:#e2e8f0;
+
+      --link:#0ea5e9;
     }
 
     body{
       background:
-        radial-gradient(1200px 600px at 10% -10%, rgba(16,185,129,.12), transparent 60%),
-        radial-gradient(900px 500px at 110% 10%, rgba(56,189,248,.12), transparent 60%),
+        radial-gradient(1200px 600px at 10% -10%, rgba(16,185,129,.08), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(14,165,233,.10), transparent 60%),
         linear-gradient(180deg, var(--bg-grad-a), var(--bg-grad-b));
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji';
-      color: #0f172a;
+      color: var(--ink);
     }
 
     .glass{background:linear-gradient(180deg,#ffffffb0,#ffffff80);backdrop-filter:blur(10px);border:1px solid rgba(15,23,42,.06);box-shadow:0 10px 30px -10px var(--card-sh)}
     .card{border-radius:1rem;border:1px solid var(--card-brd);background:var(--card-bg);box-shadow:0 10px 30px -12px var(--card-sh);padding:1rem;transition:box-shadow .25s ease, transform .25s ease, border-color .25s}
     .card:hover{ transform: translateY(-1px); box-shadow: 0 14px 38px -12px var(--card-sh); border-color: rgba(14,165,233,.25) }
+
     .timeline-line{position:absolute;left:6px;top:.25rem;bottom:.25rem;width:1px;background:linear-gradient(#e2e8f0,#cbd5e1)}
     .bullet{position:absolute;left:0;top:.375rem;height:.75rem;width:.75rem;border-radius:9999px;background:var(--accent-2);box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+
     .badge{font-size:.75rem;font-weight:600;color:#065f46;background:#ecfdf5;border:1px solid #d1fae5;border-radius:.375rem;padding:.125rem .5rem}
-    .tab{border:1px solid var(--card-brd); color:#0f172a; background: linear-gradient(180deg,#ffffffb3,#ffffff99); transition: all .2s ease}
-    .tab.tab-active{background: linear-gradient(180deg,#0f172a,#111827); color:#fff; border-color:rgba(255,255,255,.18); box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.1)}
+
+    .tab{border:1px solid var(--card-brd); color:var(--ink); background: linear-gradient(180deg,#ffffffb3,#ffffff99); transition: all .2s ease}
+    .tab.tab-active{background: linear-gradient(180deg,#0ea5e9,#0284c7); color:#fff; border-color:rgba(2,132,199,.25); box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.25)}
     .tab:not(.tab-active):hover{ background:#ffffffd0 }
+
     img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover;border-radius:.75rem}
-    .k-section h3{font-size:1.125rem;font-weight:600}
-    .k-section h4{font-weight:600}
+
+    .k-section h3{font-size:1.125rem;font-weight:600;color:var(--ink)}
+    .k-section h4{font-weight:600;color:var(--ink)}
+
     .chip{border:1px solid var(--chip-brd);border-radius:999px;padding:.35rem .7rem;font-size:.8rem;cursor:pointer;background:#fff;transition: all .15s ease}
     .chip:hover{ transform: translateY(-1px); box-shadow:0 6px 14px -10px var(--card-sh) }
-    .chip[data-active="1"]{ background: var(--chip-on); border-color: #c7d2fe; box-shadow: 0 0 0 2px #e0e7ff inset }
-    .hint{background:#f8fafc;border:1px solid #e2e8f0}
-    .link{color:#0369a1;text-decoration:underline}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid transparent;padding:.375rem .6rem;border-radius:.5rem;font-size:.75rem;background:linear-gradient(180deg,#0ea5e9,#0284c7);color:#fff;box-shadow:0 10px 24px -12px rgba(2,132,199,.45);transition: transform .15s ease, box-shadow .15s ease, filter .1s ease}
+    .chip[data-active="1"]{ background: var(--chip-on); border-color: #c7d2fe; box-shadow: 0 0 0 2px var(--chip-on-ring) inset }
+
+    .hint{background:var(--hint-bg);border:1px solid var(--hint-brd)}
+    .link{color:var(--link);text-decoration:underline}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid transparent;padding:.375rem .6rem;border-radius:.6rem;font-size:.8rem;background:linear-gradient(180deg,#0ea5e9,#0284c7);color:#fff;box-shadow:0 10px 24px -12px rgba(2,132,199,.45);transition: transform .15s ease, box-shadow .15s ease, filter .1s ease}
     .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); box-shadow:0 14px 30px -12px rgba(2,132,199,.55) }
     .btn:active{ transform: translateY(0) }
-    .btn-ghost{background:linear-gradient(180deg,#0f172a,#111827);color:#fff;border-color:transparent}
+    .btn-ghost{background:linear-gradient(180deg,#111827,#1f2937);color:#fff;border-color:transparent}
+
     #map{height:420px;border-radius:1rem;border:1px solid var(--card-brd);box-shadow:0 18px 44px -20px var(--card-sh);position:relative}
     .leaflet-popup-content{margin:8px 12px}
     .map-toolbar{position:absolute; z-index:500; inset:12px auto auto 12px; display:flex; gap:8px; align-items:center; background: rgba(255,255,255,.9); border:1px solid var(--card-brd); border-radius:.75rem; padding:.35rem .5rem; backdrop-filter: blur(6px)}
-    .map-pill{ padding:.25rem .6rem; border-radius:999px; font-size:.75rem; border:1px solid var(--chip-brd); background:#fff }
+    .map-pill{ padding:.25rem .6rem; border-radius:999px; font-size:.75rem; border:1px solid var(--chip-brd); background:var(--pill-bg) }
+
     [data-name].ring{ transition: box-shadow .4s ease }
     @media (prefers-reduced-motion: reduce){ .card, .btn, .chip { transition: none!important } }
   </style>
@@ -80,15 +102,16 @@
           </svg>
         </div>
         <div class="flex-1">
-          <h1 class="text-xl sm:text-2xl font-semibold text-slate-900">Dublin — 7-Tage Solo-Reise</h1>
-          <p class="text-sm text-slate-600">Tabs: <span class="font-medium">Plan</span> & <span class="font-medium">Entdecken</span> (alles verlinkt + Karte)</p>
-          <p class="text-xs text-slate-500 mt-1">Hotel: <span class="font-semibold">Staycity Aparthotels Dublin City Quay</span></p>
+          <h1 class="text-xl sm:text-2xl font-semibold" style="color:var(--ink)">Dublin — 7-Tage Solo-Reise</h1>
+          <p class="text-sm" style="color:var(--ink-2)">Tabs: <span class="font-medium">Plan</span> & <span class="font-medium">Entdecken</span> (alles verlinkt + Karte)</p>
+          <p class="text-xs mt-1" style="color:var(--ink-2)">Hotel: <span class="font-semibold">Staycity Aparthotels Dublin City Quay</span></p>
         </div>
+        <!-- (Dark-Mode-Button entfernt) -->
       </div>
     </header>
 
     <!-- Tabs -->
-    <nav class="sticky top-0 z-10 bg-gradient-to-b from-slate-50/80 to-slate-100/80 backdrop-blur rounded-xl p-1 mb-4 shadow-sm">
+    <nav class="sticky top-0 z-10 bg-gradient-to-b from-white/80 to-white/70 backdrop-blur rounded-xl p-1 mb-4 shadow-sm border border-slate-200/60">
       <div class="grid grid-cols-2 gap-1">
         <button id="tabA" class="tab tab-active rounded-lg px-3 py-2 text-sm font-medium">Plan</button>
         <button id="tabC" class="tab rounded-lg px-3 py-2 text-sm font-medium">Entdecken</button>
@@ -96,22 +119,22 @@
     </nav>
 
     <!-- Übersicht -->
-    <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-md mb-4">
-      <h2 class="text-lg font-semibold text-slate-800 mb-2">Kurzinfos</h2>
+    <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-md mb-4 border border-slate-200/60">
+      <h2 class="text-lg font-semibold text-slate-900 mb-2">Kurzinfos</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-slate-600">
-        <div class="p-3 rounded-lg bg-slate-50">Dauer<br><span class="font-medium text-slate-800">7–8 Tage</span></div>
-        <div class="p-3 rounded-lg bg-slate-50">Beste Reisezeit<br><span class="font-medium text-slate-800">Oktober (Herbst)</span></div>
-        <div class="p-3 rounded-lg bg-slate-50">Hinweis<br><span class="font-medium text-slate-800">Nordirland: Reisepass nötig</span></div>
+        <div class="p-3 rounded-lg bg-white border border-slate-200/70">Dauer<br><span class="font-medium text-slate-900">7–8 Tage</span></div>
+        <div class="p-3 rounded-lg bg-white border border-slate-200/70">Beste Reisezeit<br><span class="font-medium text-slate-900">Oktober (Herbst)</span></div>
+        <div class="p-3 rounded-lg bg-white border border-slate-200/70">Hinweis<br><span class="font-medium text-slate-900">Nordirland: Reisepass nötig</span></div>
       </div>
     </section>
 
     <!-- ========= PLAN ========= -->
     <div id="wrapA">
-      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200/60">
         <div class="flex items-start justify-between mb-4 gap-3">
           <div>
             <h3 class="text-xl font-semibold text-slate-900">Plan — Dublin & Nordirland</h3>
-            <p class="text-sm text-slate-500 mt-1">Zeitraum: Do 16.10. (Ankunft 14:00) – Do 23.10. (Abflug 08:55). Enthält Trinity Trails & Book of Kells, Giant’s Causeway & Belfast, Cliffs of Moher & Galway, ⚽ Bohemians vs St Patrick’s (20.10.).</p>
+            <p class="text-sm text-slate-600 mt-1">Zeitraum: Do 16.10. (Ankunft 14:00) – Do 23.10. (Abflug 08:55). Enthält Trinity Trails & Book of Kells, Giant’s Causeway & Belfast, Cliffs of Moher & Galway, ⚽ Bohemians vs St Patrick’s (20.10.).</p>
           </div>
           <div class="text-sm text-emerald-600 font-medium shrink-0">Kosten (ohne Flug): €1.050–1.250</div>
         </div>
@@ -399,7 +422,7 @@
 
     <!-- ========= ENTDECKEN ========= -->
     <div id="wrapC" class="hidden">
-      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 k-section">
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-200/60 k-section">
         <div class="flex items-start justify-between mb-4 gap-3">
           <h3>Entdecken — Alles in Dublin (Master-Liste + Karte)</h3>
           <div class="hidden sm:flex items-center gap-2 text-xs">
@@ -425,7 +448,7 @@
         <div class="hint rounded-xl p-3 text-sm text-slate-700 mb-5">
           <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <input id="q" type="search" placeholder="Suche (z. B. 'whiskey', 'kostenlos', 'museum')"
-                   class="w-full sm:w-1/2 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-500 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400" />
+                   class="w-full sm:w-1/2 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-500 px-3 py-2 outline-none focus:ring-2 focus:ring-sky-300 focus:border-sky-400" />
             <div class="flex gap-2 flex-wrap">
               <button data-cat="brau" class="chip" aria-pressed="false">🍺 Brauerei/Whiskey</button>
               <button data-cat="hist" class="chip" aria-pressed="false">🏰 Geschichte</button>
@@ -719,7 +742,7 @@
 
       const layerGroup = L.layerGroup().addTo(map);
 
-      // Hotel-Marker (grün)
+      // Hotel-Icon (grün)
       const hotelIcon = L.divIcon({
         className: 'hotel-pin',
         html: `
@@ -767,7 +790,7 @@
         const apply = () => {
           const on = chip.dataset.active === "1";
           chip.style.background = on ? 'var(--chip-on)' : '';
-          chip.style.boxShadow = on ? '0 0 0 2px #e0e7ff inset' : '';
+          chip.style.boxShadow = on ? `0 0 0 2px var(--chip-on-ring) inset` : '';
           chip.setAttribute('aria-pressed', on ? 'true' : 'false');
         };
         apply();
