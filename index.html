@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dublin — 7-Tage Solo-Reise (Plan & Entdecken)</title>
   <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#0f172a">
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
@@ -16,18 +17,8 @@
     .bullet{position:absolute;left:0;top:.375rem;height:.75rem;width:.75rem;border-radius:9999px;background:rgb(16 185 129);box-shadow:0 0 0 2px rgba(16,185,129,.15)}
     .badge{font-size:.75rem;font-weight:600;color:#047857;background:#ECFDF5;border:1px solid #D1FAE5;border-radius:.375rem;padding:.125rem .5rem}
     .tab{border:1px solid rgb(226 232 240); color:#0f172a;backdrop-filter:blur(10px)}
-/* Aktiver Tab: dunkelblau + weißer Text, weiterhin glasig */
-.tab.tab-active{
-  background: rgb(15, 23, 42);
-  color:#fff;
-  border-color: rgba(255,255,255,.18);backdrop-filter:blur(10px)
-}
-
-/* Optional: Hover für inaktive */
-.tab:not(.tab-active):hover{
-  background: rgba(255,255,255,.7);
-}
-    
+    .tab.tab-active{background:#0f172a;color:#fff;border-color:rgba(255,255,255,.18)}
+    .tab:not(.tab-active):hover{background:rgba(255,255,255,.7)}
     img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover}
     .k-section h3{font-size:1.125rem;font-weight:600;color:#0f172a}
     .k-section h4{font-weight:600;color:#0f172a}
@@ -36,10 +27,11 @@
     .link{color:#0369a1;text-decoration:underline}
     .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgb(203 213 225);padding:.375rem .6rem;border-radius:.5rem;font-size:.75rem;background:#0f172a;color:#fff;border-color:#0f172a}
     .btn:hover{background:#031a30}
-    .badge-ghost{background:#eef2ff;border-color:#c7d2fe;color:#3730a3}
     .btn-ghost{background:#0f172a;color:#fff;border-color:#0f172a}
     #map{height:380px;border-radius:1rem;border:1px solid rgb(226 232 240)}
     .leaflet-popup-content{margin:8px 12px}
+    .leaflet-popup-content a{color:#0369a1}
+    @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
   </style>
 </head>
 <body class="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 p-4 sm:p-6 font-sans">
@@ -53,7 +45,7 @@
           </svg>
         </div>
         <div>
-          <h1 class="text-xl sm:text-2xl font-semibold color-black text-slate-900">Dublin — 7-Tage Solo-Reise</h1>
+          <h1 class="text-xl sm:text-2xl font-semibold text-slate-900">Dublin — 7-Tage Solo-Reise</h1>
           <p class="text-sm text-slate-500">Tabs: <span class="font-medium">Plan</span> & <span class="font-medium">Entdecken</span> (alles verlinkt + Karte)</p>
           <p class="text-xs text-slate-500 mt-1">Hotel: <span class="font-semibold">Staycity Aparthotels Dublin City Quay</span></p>
         </div>
@@ -124,7 +116,7 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">18:00</span>
                       <div class="text-sm font-medium text-slate-800">Dinner: The Bank on College Green / Boxty House</div>
-                      <a class="btn" target="_blank" href="https://maps.google.com/?q=The+Bank+on+College+Green+Dublin">Karte</a>
+                      <a class="btn" target="_blank" rel="noopener noreferrer" aria-label="The Bank on College Green auf Karte" href="https://maps.google.com/?q=The+Bank+on+College+Green+Dublin">Karte</a>
                     </div>
                   </div>
                   <div class="relative pl-8">
@@ -132,7 +124,7 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">20:00</span>
                       <div class="text-sm font-medium text-slate-800">Pub-Tour: The Church · O’Donoghue’s · The Cobblestone</div>
-                      <a class="btn" target="_blank" href="https://dublinpubcrawl.com/">Tickets</a>
+                      <a class="btn" target="_blank" rel="noopener noreferrer" aria-label="Pub Crawl Tickets" href="https://dublinpubcrawl.com/">Tickets</a>
                     </div>
                   </div>
                 </div>
@@ -156,7 +148,8 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">09:00</span>
                       <div class="text-sm font-medium text-slate-800">Trinity Trails – 45-min. Campus-Tour (EN)</div>
-                      <a class="btn btn-ghost" target="_blank" href="https://www.tcd.ie/library/old-library/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Trinity Trails Tickets" href="https://www.tcd.ie/library/old-library/">Tickets</a>
+                      <a class="btn" target="_blank" rel="noopener noreferrer" aria-label="Trinity auf Karte" href="https://maps.google.com/?q=Trinity+College+Dublin">Karte</a>
                     </div>
                   </div>
                   <div class="relative pl-8">
@@ -164,14 +157,14 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">09:45</span>
                       <div class="text-sm font-medium text-slate-800">Book of Kells Experience + Old Library</div>
-                      <a class="btn btn-ghost" target="_blank" href="https://www.tcd.ie/library/old-library/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Book of Kells Tickets" href="https://www.tcd.ie/library/old-library/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
                     <div class="flex items-center gap-3">
                       <span class="badge">12:00</span>
                       <div class="text-sm font-medium text-slate-800">Lunch: Bewley’s Café / Grafton St.</div>
-                      <a class="btn" target="_blank" href="https://www.bewleys.com/locations/grafton-street-cafe/">Reservieren</a>
+                      <a class="btn" target="_blank" rel="noopener noreferrer" aria-label="Bewley's Reservierung" href="https://www.bewleys.com/locations/grafton-street-cafe/">Reservieren</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
@@ -184,7 +177,7 @@
                     <div class="flex items-center gap-3">
                       <span class="badge">18:00</span>
                       <div class="text-sm font-medium text-slate-800">Dinner: Fade Street Social / The Church</div>
-                      <a class="btn" target="_blank" href="https://www.fadestreetsocial.com/">Reservieren</a>
+                      <a class="btn" target="_blank" rel="noopener noreferrer" aria-label="Fade Street Social Reservierung" href="https://www.fadestreetsocial.com/">Reservieren</a>
                     </div>
                   </div>
                 </div>
@@ -207,7 +200,7 @@
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">06:30</span>
                       <div class="text-sm font-medium text-slate-800">Abfahrt College Green / Molly Malone</div>
-                      <a class="btn btn-ghost" target="_blank" href="https://www.irishdaytours.ie/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Causeway Tour Tickets" href="https://www.irishdaytours.ie/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
@@ -242,7 +235,7 @@
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">10:00</span>
                       <div class="text-sm font-medium text-slate-800">Alternative Stadt: EPIC Museum · Docklands · Markets</div>
-                      <a class="btn" target="_blank" href="https://epicchq.com">EPIC Tickets</a>
+                      <a class="btn" target="_blank" rel="noopener noreferrer" aria-label="EPIC Tickets" href="https://epicchq.com">EPIC Tickets</a>
                     </div>
                   </div>
                 </div>
@@ -264,13 +257,13 @@
                   <div class="relative pl-8"><span class="bullet"></span>
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">10:00</span><div class="text-sm font-medium text-slate-800">Kilmainham Gaol (vorher buchen)</div>
-                      <a class="btn btn-ghost" target="_blank" href="https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Kilmainham Tickets" href="https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">14:00</span><div class="text-sm font-medium text-slate-800">Guinness Storehouse + Gravity Bar</div>
-                      <a class="btn btn-ghost" target="_blank" href="https://www.guinness-storehouse.com/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Guinness Tickets" href="https://www.guinness-storehouse.com/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
@@ -299,7 +292,7 @@
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">06:50</span>
                       <div class="text-sm font-medium text-slate-800">Abfahrt Dublin (bitte 10 Min. vorher da sein)</div>
-                      <a class="btn btn-ghost" target="_blank" href="https://www.irishdaytours.ie/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" aria-label="Cliffs Tour Tickets" href="https://www.irishdaytours.ie/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span><div class="flex items-center gap-3"><span class="badge">10:45</span><div class="text-sm font-medium text-slate-800">Cliffs of Moher – Hauptstopp</div></div></div>
@@ -352,10 +345,10 @@
           <div>
             <h4 class="font-semibold mb-2">Bilder & Sehenswürdigkeiten</h4>
             <div class="grid grid-cols-1 gap-3">
-              <img class="rounded-lg shadow multi" alt="Trinity College Dublin" data-srcs="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg/1280px-The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg">
-              <img class="rounded-lg shadow multi" alt="Giant's Causeway" data-srcs="https://upload.wikimedia.org/wikipedia/commons/c/c0/Causeway-code_poet-4.jpg">
-              <img class="rounded-lg shadow multi" alt="Dark Hedges" data-srcs="https://upload.wikimedia.org/wikipedia/commons/b/b2/Dark_Hedges_near_Armoy%2C_Co_Antrim_%28cropped%29.jpg">
-              <img class="rounded-lg shadow multi" alt="Cliffs of Moher" data-srcs="https://upload.wikimedia.org/wikipedia/commons/7/74/Cliffs_of_Moher%2C_Irland.jpg">
+              <img loading="lazy" class="rounded-lg shadow multi" alt="Trinity College Dublin" data-srcs="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg/1280px-The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg">
+              <img loading="lazy" class="rounded-lg shadow multi" alt="Giant's Causeway" data-srcs="https://upload.wikimedia.org/wikipedia/commons/c/c0/Causeway-code_poet-4.jpg">
+              <img loading="lazy" class="rounded-lg shadow multi" alt="Dark Hedges" data-srcs="https://upload.wikimedia.org/wikipedia/commons/b/b2/Dark_Hedges_near_Armoy%2C_Co_Antrim_%28cropped%29.jpg">
+              <img loading="lazy" class="rounded-lg shadow multi" alt="Cliffs of Moher" data-srcs="https://upload.wikimedia.org/wikipedia/commons/7/74/Cliffs_of_Moher%2C_Irland.jpg">
             </div>
 
             <h4 class="font-semibold mt-4 mb-2 text-slate-800">Wichtige Links & Buchungen</h4>
@@ -383,13 +376,11 @@
 
         <!-- MAP + FILTER -->
         <div class="grid gap-4 mb-5">
-          <div id="map" style="height:380px;border-radius:1rem;border:1px solid rgb(226 232 240)"></div>
+          <div id="map"></div>
           <div class="hint rounded-xl p-3 text-sm text-slate-700">
             <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
               <input id="q" type="search" placeholder="Suche (z. B. 'whiskey', 'kostenlos', 'museum')"
-                     class="w-full sm:w-1/2 rounded-lg border border-slate-200 bg-white text-slate-900
-         placeholder-slate-500 px-3 py-2 outline-none
-         focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400" />
+                     class="w-full sm:w-1/2 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-500 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400" />
               <div class="flex gap-2 flex-wrap">
                 <button data-cat="brau" class="chip">🍺 Brauerei/Whiskey</button>
                 <button data-cat="hist" class="chip">🏰 Geschichte</button>
@@ -402,14 +393,13 @@
                 <button data-cat="shop" class="chip">🛍️ Shopping</button>
                 <button data-cat="trip" class="chip">🚌 Tagesausflug</button>
               </div>
-                  <button id="locateBtn" type="button" class="btn sm:ml-auto" aria-label="Meinen Standort zeigen">
-      📍 Mein Standort
-    </button>
+              <button id="locateBtn" type="button" class="btn sm:ml-auto" aria-label="Meinen Standort zeigen">📍 Mein Standort</button>
               <label class="flex items-center gap-2 text-xs sm:text-sm select-none">
                 <input id="nearHotel" type="checkbox" class="h-4 w-4"> <span>Nur „In Hotel-Nähe“ (&lt; 2 km)</span>
               </label>
             </div>
           </div>
+          <div id="emptyMsg" class="hidden text-xs text-slate-600 pl-1">Keine Treffer für die aktuelle Filterung.</div>
         </div>
 
         <!-- CATEGORIES (expanded) -->
@@ -419,10 +409,10 @@
           <div data-cat="hist" class="space-y-2">
             <h4>🏛️ Top Sehenswürdigkeiten & Museen</h4>
             <ul class="list-disc ml-5">
-              <li data-name="Kilmainham Gaol"><a class="link" href="https://www.google.com/search?q=Kilmainham+Gaol+Dublin" target="_blank" rel="noopener"><strong>Kilmainham Gaol</strong></a> — ⭐ 4,6 · Spezialmuseum, Kilmainham.</li>
+              <li data-name="Kilmainham Gaol"><a class="link" href="https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/" target="_blank" rel="noopener"><strong>Kilmainham Gaol</strong></a> — ⭐ 4,6 · Spezialmuseum, Kilmainham.</li>
               <li data-name="Guinness Storehouse"><a class="link" href="https://www.guinness-storehouse.com" target="_blank" rel="noopener"><strong>Guinness Storehouse</strong></a> — ⭐ 4,3 · Gravity Bar.</li>
               <li data-name="The Little Museum of Dublin"><a class="link" href="https://www.littlemuseum.ie" target="_blank" rel="noopener"><strong>The Little Museum of Dublin</strong></a> — ⭐ 4,8 · Stadtgeschichte & U2.</li>
-              <li data-name="Book of Kells (Trinity)"><a class="link" href="https://www.tcd.ie/library/old-library/" target="_blank" rel="noopener"><strong>Book of Kells Experience</strong></a> — ⭐ 4,3 · Trinity College.</li>
+              <li data-name="Book of Kells / Old Library"><a class="link" href="https://www.tcd.ie/library/old-library/" target="_blank" rel="noopener"><strong>Book of Kells Experience</strong></a> — ⭐ 4,3 · Trinity College.</li>
               <li data-name="Jameson Distillery Bow St."><a class="link" href="https://www.jamesonwhiskey.com/visit-us/bow-st-dublin" target="_blank" rel="noopener"><strong>Jameson Distillery Bow St.</strong></a> — ⭐ 4,5 · Tour & Verkostung.</li>
               <li data-name="Irish Rock 'N' Roll Museum"><a class="link" href="https://irishrocknrollmuseum.com/" target="_blank" rel="noopener"><strong>Irish Rock ’N’ Roll Museum</strong></a> — ⭐ 4,9 · Temple Bar.</li>
               <li data-name="EPIC The Irish Emigration Museum"><a class="link" href="https://epicchq.com" target="_blank" rel="noopener"><strong>EPIC – Irish Emigration Museum</strong></a> — ⭐ 4,8 · Docklands.</li>
@@ -435,12 +425,12 @@
               <li data-name="Dublin Castle"><a class="link" href="https://www.dublincastle.ie/" target="_blank" rel="noopener"><strong>Dublin Castle</strong></a> — ⭐ 4,0.</li>
               <li data-name="Dublinia"><a class="link" href="https://dublinia.ie/" target="_blank" rel="noopener"><strong>Dublinia</strong></a> — ⭐ 4,2.</li>
               <li data-name="Chester Beatty"><a class="link" href="https://chesterbeatty.ie" target="_blank" rel="noopener"><strong>Chester Beatty</strong></a> — ⭐ 4,7.</li>
-              <li data-name="Croke Park Stadium Tour"><a class="link" href="https://crokepark.ie/visit" target="_blank" rel="noopener"><strong>Croke Park Tour & GAA Museum</strong></a> — ⭐ 4,8.</li>
+              <li data-name="Croke Park Tour & GAA Museum"><a class="link" href="https://crokepark.ie/visit" target="_blank" rel="noopener"><strong>Croke Park Tour & GAA Museum</strong></a> — ⭐ 4,8.</li>
               <li data-name="Jeanie Johnston Tall Ship"><a class="link" href="https://jeaniejohnston.ie" target="_blank" rel="noopener"><strong>Jeanie Johnston Tall Ship</strong></a> — ⭐ 4,7.</li>
-              <li data-name="National Botanic Gardens"><a class="link" href="https://botanicgardens.ie" target="_blank" rel="noopener"><strong>National Botanic Gardens</strong></a> — ⭐ 4,7.</li>
+              <li data-name="National Botanic Gardens (Glasnevin)"><a class="link" href="https://botanicgardens.ie" target="_blank" rel="noopener"><strong>National Botanic Gardens</strong></a> — ⭐ 4,7.</li>
               <li data-name="Christ Church Cathedral"><a class="link" href="https://christchurchcathedral.ie/" target="_blank" rel="noopener"><strong>Christ Church Cathedral</strong></a> — ⭐ 4,4.</li>
               <li data-name="GPO Museum"><a class="link" href="https://www.gpowitnesshistory.ie/" target="_blank" rel="noopener"><strong>GPO Museum</strong></a> — ⭐ 4,5.</li>
-              <li data-name="The Famine Sculptures"><a class="link" href="https://www.google.com/search?q=Famine+Sculptures+Dublin" target="_blank" rel="noopener"><strong>The Famine Sculptures</strong></a> — ⭐ 4,5.</li>
+              <li data-name="The Famine Sculptures"><a class="link" href="https://maps.google.com/?q=Famine+Sculptures+Dublin" target="_blank" rel="noopener"><strong>The Famine Sculptures</strong></a> — ⭐ 4,5.</li>
             </ul>
           </div>
 
@@ -505,15 +495,15 @@
             <h4>🏙️ Weitere Sehenswürdigkeiten & Erlebnisse</h4>
             <ul class="list-disc ml-5">
               <li data-name="Grafton Street">Grafton Street — Straßenkünstler & Shopping.</li>
-              <li data-name="Dublin Sightseeing Cruise (Liffey)">Dublin Sightseeing Cruise (Liffey) — Bootstour.</li>
-              <li data-name="Dark Dublin Tour">Dark Dublin: Folter, Mord & Mysterium — Abendtour.</li>
-              <li data-name="Dublin Ghost Bus Tour">Dublin Ghost Bus Tour — Gruseltour mit Schauspiel.</li>
-              <li data-name="Gravedigger Tour">Gravedigger Tour — 2-h Geisterbus.</li>
-              <li data-name="Mythology & Folklore Tour">Mythologie- & Folklore-Tour — Irische Legenden.</li>
-              <li data-name="Out-of-Tourist-Path Pub Tour">Out-of-Tourist-Path Pub Tour — Lokale Pubs & Tastings.</li>
-              <li data-name="Irish Coffee Masterclass">Irish Coffee Masterclass — Workshop.</li>
-              <li data-name="Irish Craic & Cuisine Kochkurs">Irish Craic & Cuisine Kochkurs — Kochen & Dinner.</li>
-              <li data-name="The Cobblestone">The Cobblestone — Live Musik Pub.</li>
+              <li data-name="Dublin Sightseeing Cruise (Liffey)"><a class="link" href="https://dublindiscovered.ie/" target="_blank" rel="noopener">Dublin Sightseeing Cruise (Liffey)</a> — Bootstour.</li>
+              <li data-name="Dark Dublin Tour"><a class="link" href="https://dodublin.ie/tours/dark-dublin" target="_blank" rel="noopener">Dark Dublin: Folter, Mord & Mysterium</a> — Abendtour.</li>
+              <li data-name="Dublin Ghost Bus Tour"><a class="link" href="https://www.ghostbustour.ie/dublin" target="_blank" rel="noopener">Dublin Ghost Bus Tour</a> — Gruseltour.</li>
+              <li data-name="Gravedigger Tour"><a class="link" href="https://dodublin.ie/city-sightseeing-tours/gravedigger-ghost-tour" target="_blank" rel="noopener">Gravedigger Tour</a> — 2-h Geisterbus.</li>
+              <li data-name="Mythology & Folklore Tour"><a class="link" href="https://www.secretstreets.ie/tours/myths-and-legends" target="_blank" rel="noopener">Mythologie- & Folklore-Tour</a>.</li>
+              <li data-name="Out-of-Tourist-Path Pub Tour"><a class="link" href="https://www.tours.ie/pub-crawl" target="_blank" rel="noopener">Out-of-Tourist-Path Pub Tour</a>.</li>
+              <li data-name="Irish Coffee Masterclass"><a class="link" href="https://irishwhiskeymuseum.ie/tours-tastings/irish-coffee-masterclass/" target="_blank" rel="noopener">Irish Coffee Masterclass</a>.</li>
+              <li data-name="Irish Craic & Cuisine Kochkurs"><a class="link" href="https://www.cookwithaoife.com/" target="_blank" rel="noopener">Irish Craic & Cuisine Kochkurs</a>.</li>
+              <li data-name="The Cobblestone"><a class="link" href="https://www.thecobblestonepub.ie/" target="_blank" rel="noopener">The Cobblestone</a> — Live Musik Pub.</li>
             </ul>
           </div>
 
@@ -521,32 +511,32 @@
           <div data-cat="food" class="space-y-2">
             <h4>🍽️ Top Restaurants in Dublin</h4>
             <ul class="list-disc ml-5">
-              <li data-name="FIRE Steakhouse & Bar">FIRE Steakhouse & Bar · ⭐ 4,8 · Steak · €€€€</li>
-              <li data-name="Sole Seafood & Grill">Sole Seafood & Grill · ⭐ 4,8 · Fisch · €€€€</li>
-              <li data-name="Ryleigh’s">Ryleigh’s · ⭐ 4,8 · Steak · €€–€€€</li>
-              <li data-name="Brookwood">Brookwood · ⭐ 4,6 · Steak · €€–€€€</li>
-              <li data-name="Featherblade">Featherblade · ⭐ 4,5 · Steak · €€–€€€</li>
-              <li data-name="Bloom Brasserie">Bloom Brasserie · ⭐ 4,7 · Modern · €€–€€€</li>
-              <li data-name="Tang Café">Tang Café · ⭐ 4,8 · Frühstück · €</li>
-              <li data-name="31 Lennox">31 Lennox · ⭐ 4,9 · Frühstück · €€–€€€</li>
-              <li data-name="Urbanity">Urbanity · ⭐ 4,7 · Brunch · €€–€€€</li>
-              <li data-name="Lemon Jelly Café">Lemon Jelly Café · ⭐ 4,5 · Frühstück · €€–€€€</li>
-              <li data-name="Murphy’s Bistro Café">Murphy’s Bistro Café · ⭐ 4,7 · Frühstück · €€–€€€</li>
-              <li data-name="Lovinspoon">Lovinspoon · ⭐ 4,7 · Frühstück · €</li>
-              <li data-name="Glovers Alley">Glovers Alley ⭐ · ⭐ 4,7 · Fine Dining · €€€€</li>
-              <li data-name="WILDE Restaurant">WILDE Restaurant · ⭐ 4,8 · Fine Dining · €€€€</li>
-              <li data-name="The Garden Room">The Garden Room · ⭐ 4,7 · Elegant · €€€€</li>
-              <li data-name="1900 Restaurant">1900 Restaurant · ⭐ 4,7 · Elegant · €€€€</li>
-              <li data-name="Corfu Greek Restaurant">Corfu Greek Restaurant · ⭐ 4,6 · Mediterran · €€–€€€</li>
-              <li data-name="Damascus Gate">Damascus Gate · ⭐ 4,6 · Libanesisch · €€–€€€</li>
-              <li data-name="La Maison">La Maison · ⭐ 4,5 · Französisch · €€–€€€</li>
-              <li data-name="La Caverna">La Caverna · ⭐ 4,4 · Italienisch · €€–€€€</li>
-              <li data-name="Yamamori Izakaya">Yamamori Izakaya · ⭐ 4,3 · Japanisch · €€–€€€</li>
-              <li data-name="Tippenyaki Restaurant">Tippenyaki Restaurant · ⭐ 4,7 · Japanisch · €€–€€€</li>
-              <li data-name="Boss Stop">Boss Stop · ⭐ 4,9 · Asiatisch · €€–€€€</li>
-              <li data-name="Davy Byrnes">Davy Byrnes · ⭐ 4,7 · Pub · €€–€€€</li>
-              <li data-name="Bobo’s Burgers">Bobo’s Burgers · ⭐ 4,4 · Burger · €€–€€€</li>
-              <li data-name="The Strand House – Fairview">The Strand House – Fairview · ⭐ 4,9 · Pub · €€–€€€</li>
+              <li data-name="FIRE Steakhouse & Bar"><a class="link" href="https://www.firesteakhouse.ie/" target="_blank" rel="noopener">FIRE Steakhouse & Bar</a> · ⭐ 4,8 · Steak · €€€€</li>
+              <li data-name="Sole Seafood & Grill"><a class="link" href="https://www.sole.ie/" target="_blank" rel="noopener">Sole Seafood & Grill</a> · ⭐ 4,8 · Fisch · €€€€</li>
+              <li data-name="Ryleigh’s"><a class="link" href="https://ryleighs.ie/" target="_blank" rel="noopener">Ryleigh’s</a> · ⭐ 4,8 · Steak · €€–€€€</li>
+              <li data-name="Brookwood"><a class="link" href="https://brookwood.ie/" target="_blank" rel="noopener">Brookwood</a> · ⭐ 4,6 · Steak · €€–€€€</li>
+              <li data-name="Featherblade"><a class="link" href="https://featherblade.ie/" target="_blank" rel="noopener">Featherblade</a> · ⭐ 4,5 · Steak · €€–€€€</li>
+              <li data-name="Bloom Brasserie"><a class="link" href="https://www.bloombrasserie.ie/" target="_blank" rel="noopener">Bloom Brasserie</a> · ⭐ 4,7 · Modern · €€–€€€</li>
+              <li data-name="Tang Café"><a class="link" href="https://www.tang.ie/" target="_blank" rel="noopener">Tang Café</a> · ⭐ 4,8 · Frühstück · €</li>
+              <li data-name="31 Lennox"><a class="link" href="https://31lennox.ie/" target="_blank" rel="noopener">31 Lennox</a> · ⭐ 4,9 · Frühstück · €€–€€€</li>
+              <li data-name="Urbanity"><a class="link" href="https://urbanity.ie/" target="_blank" rel="noopener">Urbanity</a> · ⭐ 4,7 · Brunch · €€–€€€</li>
+              <li data-name="Lemon Jelly Café"><a class="link" href="https://lemonjelly.ie/" target="_blank" rel="noopener">Lemon Jelly Café</a> · ⭐ 4,5 · Frühstück · €€–€€€</li>
+              <li data-name="Murphy’s Bistro Café"><a class="link" href="https://www.google.com/search?q=Murphy%E2%80%99s+Bistro+Caf%C3%A9+Dublin" target="_blank" rel="noopener">Murphy’s Bistro Café</a> · ⭐ 4,7 · Frühstück · €€–€€€</li>
+              <li data-name="Lovinspoon"><a class="link" href="https://www.google.com/search?q=Lovinspoon+Dublin" target="_blank" rel="noopener">Lovinspoon</a> · ⭐ 4,7 · Frühstück · €</li>
+              <li data-name="Glovers Alley"><a class="link" href="https://gloversalley.com/" target="_blank" rel="noopener">Glovers Alley ⭐</a> · ⭐ 4,7 · Fine Dining · €€€€</li>
+              <li data-name="WILDE Restaurant"><a class="link" href="https://wilde.ie/" target="_blank" rel="noopener">WILDE Restaurant</a> · ⭐ 4,8 · Fine Dining · €€€€</li>
+              <li data-name="The Garden Room"><a class="link" href="https://www.thewestbury.ie/dining/the-garden-room" target="_blank" rel="noopener">The Garden Room</a> · ⭐ 4,7 · Elegant · €€€€</li>
+              <li data-name="1900 Restaurant"><a class="link" href="https://onehthornton.com/1900-restaurant/" target="_blank" rel="noopener">1900 Restaurant</a> · ⭐ 4,7 · Elegant · €€€€</li>
+              <li data-name="Corfu Greek Restaurant"><a class="link" href="https://corfurestaurant.ie/" target="_blank" rel="noopener">Corfu Greek Restaurant</a> · ⭐ 4,6 · Mediterran · €€–€€€</li>
+              <li data-name="Damascus Gate"><a class="link" href="https://www.google.com/search?q=Damascus+Gate+Dublin" target="_blank" rel="noopener">Damascus Gate</a> · ⭐ 4,6 · Libanesisch · €€–€€€</li>
+              <li data-name="La Maison"><a class="link" href="https://lamaison.ie/" target="_blank" rel="noopener">La Maison</a> · ⭐ 4,5 · Französisch · €€–€€€</li>
+              <li data-name="La Caverna"><a class="link" href="https://lacaverna.ie/" target="_blank" rel="noopener">La Caverna</a> · ⭐ 4,4 · Italienisch · €€–€€€</li>
+              <li data-name="Yamamori Izakaya"><a class="link" href="https://www.yamamori.ie/izakaya" target="_blank" rel="noopener">Yamamori Izakaya</a> · ⭐ 4,3 · Japanisch · €€–€€€</li>
+              <li data-name="Tippenyaki Restaurant"><a class="link" href="https://www.google.com/search?q=Tippenyaki+Restaurant+Dublin" target="_blank" rel="noopener">Tippenyaki Restaurant</a> · ⭐ 4,7 · Japanisch · €€–€€€</li>
+              <li data-name="Boss Stop"><a class="link" href="https://www.google.com/search?q=Boss+Stop+Dublin" target="_blank" rel="noopener">Boss Stop</a> · ⭐ 4,9 · Asiatisch · €€–€€€</li>
+              <li data-name="Davy Byrnes"><a class="link" href="https://www.davybyrnes.com/" target="_blank" rel="noopener">Davy Byrnes</a> · ⭐ 4,7 · Pub · €€–€€€</li>
+              <li data-name="Bobo’s Burgers"><a class="link" href="https://bobos.ie/" target="_blank" rel="noopener">Bobo’s Burgers</a> · ⭐ 4,4 · Burger · €€–€€€</li>
+              <li data-name="The Strand House – Fairview"><a class="link" href="https://www.google.com/search?q=The+Strand+House+Fairview" target="_blank" rel="noopener">The Strand House – Fairview</a> · ⭐ 4,9 · Pub · €€–€€€</li>
             </ul>
           </div>
 
@@ -579,7 +569,6 @@
       {cat:"hist", name:"Kilmainham Gaol", lat:53.34210, lng:-6.31080, url:"https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/"},
       {cat:"hist", name:"Guinness Storehouse", lat:53.34190, lng:-6.28670, url:"https://www.guinness-storehouse.com"},
       {cat:"hist", name:"The Little Museum of Dublin", lat:53.33965, lng:-6.25973, url:"https://www.littlemuseum.ie"},
-      {cat:"hist", name:"Book of Kells (Trinity)", lat:53.34380, lng:-6.25460, url:"https://www.tcd.ie/library/old-library/"},
       {cat:"hist", name:"Book of Kells / Old Library", lat:53.34380, lng:-6.25460, url:"https://www.tcd.ie/library/old-library/"},
       {cat:"hist", name:"EPIC The Irish Emigration Museum", lat:53.34880, lng:-6.24530, url:"https://epicchq.com"},
       {cat:"hist", name:"Saint Patrick’s Cathedral", lat:53.33943, lng:-6.27125, url:"https://www.stpatrickscathedral.ie/"},
@@ -589,13 +578,12 @@
       {cat:"hist", name:"Dublin Castle", lat:53.34300, lng:-6.26730, url:"https://www.dublincastle.ie/"},
       {cat:"hist", name:"Dublinia", lat:53.34363, lng:-6.27174, url:"https://dublinia.ie/"},
       {cat:"hist", name:"Chester Beatty", lat:53.34263, lng:-6.26985, url:"https://chesterbeatty.ie"},
-      {cat:"hist", name:"Croke Park Stadium Tour", lat:53.36063, lng:-6.25188, url:"https://crokepark.ie/visit"},
-      {cat:"hist", name:"Croke Park Stadium Tour & GAA Museum", lat:53.36063, lng:-6.25188, url:"https://crokepark.ie/visit"},
+      {cat:"hist", name:"Croke Park Tour & GAA Museum", lat:53.36063, lng:-6.25188, url:"https://crokepark.ie/visit"},
       {cat:"hist", name:"Jeanie Johnston Tall Ship", lat:53.34890, lng:-6.24590, url:"https://jeaniejohnston.ie"},
-      {cat:"hist", name:"National Botanic Gardens", lat:53.37155, lng:-6.26988, url:"https://botanicgardens.ie"},
+      {cat:"hist", name:"National Botanic Gardens (Glasnevin)", lat:53.37155, lng:-6.26988, url:"https://botanicgardens.ie"},
       {cat:"hist", name:"Christ Church Cathedral", lat:53.34319, lng:-6.27106, url:"https://christchurchcathedral.ie/"},
       {cat:"hist", name:"GPO Museum", lat:53.34979, lng:-6.26029, url:"https://www.gpowitnesshistory.ie/"},
-      {cat:"hist", name:"The Famine Sculptures", lat:53.34813, lng:-6.24555, url:"https://goo.gl/maps/"},
+      {cat:"hist", name:"The Famine Sculptures", lat:53.34813, lng:-6.24555, url:"https://maps.google.com/?q=Famine+Sculptures+Dublin"},
       // --- Whiskey / Brau (brau) ---
       {cat:"brau", name:"Jameson Distillery Bow St.", lat:53.34772, lng:-6.27732, url:"https://www.jamesonwhiskey.com/visit-us/bow-st-dublin"},
       {cat:"brau", name:"Teeling Distillery", lat:53.33380, lng:-6.27750, url:"https://teelingdistillery.com"},
@@ -613,17 +601,16 @@
       {cat:"natur", name:"St Stephen’s Green", lat:53.33740, lng:-6.25910, url:"https://maps.google.com/?q=St+Stephen's+Green"},
       {cat:"natur", name:"Phoenix Park", lat:53.35540, lng:-6.32910, url:"https://maps.google.com/?q=Phoenix+Park"},
       {cat:"natur", name:"Dublin Zoo", lat:53.35580, lng:-6.30570, url:"https://maps.google.com/?q=Dublin+Zoo"},
-      {cat:"natur", name:"National Botanic Gardens (Glasnevin)", lat:53.37155, lng:-6.26988, url:"https://botanicgardens.ie"},
       // --- Nightlife / Sonstiges (night) ---
       {cat:"night", name:"Grafton Street", lat:53.34190, lng:-6.25950, url:"https://goo.gl/maps/"},
       {cat:"night", name:"Dublin Sightseeing Cruise (Liffey)", lat:53.34739, lng:-6.24766, url:"https://dublindiscovered.ie/"},
-      {cat:"night", name:"Dark Dublin Tour", lat:53.34983, lng:-6.26031, url:"#"},
-      {cat:"night", name:"Dublin Ghost Bus Tour", lat:53.34960, lng:-6.26030, url:"#"},
-      {cat:"night", name:"Gravedigger Tour", lat:53.34960, lng:-6.26030, url:"#"},
-      {cat:"night", name:"Mythology & Folklore Tour", lat:53.34960, lng:-6.26030, url:"#"},
-      {cat:"night", name:"Out-of-Tourist-Path Pub Tour", lat:53.34960, lng:-6.26030, url:"#"},
-      {cat:"night", name:"Irish Coffee Masterclass", lat:53.34330, lng:-6.25900, url:"#"},
-      {cat:"night", name:"Irish Craic & Cuisine Kochkurs", lat:53.34300, lng:-6.26730, url:"#"},
+      {cat:"night", name:"Dark Dublin Tour", lat:53.34983, lng:-6.26031, url:"https://dodublin.ie/tours/dark-dublin"},
+      {cat:"night", name:"Dublin Ghost Bus Tour", lat:53.34960, lng:-6.26030, url:"https://www.ghostbustour.ie/dublin"},
+      {cat:"night", name:"Gravedigger Tour", lat:53.35038, lng:-6.26445, url:"https://dodublin.ie/city-sightseeing-tours/gravedigger-ghost-tour"},
+      {cat:"night", name:"Mythology & Folklore Tour", lat:53.34960, lng:-6.26030, url:"https://www.secretstreets.ie/tours/myths-and-legends"},
+      {cat:"night", name:"Out-of-Tourist-Path Pub Tour", lat:53.34960, lng:-6.26030, url:"https://www.tours.ie/pub-crawl"},
+      {cat:"night", name:"Irish Coffee Masterclass", lat:53.34330, lng:-6.25900, url:"https://irishwhiskeymuseum.ie/tours-tastings/irish-coffee-masterclass/"},
+      {cat:"night", name:"Irish Craic & Cuisine Kochkurs", lat:53.34300, lng:-6.26730, url:"https://www.cookwithaoife.com/"},
       {cat:"night", name:"The Cobblestone", lat:53.34960, lng:-6.27820, url:"https://www.thecobblestonepub.ie/"},
       // --- Film (film) ---
       {cat:"film", name:"Grafton Street (Once)", lat:53.34190, lng:-6.25950, url:"https://goo.gl/maps/"},
@@ -641,28 +628,28 @@
       {cat:"food", name:"31 Lennox", lat:53.33037, lng:-6.26551, url:"https://31lennox.ie/"},
       {cat:"food", name:"Urbanity", lat:53.34764, lng:-6.27309, url:"https://urbanity.ie/"},
       {cat:"food", name:"Lemon Jelly Café", lat:53.34714, lng:-6.26246, url:"https://lemonjelly.ie/"},
-      {cat:"food", name:"Murphy’s Bistro Café", lat:53.35017, lng:-6.25659, url:""},
-      {cat:"food", name:"Lovinspoon", lat:53.35337, lng:-6.26015, url:""},
+      {cat:"food", name:"Murphy’s Bistro Café", lat:53.35017, lng:-6.25659, url:"https://www.google.com/search?q=Murphy%E2%80%99s+Bistro+Caf%C3%A9+Dublin"},
+      {cat:"food", name:"Lovinspoon", lat:53.35337, lng:-6.26015, url:"https://www.google.com/search?q=Lovinspoon+Dublin"},
       {cat:"food", name:"Glovers Alley", lat:53.33802, lng:-6.26003, url:"https://gloversalley.com/"},
       {cat:"food", name:"WILDE Restaurant", lat:53.33833, lng:-6.25956, url:"https://wilde.ie/"},
       {cat:"food", name:"The Garden Room", lat:53.33842, lng:-6.25974, url:"https://www.thewestbury.ie/dining/the-garden-room"},
       {cat:"food", name:"1900 Restaurant", lat:53.33773, lng:-6.25765, url:"https://onehthornton.com/1900-restaurant/"},
       {cat:"food", name:"Corfu Greek Restaurant", lat:53.34452, lng:-6.26513, url:"https://corfurestaurant.ie/"},
-      {cat:"food", name:"Damascus Gate", lat:53.33985, lng:-6.26409, url:""},
+      {cat:"food", name:"Damascus Gate", lat:53.33985, lng:-6.26409, url:"https://www.google.com/search?q=Damascus+Gate+Dublin"},
       {cat:"food", name:"La Maison", lat:53.34303, lng:-6.26363, url:"https://lamaison.ie/"},
       {cat:"food", name:"La Caverna", lat:53.34558, lng:-6.26451, url:"https://lacaverna.ie/"},
       {cat:"food", name:"Yamamori Izakaya", lat:53.34520, lng:-6.26519, url:"https://www.yamamori.ie/izakaya"},
-      {cat:"food", name:"Tippenyaki Restaurant", lat:53.33652, lng:-6.25521, url:""},
-      {cat:"food", name:"Boss Stop", lat:53.34984, lng:-6.25994, url:""},
+      {cat:"food", name:"Tippenyaki Restaurant", lat:53.33652, lng:-6.25521, url:"https://www.google.com/search?q=Tippenyaki+Restaurant+Dublin"},
+      {cat:"food", name:"Boss Stop", lat:53.34984, lng:-6.25994, url:"https://www.google.com/search?q=Boss+Stop+Dublin"},
       {cat:"food", name:"Davy Byrnes", lat:53.34177, lng:-6.25823, url:"https://www.davybyrnes.com/"},
       {cat:"food", name:"Bobo’s Burgers", lat:53.34366, lng:-6.26342, url:"https://bobos.ie/"},
-      {cat:"food", name:"The Strand House – Fairview", lat:53.36221, lng:-6.22969, url:""},
+      {cat:"food", name:"The Strand House – Fairview", lat:53.36221, lng:-6.22969, url:"https://www.google.com/search?q=The+Strand+House+Fairview"},
       // --- Tagesausflüge (trip) — Molly Malone als Abfahrt
       {cat:"trip", name:"Wicklow Mountains & Glendalough (Abfahrt)", lat:53.34297, lng:-6.25953, url:"https://www.irishdaytours.ie/"},
       {cat:"trip", name:"Cliffs of Moher & Galway (Abfahrt)", lat:53.34297, lng:-6.25953, url:"https://www.irishdaytours.ie/"},
       {cat:"trip", name:"Belfast & Giant’s Causeway (Abfahrt)", lat:53.34297, lng:-6.25953, url:"https://www.irishdaytours.ie/"},
-      {cat:"trip", name:"Boyne Valley / Newgrange (Abfahrt)", lat:53.35000, lng:-6.26000, url:"#"},
-      {cat:"trip", name:"Kilkenny & Castle (Abfahrt)", lat:53.35000, lng:-6.26000, url:"#"},
+      {cat:"trip", name:"Boyne Valley / Newgrange (Abfahrt)", lat:53.35000, lng:-6.26000, url:"https://www.heritageireland.ie/places-to-visit/bru-na-boinne-visitor-centre-newgrange-knowth-and-dowth/"},
+      {cat:"trip", name:"Kilkenny & Castle (Abfahrt)", lat:53.35000, lng:-6.26000, url:"https://visitkilkenny.ie/see-and-do/kilkenny-castle/"},
     ];
 
     // ------- Hilfsfunktionen -------
@@ -673,6 +660,7 @@
       const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
       return 2*R*Math.asin(Math.sqrt(a));
     }
+    const gmDir = (p) => `https://www.google.com/maps/dir/?api=1&origin=${HOTEL.lat},${HOTEL.lng}&destination=${p.lat},${p.lng}&travelmode=walking`;
 
     function initMultiImages(){
       document.querySelectorAll('img.multi').forEach(img => {
@@ -690,8 +678,27 @@
       const map = L.map('map', { scrollWheelZoom: false }).setView([53.3465, -6.26], 13);
       L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '&copy; OpenStreetMap' }).addTo(map);
 
-
       const layerGroup = L.layerGroup().addTo(map);
+
+      // Hotel-Marker (grünes SVG)
+      const hotelIcon = L.divIcon({
+        className: 'hotel-pin',
+        html: `<svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" fill="#10b981" stroke="white" stroke-width="1"/>
+            <circle cx="12" cy="9" r="2.8" fill="white"/></svg>`,
+        iconSize: [28,28], iconAnchor: [14,28], popupAnchor: [0,-24]
+      });
+      L.marker([HOTEL.lat, HOTEL.lng], { title: HOTEL.name, icon: hotelIcon })
+        .addTo(map)
+        .bindPopup(`<b>${HOTEL.name}</b><br><a href="${HOTEL.url}" target="_blank" rel="noopener">Website</a>`);
+
+      // Zustände wiederherstellen
+      try {
+        const cats = JSON.parse(localStorage.getItem('discover.cats') || '[]');
+        chips.forEach(c => { if (cats.includes(c.getAttribute('data-cat'))) { c.dataset.active="1"; c.style.background='#eef2ff'; c.setAttribute('aria-pressed','true'); }});
+        const sv = localStorage.getItem('discover.q'); if (sv) q.value = sv;
+        const nv = localStorage.getItem('discover.near'); if (nv==='1') nearHotel.checked = true;
+      } catch {}
 
       function refresh(){
         layerGroup.clearLayers();
@@ -708,7 +715,9 @@
           sec.style.display = (catMatch && textMatch) ? '' : 'none';
         });
 
-        // Marker setzen
+        // Marker setzen + Bounds sammeln
+        let added = 0;
+        const group = [];
         PLACES.forEach(p => {
           const catMatch = selectedCats.size===0 || selectedCats.has(p.cat);
           const textMatch = term==='' || p.name.toLowerCase().includes(term);
@@ -717,70 +726,87 @@
 
           if (catMatch && textMatch && nearMatch) {
             const m = L.marker([p.lat, p.lng], { title: p.name })
-              .bindPopup(`<b>${p.name}</b><br><span style="font-size:11px">${p.cat}</span><br>${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">Mehr …</a>` : ''}`);
+              .bindPopup(`<b>${p.name}</b><br><span style="font-size:11px">${p.cat}</span><br>
+                ${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">Mehr …</a>` : ''}
+                <a href="${gmDir(p)}" target="_blank" rel="noopener" style="margin-left:6px;">Route</a>
+                <a href="#" data-scroll="${p.name}" style="margin-left:6px;">Liste zeigen</a>`);
             layerGroup.addLayer(m);
+            group.push([p.lat, p.lng]);
+            added++;
           }
         });
+
+        // Fit Bounds wenn Marker da sind
+        if (added > 0) {
+          try {
+            const b = L.latLngBounds(group);
+            if (b.isValid()) map.fitBounds(b, { padding: [24,24] });
+          } catch {}
+        }
+
+        // Leerer State
+        const empty = document.getElementById('emptyMsg');
+        if (empty) empty.classList.toggle('hidden', added !== 0);
       }
-  // Hotel-Marker mit grünem SVG-Icon
-      const hotelIcon = L.divIcon({
-        className: 'hotel-pin',
-        html: `
-          <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true">
-            <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" fill="#10b981" stroke="white" stroke-width="1"/>
-            <circle cx="12" cy="9" r="2.8" fill="white"/>
-          </svg>`,
-        iconSize: [28,28],
-        iconAnchor: [14,28],
-        popupAnchor: [0,-24]
-      });
 
-      L.marker([HOTEL.lat, HOTEL.lng], { title: HOTEL.name, icon: hotelIcon })
-        .addTo(map)
-        .bindPopup(`<b>${HOTEL.name}</b><br><a href="${HOTEL.url}" target="_blank" rel="noopener">Website</a>`);
-
-      // Chip-Toggles
+      // A11y & Toggle der Chips
       chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          chip.dataset.active = chip.dataset.active === "1" ? "0" : "1";
-          chip.style.background = chip.dataset.active === "1" ? '#eef2ff' : '';
+        chip.setAttribute('role','button');
+        chip.setAttribute('tabindex','0');
+        chip.setAttribute('aria-pressed', chip.dataset.active === "1" ? 'true' : 'false');
+
+        const toggle = () => {
+          const newVal = chip.dataset.active === "1" ? "0" : "1";
+          chip.dataset.active = newVal;
+          chip.style.background = newVal === "1" ? '#eef2ff' : '';
+          chip.setAttribute('aria-pressed', newVal === "1" ? 'true' : 'false');
+          // speichern
+          localStorage.setItem('discover.cats',
+            JSON.stringify([...chips].filter(c => c.dataset.active === "1").map(c => c.getAttribute('data-cat')))
+          );
           refresh();
-        });
+        };
+
+        chip.addEventListener('click', toggle);
+        chip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }});
       });
 
-      q && q.addEventListener('input', refresh);
-      nearHotel && nearHotel.addEventListener('change', refresh);
+      q && q.addEventListener('input', () => { localStorage.setItem('discover.q', q.value); refresh(); });
+      nearHotel && nearHotel.addEventListener('change', () => { localStorage.setItem('discover.near', nearHotel.checked ? '1' : '0'); refresh(); });
 
+      // Karten-Popup → Liste scrollen
+      document.addEventListener('click', (e) => {
+        const link = e.target.closest('a[data-scroll]');
+        if (!link) return;
+        e.preventDefault();
+        const name = link.getAttribute('data-scroll');
+        const el = document.querySelector(`[data-name="${CSS.escape(name)}"]`);
+        if (el) {
+          el.scrollIntoView({ behavior:'smooth', block:'center' });
+          el.classList.add('ring','ring-emerald-300','rounded');
+          setTimeout(() => el.classList.remove('ring','ring-emerald-300','rounded'), 1200);
+        }
+      });
 
-
-  // --- GPS-Ortung ---
-      let userMarker = null;
-      let accuracyCircle = null;
-
+      // GPS-Ortung
+      let userMarker = null, accuracyCircle = null;
       function showLocationOnMap(e){
         const { latitude, longitude, accuracy } = {
           latitude: e.latitude ?? e.coords?.latitude ?? e.latlng?.lat,
           longitude: e.longitude ?? e.coords?.longitude ?? e.latlng?.lng,
           accuracy: e.accuracy ?? e.coords?.accuracy ?? 50
         };
-
         if (!userMarker){
           userMarker = L.marker([latitude, longitude], { title: 'Mein Standort' })
             .addTo(map).bindPopup('Du bist hier.');
-        } else {
-          userMarker.setLatLng([latitude, longitude]);
-        }
-
+        } else { userMarker.setLatLng([latitude, longitude]); }
         if (!accuracyCircle){
           accuracyCircle = L.circle([latitude, longitude], { radius: accuracy, weight: 1, fillOpacity: .1 }).addTo(map);
         } else {
-          accuracyCircle.setLatLng([latitude, longitude]);
-          accuracyCircle.setRadius(accuracy);
+          accuracyCircle.setLatLng([latitude, longitude]); accuracyCircle.setRadius(accuracy);
         }
-
         map.setView([latitude, longitude], Math.max(map.getZoom(), 15));
       }
-
       function locateOnce(){
         map.once('locationfound', (e) => showLocationOnMap({ latlng: e.latlng, accuracy: e.accuracy }));
         map.once('locationerror', () => {
@@ -790,18 +816,13 @@
               () => alert('Standort konnte nicht ermittelt werden (Berechtigung?)'),
               { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
             );
-          } else {
-            alert('Geolocation wird von deinem Browser nicht unterstützt.');
-          }
+          } else { alert('Geolocation wird von deinem Browser nicht unterstützt.'); }
         });
         map.locate({ setView:false, maxZoom: 16, enableHighAccuracy: true, timeout: 7000 });
       }
-
       const locateBtn = document.getElementById('locateBtn');
       locateBtn && locateBtn.addEventListener('click', locateOnce);
 
-
-      
       refresh(); // initial
       return map;
     }
@@ -815,15 +836,23 @@
       function activatePlan(){
         tabA.classList.add('tab-active'); tabC.classList.remove('tab-active');
         wrapA.classList.remove('hidden'); wrapC.classList.add('hidden');
+        localStorage.setItem('ui.tab','plan');
       }
       function activateDiscover(){
         tabC.classList.add('tab-active'); tabA.classList.remove('tab-active');
         wrapC.classList.remove('hidden'); wrapA.classList.add('hidden');
+        localStorage.setItem('ui.tab','discover');
         if (mapRef && mapRef.invalidateSize) setTimeout(() => mapRef.invalidateSize(), 100);
       }
 
       tabA?.addEventListener('click', activatePlan);
       tabC?.addEventListener('click', activateDiscover);
+
+      // Deep link / gespeicherter Tab
+      const hash = location.hash.replace('#','');
+      const saved = localStorage.getItem('ui.tab');
+      if (hash === 'discover' || saved === 'discover') activateDiscover();
+      else activatePlan();
     }
 
     // ------- Bootstrapping -------
@@ -835,32 +864,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
