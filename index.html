@@ -28,9 +28,9 @@
       --ink:#0f172a;        /* Primär-Text (Slate-900) */
       --ink-2:#334155;      /* Sekundär-Text (Slate-700) */
 
-      --accent:#0ea5e9;     /* iOS-like Blau (Sky-500) */
-      --accent-2:#10b981;   /* iOS-like Grün (Emerald-500) */
-      --accent-soft:#e0f2fe;/* helles Blau für Fokusflächen */
+ --accent:#10b981;      /* Emerald 500 – Hauptakzent */
+  --accent-2:#059669;    /* Emerald 600 – dunkler Verlaufston */
+  --accent-soft:#d1fae5; /* Emerald 100 – Soft-Fläche/Focus */
 
       --chip-brd:#e5e7eb;
       --chip-on:#eef2ff;
@@ -41,8 +41,7 @@
       --hint-bg:#f8fafc;
       --hint-brd:#e2e8f0;
 
-      --link:#0ea5e9;
-    }
+  --link:#059669;        /* Linkfarbe passend grün */    }
 
     body{
       background:
@@ -63,7 +62,10 @@
     .badge{font-size:.75rem;font-weight:600;color:#065f46;background:#ecfdf5;border:1px solid #d1fae5;border-radius:.375rem;padding:.125rem .5rem}
 
     .tab{border:1px solid var(--card-brd); color:var(--ink); background: linear-gradient(180deg,#ffffffb3,#ffffff99); transition: all .2s ease}
-    .tab.tab-active{background: linear-gradient(180deg,#0ea5e9,#0284c7); color:#fff; border-color:rgba(2,132,199,.25); box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.25)}
+    .tab.tab-active{  background: linear-gradient(180deg, var(--accent), var(--accent-2));
+  color:#fff;
+  border-color: rgba(5,150,105,.25);
+  box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.25);}
     .tab:not(.tab-active):hover{ background:#ffffffd0 }
 
     img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover;border-radius:.75rem}
@@ -77,8 +79,8 @@
 
     .hint{background:var(--hint-bg);border:1px solid var(--hint-brd)}
     .link{color:var(--link);text-decoration:underline}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid transparent;padding:.375rem .6rem;border-radius:.6rem;font-size:.8rem;background:linear-gradient(180deg,#0ea5e9,#0284c7);color:#fff;box-shadow:0 10px 24px -12px rgba(2,132,199,.45);transition: transform .15s ease, box-shadow .15s ease, filter .1s ease}
-    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); box-shadow:0 14px 30px -12px rgba(2,132,199,.55) }
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid transparent;padding:.375rem .6rem;border-radius:.6rem;font-size:.8rem  background: linear-gradient(180deg, var(--accent), var(--accent-2));color:#fff;box-shadow:0 10px 24px -12px rgba(5,150,105,.45);;transition: transform .15s ease, box-shadow .15s ease, filter .1s ease}
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03);   box-shadow:0 14px 30px -12px rgba(5,150,105,.55); }
     .btn:active{ transform: translateY(0) }
     .btn-ghost{background:linear-gradient(180deg,#111827,#1f2937);color:#fff;border-color:transparent}
 
@@ -877,3 +879,4 @@
   </script>
 </body>
 </html>
+
