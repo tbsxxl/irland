@@ -4,8 +4,13 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Dublin — 7-Tage Solo-Reise (Plan & Entdecken)</title>
+  <meta name="color-scheme" content="light">
 
-  <!-- Tailwind (CDN) -->
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Tailwind -->
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Leaflet -->
@@ -13,72 +18,86 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
   <style>
+    /* ---------- Light Theme (permanent) ---------- */
     :root{
-      --card-bg: #ffffff;
-      --card-br: 14px;
-      --card-border: 1px solid rgba(15,23,42,0.08);
-      --chip-bg:#fff;
-      --chip-br:10px;
-      --chip-border:1px solid rgba(15,23,42,0.1);
+      --bg-grad-a:#f8fafc; /* slate-50 */
+      --bg-grad-b:#eef2ff; /* indigo-50 */
+      --card-bg:#ffffff;
+      --card-brd:rgba(15,23,42,.06);
+      --card-sh:#0b12201a;
+      --chip-brd:#e5e7eb;
+      --chip-on:#eef2ff;
+      --accent:#0ea5e9;   /* sky-500 */
+      --accent-2:#10b981; /* emerald-500 */
     }
-    body{ background: linear-gradient(180deg,#f8fafc 0%, #eef2f7 100%) }
-    .glass{background:rgba(255,255,255,.75);backdrop-filter:blur(10px)}
-    .card{border-radius:var(--card-br);border:var(--card-border);background:var(--card-bg);box-shadow:0 8px 22px rgba(16,24,40,.06)}
-    .section{padding:1.25rem}
-    .timeline-line{position:absolute;left:6px;top:.25rem;bottom:.25rem;width:1px;background:rgba(15,23,42,.08)}
-    .bullet{position:absolute;left:0;top:.375rem;height:.75rem;width:.75rem;border-radius:9999px;background:#10b981;box-shadow:0 0 0 2px rgba(16,185,129,.15)}
-    .badge{font-size:.75rem;font-weight:700;color:#065f46;background:#ecfdf5;border:1px solid #d1fae5;border-radius:.375rem;padding:.125rem .5rem;white-space:nowrap}
-    .tab{border:1px solid rgba(15,23,42,.10); color:#0f172a; background:#fff; transition:all .2s}
-    .tab.tab-active{ background:#0f172a; color:#fff; border-color:#0f172a }
-    .tab:not(.tab-active):hover{ background:#f8fafc }
-    img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover;border-radius:12px}
-    .k-section h3{font-size:1.125rem;font-weight:700;color:#0f172a}
-    .k-section h4{font-weight:700;color:#0f172a}
-    .chip{border:var(--chip-border);border-radius:var(--chip-br);padding:.35rem .6rem;font-size:.8rem;cursor:pointer;background:var(--chip-bg)}
-    .chip[data-active="1"]{ background:#eef2ff; border-color:#c7d2fe }
-    .hint{background:#f8fafc;border:1px solid #e2e8f0;border-radius:14px}
+
+    body{
+      background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(16,185,129,.12), transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, rgba(56,189,248,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg-grad-a), var(--bg-grad-b));
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, 'Apple Color Emoji','Segoe UI Emoji';
+      color: #0f172a;
+    }
+
+    .glass{background:linear-gradient(180deg,#ffffffb0,#ffffff80);backdrop-filter:blur(10px);border:1px solid rgba(15,23,42,.06);box-shadow:0 10px 30px -10px var(--card-sh)}
+    .card{border-radius:1rem;border:1px solid var(--card-brd);background:var(--card-bg);box-shadow:0 10px 30px -12px var(--card-sh);padding:1rem;transition:box-shadow .25s ease, transform .25s ease, border-color .25s}
+    .card:hover{ transform: translateY(-1px); box-shadow: 0 14px 38px -12px var(--card-sh); border-color: rgba(14,165,233,.25) }
+    .timeline-line{position:absolute;left:6px;top:.25rem;bottom:.25rem;width:1px;background:linear-gradient(#e2e8f0,#cbd5e1)}
+    .bullet{position:absolute;left:0;top:.375rem;height:.75rem;width:.75rem;border-radius:9999px;background:var(--accent-2);box-shadow:0 0 0 3px rgba(16,185,129,.18)}
+    .badge{font-size:.75rem;font-weight:600;color:#065f46;background:#ecfdf5;border:1px solid #d1fae5;border-radius:.375rem;padding:.125rem .5rem}
+    .tab{border:1px solid var(--card-brd); color:#0f172a; background: linear-gradient(180deg,#ffffffb3,#ffffff99); transition: all .2s ease}
+    .tab.tab-active{background: linear-gradient(180deg,#0f172a,#111827); color:#fff; border-color:rgba(255,255,255,.18); box-shadow: inset 0 -1px 0 0 rgba(255,255,255,.1)}
+    .tab:not(.tab-active):hover{ background:#ffffffd0 }
+    img.multi{aspect-ratio:16/10;width:100%;height:auto;object-fit:cover;border-radius:.75rem}
+    .k-section h3{font-size:1.125rem;font-weight:600}
+    .k-section h4{font-weight:600}
+    .chip{border:1px solid var(--chip-brd);border-radius:999px;padding:.35rem .7rem;font-size:.8rem;cursor:pointer;background:#fff;transition: all .15s ease}
+    .chip:hover{ transform: translateY(-1px); box-shadow:0 6px 14px -10px var(--card-sh) }
+    .chip[data-active="1"]{ background: var(--chip-on); border-color: #c7d2fe; box-shadow: 0 0 0 2px #e0e7ff inset }
+    .hint{background:#f8fafc;border:1px solid #e2e8f0}
     .link{color:#0369a1;text-decoration:underline}
-    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid #0f172a;padding:.45rem .7rem;border-radius:.55rem;font-size:.8rem;background:#0f172a;color:#fff}
-    .btn:hover{background:#0b1530}
-    .btn.subtle{border-color:#cbd5e1;background:#fff;color:#0f172a}
-    .btn.subtle:hover{background:#f8fafc}
-    #map{height:420px;border-radius:16px;border:1px solid rgba(15,23,42,.08)}
+    .btn{display:inline-flex;align-items:center;gap:.5rem;border:1px solid transparent;padding:.375rem .6rem;border-radius:.5rem;font-size:.75rem;background:linear-gradient(180deg,#0ea5e9,#0284c7);color:#fff;box-shadow:0 10px 24px -12px rgba(2,132,199,.45);transition: transform .15s ease, box-shadow .15s ease, filter .1s ease}
+    .btn:hover{ transform: translateY(-1px); filter: brightness(1.03); box-shadow:0 14px 30px -12px rgba(2,132,199,.55) }
+    .btn:active{ transform: translateY(0) }
+    .btn-ghost{background:linear-gradient(180deg,#0f172a,#111827);color:#fff;border-color:transparent}
+    #map{height:420px;border-radius:1rem;border:1px solid var(--card-brd);box-shadow:0 18px 44px -20px var(--card-sh);position:relative}
     .leaflet-popup-content{margin:8px 12px}
-    .sec-title{font-weight:700;color:#0f172a}
+    .map-toolbar{position:absolute; z-index:500; inset:12px auto auto 12px; display:flex; gap:8px; align-items:center; background: rgba(255,255,255,.9); border:1px solid var(--card-brd); border-radius:.75rem; padding:.35rem .5rem; backdrop-filter: blur(6px)}
+    .map-pill{ padding:.25rem .6rem; border-radius:999px; font-size:.75rem; border:1px solid var(--chip-brd); background:#fff }
+    [data-name].ring{ transition: box-shadow .4s ease }
+    @media (prefers-reduced-motion: reduce){ .card, .btn, .chip { transition: none!important } }
   </style>
 </head>
-
-<body class="min-h-screen p-4 sm:p-6 font-sans">
+<body class="min-h-screen p-4 sm:p-6">
   <div class="max-w-5xl mx-auto">
-
-    <!-- Header -->
-    <header class="mb-5">
+    <header class="mb-4 sm:mb-6">
       <div class="flex items-center gap-4">
-        <div class="w-14 h-14 glass rounded-2xl flex items-center justify-center shadow-md">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+        <div class="w-12 h-12 sm:w-14 sm:h-14 glass rounded-2xl flex items-center justify-center">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7" />
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 3h8v4H8z" />
           </svg>
         </div>
-        <div>
-          <h1 class="text-2xl font-semibold text-slate-900">Dublin — 7-Tage Solo-Reise</h1>
-          <p class="text-sm text-slate-500">Tabs: <span class="font-medium">Plan</span> & <span class="font-medium">Entdecken</span> (mit Karte & Filtern)</p>
+        <div class="flex-1">
+          <h1 class="text-xl sm:text-2xl font-semibold text-slate-900">Dublin — 7-Tage Solo-Reise</h1>
+          <p class="text-sm text-slate-600">Tabs: <span class="font-medium">Plan</span> & <span class="font-medium">Entdecken</span> (alles verlinkt + Karte)</p>
           <p class="text-xs text-slate-500 mt-1">Hotel: <span class="font-semibold">Staycity Aparthotels Dublin City Quay</span></p>
         </div>
       </div>
     </header>
 
     <!-- Tabs -->
-    <nav class="sticky top-0 z-10 glass rounded-xl p-1 mb-4 shadow-sm">
+    <nav class="sticky top-0 z-10 bg-gradient-to-b from-slate-50/80 to-slate-100/80 backdrop-blur rounded-xl p-1 mb-4 shadow-sm">
       <div class="grid grid-cols-2 gap-1">
         <button id="tabA" class="tab tab-active rounded-lg px-3 py-2 text-sm font-medium">Plan</button>
         <button id="tabC" class="tab rounded-lg px-3 py-2 text-sm font-medium">Entdecken</button>
       </div>
     </nav>
 
-    <!-- Kurzinfos -->
-    <section class="card section mb-4">
-      <h2 class="text-lg sec-title mb-2">Kurzinfos</h2>
+    <!-- Übersicht -->
+    <section class="bg-white p-4 sm:p-5 rounded-2xl shadow-md mb-4">
+      <h2 class="text-lg font-semibold text-slate-800 mb-2">Kurzinfos</h2>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm text-slate-600">
         <div class="p-3 rounded-lg bg-slate-50">Dauer<br><span class="font-medium text-slate-800">7–8 Tage</span></div>
         <div class="p-3 rounded-lg bg-slate-50">Beste Reisezeit<br><span class="font-medium text-slate-800">Oktober (Herbst)</span></div>
@@ -86,9 +105,9 @@
       </div>
     </section>
 
-    <!-- ===== PLAN ===== -->
+    <!-- ========= PLAN ========= -->
     <div id="wrapA">
-      <section class="card section">
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100">
         <div class="flex items-start justify-between mb-4 gap-3">
           <div>
             <h3 class="text-xl font-semibold text-slate-900">Plan — Dublin & Nordirland</h3>
@@ -98,11 +117,11 @@
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <!-- Days -->
+          <!-- Day Cards -->
           <div class="space-y-3">
 
             <!-- Tag 1 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">1</span>
@@ -124,7 +143,7 @@
                     <span class="bullet"></span>
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">16:00</span>
-                      <div class="text-sm font-medium text-slate-800">Liffey → Ha’penny Bridge → Temple Bar</div>
+                      <div class="text-sm font-medium text-slate-800">Spaziergang: Liffey → Ha’penny Bridge → Temple Bar</div>
                     </div>
                   </div>
                   <div class="relative pl-8">
@@ -132,7 +151,7 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">18:00</span>
                       <div class="text-sm font-medium text-slate-800">Dinner: The Bank on College Green / Boxty House</div>
-                      <a class="btn subtle" target="_blank" href="https://maps.google.com/?q=The+Bank+on+College+Green+Dublin">Karte</a>
+                      <a class="btn" target="_blank" href="https://maps.google.com/?q=The+Bank+on+College+Green+Dublin">Karte</a>
                     </div>
                   </div>
                   <div class="relative pl-8">
@@ -140,7 +159,7 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">20:00</span>
                       <div class="text-sm font-medium text-slate-800">Pub-Tour: The Church · O’Donoghue’s · The Cobblestone</div>
-                      <a class="btn subtle" target="_blank" href="https://dublinpubcrawl.com/">Tickets</a>
+                      <a class="btn" target="_blank" href="https://dublinpubcrawl.com/">Tickets</a>
                     </div>
                   </div>
                 </div>
@@ -148,7 +167,7 @@
             </div>
 
             <!-- Tag 2 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">2</span>
@@ -164,7 +183,7 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">09:00</span>
                       <div class="text-sm font-medium text-slate-800">Trinity Trails – 45-min. Campus-Tour (EN)</div>
-                      <a class="btn" target="_blank" href="https://www.tcd.ie/library/old-library/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" href="https://www.tcd.ie/library/old-library/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8">
@@ -172,14 +191,14 @@
                     <div class="flex flex-wrap items-center gap-3">
                       <span class="badge">09:45</span>
                       <div class="text-sm font-medium text-slate-800">Book of Kells Experience + Old Library</div>
-                      <a class="btn" target="_blank" href="https://www.tcd.ie/library/old-library/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" href="https://www.tcd.ie/library/old-library/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
                     <div class="flex items-center gap-3">
                       <span class="badge">12:00</span>
                       <div class="text-sm font-medium text-slate-800">Lunch: Bewley’s Café / Grafton St.</div>
-                      <a class="btn subtle" target="_blank" href="https://www.bewleys.com/locations/grafton-street-cafe/">Reservieren</a>
+                      <a class="btn" target="_blank" href="https://www.bewleys.com/locations/grafton-street-cafe/">Reservieren</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
@@ -192,7 +211,7 @@
                     <div class="flex items-center gap-3">
                       <span class="badge">18:00</span>
                       <div class="text-sm font-medium text-slate-800">Dinner: Fade Street Social / The Church</div>
-                      <a class="btn subtle" target="_blank" href="https://www.fadestreetsocial.com/">Reservieren</a>
+                      <a class="btn" target="_blank" href="https://www.fadestreetsocial.com/">Reservieren</a>
                     </div>
                   </div>
                 </div>
@@ -200,7 +219,7 @@
             </div>
 
             <!-- Tag 3 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">3</span>
@@ -215,7 +234,7 @@
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">06:30</span>
                       <div class="text-sm font-medium text-slate-800">Abfahrt College Green / Molly Malone</div>
-                      <a class="btn" target="_blank" href="https://www.irishdaytours.ie/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" href="https://www.irishdaytours.ie/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
@@ -235,7 +254,7 @@
             </div>
 
             <!-- Tag 4 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">4</span>
@@ -250,7 +269,7 @@
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">10:00</span>
                       <div class="text-sm font-medium text-slate-800">Alternative Stadt: EPIC Museum · Docklands · Markets</div>
-                      <a class="btn subtle" target="_blank" href="https://epicchq.com">EPIC Tickets</a>
+                      <a class="btn" target="_blank" href="https://epicchq.com">EPIC Tickets</a>
                     </div>
                   </div>
                 </div>
@@ -258,7 +277,7 @@
             </div>
 
             <!-- Tag 5 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">5</span>
@@ -272,13 +291,13 @@
                   <div class="relative pl-8"><span class="bullet"></span>
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">10:00</span><div class="text-sm font-medium text-slate-800">Kilmainham Gaol (vorher buchen)</div>
-                      <a class="btn" target="_blank" href="https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" href="https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">14:00</span><div class="text-sm font-medium text-slate-800">Guinness Storehouse + Gravity Bar</div>
-                      <a class="btn" target="_blank" href="https://www.guinness-storehouse.com/">Tickets</a>
+                      <a class="btn btn-ghost" target="_blank" href="https://www.guinness-storehouse.com/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span>
@@ -292,7 +311,7 @@
             </div>
 
             <!-- Tag 6 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">6</span>
@@ -306,21 +325,21 @@
                   <div class="relative pl-8"><span class="bullet"></span>
                     <div class="flex items-center gap-3 flex-wrap">
                       <span class="badge">06:50</span>
-                      <div class="text-sm font-medium text-slate-800">Abfahrt Dublin (bitte 10 Min. früher da sein)</div>
-                      <a class="btn" target="_blank" href="https://www.irishdaytours.ie/">Tickets</a>
+                      <div class="text-sm font-medium text-slate-800">Abfahrt Dublin (bitte 10 Min. vorher da sein)</div>
+                      <a class="btn btn-ghost" target="_blank" href="https://www.irishdaytours.ie/">Tickets</a>
                     </div>
                   </div>
                   <div class="relative pl-8"><span class="bullet"></span><div class="flex items-center gap-3"><span class="badge">10:45</span><div class="text-sm font-medium text-slate-800">Cliffs of Moher – Hauptstopp</div></div></div>
                   <div class="relative pl-8"><span class="bullet"></span><div class="flex items-center gap-3"><span class="badge">12:45</span><div class="text-sm font-medium text-slate-800">Lunch – Doolin Area*</div></div></div>
                   <div class="relative pl-8"><span class="bullet"></span><div class="flex items-center gap-3"><span class="badge">14:00</span><div class="text-sm font-medium text-slate-800">The Burren – Kalksteinlandschaft</div></div></div>
-                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-center gap-3"><span class="badge">15:45</span><div class="text-sm font-medium text-slate-800">Galway City – Spanish Arch</div></div></div>
+                  <div class="relative pl-8"><span class="bullet"></span><div class="flex items-center gap-3"><span class="badge">15:45</span><div class="text-sm font-medium text-slate-800">Galway City – Streetlife & Spanish Arch</div></div></div>
                   <div class="relative pl-8"><span class="bullet"></span><div class="flex items-center gap-3"><span class="badge">19:05</span><div class="text-sm font-medium text-slate-800">Zurück in Dublin</div></div></div>
                 </div>
               </div>
             </div>
 
             <!-- Tag 7 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">7</span>
@@ -339,7 +358,7 @@
             </div>
 
             <!-- Tag 8 -->
-            <div class="p-4 border rounded-xl">
+            <div class="card">
               <div class="flex items-center justify-between mb-3">
                 <div class="flex items-center gap-2">
                   <span class="inline-flex h-7 w-7 items-center justify-center rounded-xl bg-slate-900 text-white text-sm font-semibold">8</span>
@@ -360,10 +379,10 @@
           <div>
             <h4 class="font-semibold mb-2">Bilder & Sehenswürdigkeiten</h4>
             <div class="grid grid-cols-1 gap-3">
-              <img class="multi shadow" alt="Trinity College Dublin" data-srcs="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg/1280px-The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg">
-              <img class="multi shadow" alt="Giant's Causeway" data-srcs="https://upload.wikimedia.org/wikipedia/commons/c/c0/Causeway-code_poet-4.jpg">
-              <img class="multi shadow" alt="Dark Hedges" data-srcs="https://upload.wikimedia.org/wikipedia/commons/b/b2/Dark_Hedges_near_Armoy%2C_Co_Antrim_%28cropped%29.jpg">
-              <img class="multi shadow" alt="Cliffs of Moher" data-srcs="https://upload.wikimedia.org/wikipedia/commons/7/74/Cliffs_of_Moher%2C_Irland.jpg">
+              <img class="rounded-lg shadow multi" alt="Trinity College Dublin" data-srcs="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg/1280px-The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg">
+              <img class="rounded-lg shadow multi" alt="Giant's Causeway" data-srcs="https://upload.wikimedia.org/wikipedia/commons/c/c0/Causeway-code_poet-4.jpg">
+              <img class="rounded-lg shadow multi" alt="Dark Hedges" data-srcs="https://upload.wikimedia.org/wikipedia/commons/b/b2/Dark_Hedges_near_Armoy%2C_Co_Antrim_%28cropped%29.jpg">
+              <img class="rounded-lg shadow multi" alt="Cliffs of Moher" data-srcs="https://upload.wikimedia.org/wikipedia/commons/7/74/Cliffs_of_Moher%2C_Irland.jpg">
             </div>
 
             <h4 class="font-semibold mt-4 mb-2 text-slate-800">Wichtige Links & Buchungen</h4>
@@ -378,9 +397,9 @@
       </section>
     </div>
 
-    <!-- ===== ENTDECKEN ===== -->
+    <!-- ========= ENTDECKEN ========= -->
     <div id="wrapC" class="hidden">
-      <section class="card section k-section">
+      <section class="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 k-section">
         <div class="flex items-start justify-between mb-4 gap-3">
           <h3>Entdecken — Alles in Dublin (Master-Liste + Karte)</h3>
           <div class="hidden sm:flex items-center gap-2 text-xs">
@@ -389,34 +408,40 @@
           </div>
         </div>
 
-        <!-- MAP + FILTER -->
-        <div class="grid gap-4 mb-5">
+        <!-- MAP + TOOLBAR -->
+        <div class="relative mb-4">
           <div id="map"></div>
-          <div class="hint p-3 text-sm text-slate-700">
-            <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
-              <input id="q" type="search" placeholder="Suche (z. B. 'whiskey', 'kostenlos', 'museum')"
-                     class="w-full sm:w-1/2 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-500 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400" />
-              <div class="flex gap-2 flex-wrap">
-                <button data-cat="brau" class="chip" aria-pressed="false">🍺 Brauerei/Whiskey</button>
-                <button data-cat="hist" class="chip" aria-pressed="false">🏰 Geschichte</button>
-                <button data-cat="kunst" class="chip" aria-pressed="false">🎨 Kunst</button>
-                <button data-cat="bibl" class="chip" aria-pressed="false">📚 Bibliotheken</button>
-                <button data-cat="natur" class="chip" aria-pressed="false">🏞️ Natur</button>
-                <button data-cat="film" class="chip" aria-pressed="false">🎥 Filmorte</button>
-                <button data-cat="food" class="chip" aria-pressed="false">🍴 Food</button>
-                <button data-cat="night" class="chip" aria-pressed="false">🌙 Nightlife</button>
-                <button data-cat="shop" class="chip" aria-pressed="false">🛍️ Shopping</button>
-                <button data-cat="trip" class="chip" aria-pressed="false">🚌 Tagesausflug</button>
-              </div>
-              <button id="locateBtn" type="button" class="btn sm:ml-auto" aria-label="Meinen Standort zeigen">📍 Mein Standort</button>
-              <label class="flex items-center gap-2 text-xs sm:text-sm select-none">
-                <input id="nearHotel" type="checkbox" class="h-4 w-4"> <span>Nur „In Hotel-Nähe“ (&lt; 2 km)</span>
-              </label>
+          <div class="map-toolbar">
+            <span class="map-pill">🧭 Explore Dublin</span>
+            <button id="locateBtn" type="button" class="map-pill">📍 Mein Standort</button>
+            <label class="map-pill flex items-center gap-2">
+              <input id="nearHotel" type="checkbox" class="h-4 w-4">
+              <span>Hotel-Nähe</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Filterleiste -->
+        <div class="hint rounded-xl p-3 text-sm text-slate-700 mb-5">
+          <div class="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
+            <input id="q" type="search" placeholder="Suche (z. B. 'whiskey', 'kostenlos', 'museum')"
+                   class="w-full sm:w-1/2 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder-slate-500 px-3 py-2 outline-none focus:ring-2 focus:ring-emerald-300 focus:border-emerald-400" />
+            <div class="flex gap-2 flex-wrap">
+              <button data-cat="brau" class="chip" aria-pressed="false">🍺 Brauerei/Whiskey</button>
+              <button data-cat="hist" class="chip" aria-pressed="false">🏰 Geschichte</button>
+              <button data-cat="kunst" class="chip" aria-pressed="false">🎨 Kunst</button>
+              <button data-cat="bibl" class="chip" aria-pressed="false">📚 Bibliotheken</button>
+              <button data-cat="natur" class="chip" aria-pressed="false">🏞️ Natur</button>
+              <button data-cat="film" class="chip" aria-pressed="false">🎥 Filmorte</button>
+              <button data-cat="food" class="chip" aria-pressed="false">🍴 Food</button>
+              <button data-cat="night" class="chip" aria-pressed="false">🌙 Nightlife</button>
+              <button data-cat="shop" class="chip" aria-pressed="false">🛍️ Shopping</button>
+              <button data-cat="trip" class="chip" aria-pressed="false">🚌 Tagesausflug</button>
             </div>
           </div>
         </div>
 
-        <!-- LISTEN -->
+        <!-- CATEGORIES (expanded) -->
         <div id="list" class="space-y-8 text-sm text-slate-800">
 
           <!-- Top Sehenswürdigkeiten & Museen -->
@@ -482,7 +507,7 @@
             </ul>
           </div>
 
-          <!-- Bibliotheken -->
+          <!-- Bibliotheken / Lernen -->
           <div data-cat="bibl" class="space-y-2">
             <h4>📚 Bücher & Bibliotheken</h4>
             <ul class="list-disc ml-5">
@@ -568,18 +593,18 @@
         </div>
 
         <div class="mt-6 p-3 rounded-xl hint text-xs text-slate-600">
-          Tipp: Filter setzen oder Suche nutzen. Karte aktualisiert die Marker live. „Hotel-Nähe“ = Kreis mit Radius < 2 km um Staycity City Quay.
+          Tipp: Filter setzen oder Suche nutzen. Karte aktualisiert Marker entsprechend (Hotel-Nähe bezieht sich auf Staycity City Quay).
         </div>
       </section>
     </div>
   </div>
 
   <script>
-    // -------- Hotel + Orte (für Karte) --------
+    // ---------- Hotel + Places ----------
     const HOTEL = { name: "Staycity Aparthotels Dublin City Quay", lat: 53.34623028319582, lng: -6.252069419813648, url: "https://www.staycity.com/dublin/city-quay" };
 
     const PLACES = [
-      // Sehenswürdigkeiten / Museen (hist)
+      // Sehenswürdigkeiten / Museen
       {cat:"hist", name:"Kilmainham Gaol", lat:53.34210, lng:-6.31080, url:"https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/"},
       {cat:"hist", name:"Guinness Storehouse", lat:53.34190, lng:-6.28670, url:"https://www.guinness-storehouse.com"},
       {cat:"hist", name:"The Little Museum of Dublin", lat:53.33965, lng:-6.25973, url:"https://www.littlemuseum.ie"},
@@ -598,30 +623,25 @@
       {cat:"hist", name:"Christ Church Cathedral", lat:53.34319, lng:-6.27106, url:"https://christchurchcathedral.ie/"},
       {cat:"hist", name:"GPO Museum", lat:53.34979, lng:-6.26029, url:"https://www.gpowitnesshistory.ie/"},
       {cat:"hist", name:"The Famine Sculptures", lat:53.34813, lng:-6.24555, url:"https://goo.gl/maps/"},
-
-      // Whiskey / Brau (brau)
+      // Whiskey / Brau
       {cat:"brau", name:"Jameson Distillery Bow St.", lat:53.34772, lng:-6.27732, url:"https://www.jamesonwhiskey.com/visit-us/bow-st-dublin"},
       {cat:"brau", name:"Teeling Distillery", lat:53.33380, lng:-6.27750, url:"https://teelingdistillery.com"},
       {cat:"brau", name:"Roe & Co Distillery", lat:53.34100, lng:-6.28950, url:"https://roeandcowhiskey.com"},
       {cat:"brau", name:"Irish Whiskey Museum", lat:53.34330, lng:-6.25900, url:"https://irishwhiskeymuseum.ie"},
-
-      // Kunst (kunst)
+      // Kunst
       {cat:"kunst", name:"National Gallery of Ireland", lat:53.34018, lng:-6.25198, url:"https://www.nationalgallery.ie"},
       {cat:"kunst", name:"Hugh Lane Gallery", lat:53.35647, lng:-6.26478, url:"https://www.hughlane.ie"},
       {cat:"kunst", name:"IMMA", lat:53.34360, lng:-6.30500, url:"https://imma.ie"},
       {cat:"kunst", name:"Smock Alley Theatre", lat:53.34647, lng:-6.27107, url:"https://smockalley.com"},
-
-      // Bibliotheken (bibl)
+      // Bibliotheken
       {cat:"bibl", name:"Marsh’s Library", lat:53.33970, lng:-6.27160, url:"https://marshlibrary.ie"},
       {cat:"bibl", name:"National Library of Ireland", lat:53.34052, lng:-6.25424, url:"https://www.nli.ie"},
-
-      // Natur (natur)
+      // Natur
       {cat:"natur", name:"St Stephen’s Green", lat:53.33740, lng:-6.25910, url:"https://maps.google.com/?q=St+Stephen's+Green"},
       {cat:"natur", name:"Phoenix Park", lat:53.35540, lng:-6.32910, url:"https://maps.google.com/?q=Phoenix+Park"},
       {cat:"natur", name:"Dublin Zoo", lat:53.35580, lng:-6.30570, url:"https://maps.google.com/?q=Dublin+Zoo"},
       {cat:"natur", name:"National Botanic Gardens (Glasnevin)", lat:53.37155, lng:-6.26988, url:"https://botanicgardens.ie"},
-
-      // Nightlife / Sonstiges (night)
+      // Nightlife / diverse
       {cat:"night", name:"Grafton Street", lat:53.34190, lng:-6.25950, url:"https://goo.gl/maps/"},
       {cat:"night", name:"Dublin Sightseeing Cruise (Liffey)", lat:53.34739, lng:-6.24766, url:"https://dublindiscovered.ie/"},
       {cat:"night", name:"Dark Dublin Tour", lat:53.34983, lng:-6.26031, url:"#"},
@@ -632,14 +652,12 @@
       {cat:"night", name:"Irish Coffee Masterclass", lat:53.34330, lng:-6.25900, url:"#"},
       {cat:"night", name:"Irish Craic & Cuisine Kochkurs", lat:53.34300, lng:-6.26730, url:"#"},
       {cat:"night", name:"The Cobblestone", lat:53.34960, lng:-6.27820, url:"https://www.thecobblestonepub.ie/"},
-
-      // Film (film)
+      // Film
       {cat:"film", name:"Grafton Street (Once)", lat:53.34190, lng:-6.25950, url:"https://goo.gl/maps/"},
       {cat:"film", name:"Trinity College (Normal People)", lat:53.34380, lng:-6.25460, url:"https://www.tcd.ie/"},
       {cat:"film", name:"The Cobblestone (The Commitments)", lat:53.34960, lng:-6.27820, url:"https://www.thecobblestonepub.ie/"},
       {cat:"film", name:"Dublin Castle (The Tudors)", lat:53.34300, lng:-6.26730, url:"https://www.dublincastle.ie/"},
-
-      // Restaurants (food)
+      // Restaurants
       {cat:"food", name:"FIRE Steakhouse & Bar", lat:53.34177, lng:-6.25812, url:"https://www.firesteakhouse.ie/"},
       {cat:"food", name:"Sole Seafood & Grill", lat:53.34086, lng:-6.25809, url:"https://www.sole.ie/"},
       {cat:"food", name:"Ryleigh’s", lat:53.33849, lng:-6.23588, url:"https://ryleighs.ie/"},
@@ -666,8 +684,7 @@
       {cat:"food", name:"Davy Byrnes", lat:53.34177, lng:-6.25823, url:"https://www.davybyrnes.com/"},
       {cat:"food", name:"Bobo’s Burgers", lat:53.34366, lng:-6.26342, url:"https://bobos.ie/"},
       {cat:"food", name:"The Strand House – Fairview", lat:53.36221, lng:-6.22969, url:""},
-
-      // Tagesausflüge (trip) — Abfahrt Molly Malone
+      // Tagesausflüge (Abfahrt Molly Malone)
       {cat:"trip", name:"Wicklow Mountains & Glendalough (Abfahrt)", lat:53.34297, lng:-6.25953, url:"https://www.irishdaytours.ie/"},
       {cat:"trip", name:"Cliffs of Moher & Galway (Abfahrt)", lat:53.34297, lng:-6.25953, url:"https://www.irishdaytours.ie/"},
       {cat:"trip", name:"Belfast & Giant’s Causeway (Abfahrt)", lat:53.34297, lng:-6.25953, url:"https://www.irishdaytours.ie/"},
@@ -675,7 +692,7 @@
       {cat:"trip", name:"Kilkenny & Castle (Abfahrt)", lat:53.35000, lng:-6.26000, url:"#"},
     ];
 
-    // -------- Utils --------
+    // ---------- Utils ----------
     function haversineKm(lat1, lon1, lat2, lon2){
       const R = 6371;
       const dLat = (lat2-lat1)*Math.PI/180;
@@ -683,7 +700,6 @@
       const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
       return 2*R*Math.asin(Math.sqrt(a));
     }
-
     function initMultiImages(){
       document.querySelectorAll('img.multi').forEach(img => {
         const src = img.getAttribute('data-srcs');
@@ -691,7 +707,7 @@
       });
     }
 
-    // -------- Entdecken: Karte + Filter --------
+    // ---------- Entdecken: Map + Filter ----------
     function initDiscoveryFilterAndMap(){
       const q = document.getElementById('q');
       const list = document.getElementById('list');
@@ -703,7 +719,7 @@
 
       const layerGroup = L.layerGroup().addTo(map);
 
-      // Hotel-Marker mit grünem Icon
+      // Hotel-Marker (grün)
       const hotelIcon = L.divIcon({
         className: 'hotel-pin',
         html: `
@@ -711,18 +727,13 @@
             <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7Z" fill="#10b981" stroke="white" stroke-width="1"/>
             <circle cx="12" cy="9" r="2.8" fill="white"/>
           </svg>`,
-        iconSize: [28,28],
-        iconAnchor: [14,28],
-        popupAnchor: [0,-24]
+        iconSize: [28,28], iconAnchor: [14,28], popupAnchor: [0,-24]
       });
-
       L.marker([HOTEL.lat, HOTEL.lng], { title: HOTEL.name, icon: hotelIcon })
-        .addTo(map)
-        .bindPopup(`<b>${HOTEL.name}</b><br><a href="${HOTEL.url}" target="_blank" rel="noopener">Website</a>`);
+        .addTo(map).bindPopup(`<b>${HOTEL.name}</b><br><a href="${HOTEL.url}" target="_blank" rel="noopener">Website</a>`);
 
       function refresh(){
         layerGroup.clearLayers();
-
         const term = (q?.value || '').toLowerCase().trim();
         const selectedCats = new Set([...chips].filter(c => c.dataset.active === "1").map(c => c.getAttribute('data-cat')));
         const onlyNear = !!(nearHotel && nearHotel.checked);
@@ -745,19 +756,23 @@
 
           if (catMatch && textMatch && nearMatch) {
             const m = L.marker([p.lat, p.lng], { title: p.name })
-              .bindPopup(`<b>${p.name}</b><br><span style="font-size:11px">${p.cat}</span><br>${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">Mehr …</a>` : ''}`);
+              .bindPopup(`<b>${p.name}</b><br><small>${p.cat}</small><br>${p.url ? `<a href="${p.url}" target="_blank" rel="noopener">Mehr …</a>` : ''}`);
             layerGroup.addLayer(m);
           }
         });
       }
 
-      // Chips togglen
+      // Chip-Toggles mit aria + Style
       chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          chip.dataset.active = chip.dataset.active === "1" ? "0" : "1";
-          chip.setAttribute('aria-pressed', chip.dataset.active === "1" ? "true" : "false");
-          refresh();
-        });
+        const apply = () => {
+          const on = chip.dataset.active === "1";
+          chip.style.background = on ? 'var(--chip-on)' : '';
+          chip.style.boxShadow = on ? '0 0 0 2px #e0e7ff inset' : '';
+          chip.setAttribute('aria-pressed', on ? 'true' : 'false');
+        };
+        apply();
+        chip.addEventListener('click', () => { chip.dataset.active = chip.dataset.active === "1" ? "0" : "1"; apply(); refresh(); });
+        chip.addEventListener('keydown', e => { if (e.key===' '||e.key==='Enter'){ e.preventDefault(); chip.click(); }});
       });
 
       q && q.addEventListener('input', refresh);
@@ -765,31 +780,26 @@
 
       // GPS-Ortung
       let userMarker = null, accuracyCircle = null;
-
       function showLocationOnMap(e){
         const { latitude, longitude, accuracy } = {
           latitude: e.latitude ?? e.coords?.latitude ?? e.latlng?.lat,
           longitude: e.longitude ?? e.coords?.longitude ?? e.latlng?.lng,
           accuracy: e.accuracy ?? e.coords?.accuracy ?? 50
         };
-
         if (!userMarker){
           userMarker = L.marker([latitude, longitude], { title: 'Mein Standort' })
-            .addTo(layerGroup).bindPopup('Du bist hier.');
+            .addTo(map).bindPopup('Du bist hier.');
         } else {
           userMarker.setLatLng([latitude, longitude]);
         }
-
         if (!accuracyCircle){
-          accuracyCircle = L.circle([latitude, longitude], { radius: accuracy, weight: 1, fillOpacity: .1 }).addTo(layerGroup);
+          accuracyCircle = L.circle([latitude, longitude], { radius: accuracy, weight: 1, fillOpacity: .1 }).addTo(map);
         } else {
           accuracyCircle.setLatLng([latitude, longitude]);
           accuracyCircle.setRadius(accuracy);
         }
-
         map.setView([latitude, longitude], Math.max(map.getZoom(), 15));
       }
-
       function locateOnce(){
         map.once('locationfound', (e) => showLocationOnMap({ latlng: e.latlng, accuracy: e.accuracy }));
         map.once('locationerror', () => {
@@ -805,7 +815,6 @@
         });
         map.locate({ setView:false, maxZoom: 16, enableHighAccuracy: true, timeout: 7000 });
       }
-
       const locateBtn = document.getElementById('locateBtn');
       locateBtn && locateBtn.addEventListener('click', locateOnce);
 
@@ -813,7 +822,7 @@
       return map;
     }
 
-    // -------- Tabs --------
+    // ---------- Tabs ----------
     function initTabs(mapRef){
       const tabA = document.getElementById('tabA');
       const tabC = document.getElementById('tabC');
@@ -823,18 +832,20 @@
       function activatePlan(){
         tabA.classList.add('tab-active'); tabC.classList.remove('tab-active');
         wrapA.classList.remove('hidden'); wrapC.classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
       function activateDiscover(){
         tabC.classList.add('tab-active'); tabA.classList.remove('tab-active');
         wrapC.classList.remove('hidden'); wrapA.classList.add('hidden');
-        if (mapRef && mapRef.invalidateSize) setTimeout(() => mapRef.invalidateSize(), 120);
+        setTimeout(() => { mapRef && mapRef.invalidateSize && mapRef.invalidateSize(); }, 120);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
       }
 
       tabA?.addEventListener('click', activatePlan);
       tabC?.addEventListener('click', activateDiscover);
     }
 
-    // -------- Bootstrapping --------
+    // ---------- Bootstrapping ----------
     document.addEventListener('DOMContentLoaded', () => {
       initMultiImages();
       const map = initDiscoveryFilterAndMap();
