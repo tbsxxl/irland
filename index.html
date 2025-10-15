@@ -43,7 +43,6 @@
 
   --link:#059669;        /* Linkfarbe passend grün */    }
 
-
     body{
       background:
         radial-gradient(1200px 600px at 10% -10%, rgba(16,185,129,.08), transparent 60%),
@@ -90,57 +89,10 @@
     .map-toolbar{position:absolute; z-index:500; inset:12px auto auto 12px; display:flex; gap:8px; align-items:center; background: rgba(255,255,255,.9); border:1px solid var(--card-brd); border-radius:.75rem; padding:.35rem .5rem; backdrop-filter: blur(6px)}
     .map-pill{ padding:.25rem .6rem; border-radius:999px; font-size:.75rem; border:1px solid var(--chip-brd); background:var(--pill-bg) }
 
-
-
-  /* Wetter */
-    .wx-card{border:1px solid var(--card-brd); background:var(--card-bg); box-shadow:0 10px 30px -12px var(--card-sh)}
-    .wx-item{display:flex;flex-direction:column;align-items:center;gap:.25rem;padding:.5rem .25rem;border-radius:.75rem;border:1px solid rgba(15,23,42,.05)}
-    .wx-item b{font-size:.8rem}
-    .wx-temps{font-size:.8rem}
-    .wx-temps .max{font-weight:600;color:#065f46}
-    .wx-temps .min{color:#475569}
-
     [data-name].ring{ transition: box-shadow .4s ease }
     @media (prefers-reduced-motion: reduce){ .card, .btn, .chip { transition: none!important } }
   </style>
 </head>
-<body class="min-h-screen p-4 sm:p-6">
-  <div class="max-w-5xl mx-auto">
-    <header class="mb-4 sm:mb-6">
-      <div class="flex items-center gap-4">
-        <div class="w-12 h-12 sm:w-14 sm:h-14 glass rounded-2xl flex items-center justify-center">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 sm:w-8 sm:h-8 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V7" />
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 3h8v4H8z" />
-          </svg>
-        </div>
-        <div class="flex-1">
-          <h1 class="text-xl sm:text-2xl font-semibold" style="color:var(--ink)">Dublin — 7-Tage Solo-Reise</h1>
-          <p class="text-sm" style="color:var(--ink-2)">Tabs: <span class="font-medium">Plan</span> & <span class="font-medium">Entdecken</span> (alles verlinkt + Karte)</p>
-          <p class="text-xs mt-1" style="color:var(--ink-2)">Hotel: <span class="font-semibold">Staycity Aparthotels Dublin City Quay</span></p>
-        </div>
-      </div>
-    </header>
-
-    <!-- Tabs -->
-    <nav class="sticky top-0 z-10 bg-gradient-to-b from-white/80 to-white/70 backdrop-blur rounded-xl p-1 mb-4 shadow-sm border border-slate-200/60">
-      <div class="grid grid-cols-2 gap-1">
-        <button id="tabA" class="tab tab-active rounded-lg px-3 py-2 text-sm font-medium">Plan</button>
-        <button id="tabC" class="tab rounded-lg px-3 py-2 text-sm font-medium">Entdecken</button>
-      </div>
-    </nav>
-
-    <!-- Wetter 5 Tage -->
-    <section class="wx-card rounded-2xl p-4 mb-4">
-      <div class="flex items-center justify-between mb-3 gap-3">
-        <h2 class="text-lg font-semibold text-slate-900">Wetter – Nächste 5 Tage (Dublin)</h2>
-        <span id="wxUpdated" class="text-xs text-slate-500"></span>
-      </div>
-      <div id="wxRow" class="grid grid-cols-2 sm:grid-cols-5 gap-2"></div>
-      <p class="mt-2 text-xs text-slate-500">Quelle: Open-Meteo (ohne API-Key). Prognose kann abweichen.</p>
-    </section>
-
-
 <body class="min-h-screen p-4 sm:p-6">
   <div class="max-w-5xl mx-auto">
     <header class="mb-4 sm:mb-6">
@@ -999,8 +951,6 @@
   </script>
 </body>
 </html>
-
-
 
 
 
