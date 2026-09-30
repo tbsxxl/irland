@@ -3,12 +3,11 @@
 const TRIP = {
   id: "irland",
   title: "Dublin & Nordirland",
-  flag: "🇮🇪",
-  icon: "/icons/irland-192.png",
+  icon: "/icons/irland.svg",
   theme: "irland", themeColor: "#1E6A4E",
   center: { lat: 53.3455, lng: -6.2635, zoom: 14, name: "Dublin" },
   near: 2,
-  subtitle: "Solo-Reise · 16.–23. Oktober",
+  subtitle: "Solo-Reise · Dublin, Belfast & Westküste",
   start: "2025-10-16",          // Tag 1 (für „Heute“-Markierung und Countdown)
   end: "2025-10-23",
   cost: "€1.050–1.250 ohne Flug",
@@ -56,101 +55,101 @@ const DAYS = [
   {
     date: "Do 16.10.", title: "Ankunft & Temple Bar", tip: "Tipp: The Cobblestone (Live-Musik)",
     stops: [
-      { time: "14:00", icon: "✈️", text: "Ankunft & Transfer ins Hotel (Dublin Express / Aircoach)" },
-      { time: "16:00", icon: "🚶", text: "Spaziergang Liffey → Ha’penny Bridge → Temple Bar" },
-      { time: "18:00", icon: "🍽️", text: "Dinner: The Bank on College Green / Boxty House",
+      { time: "14:00", icon: "plane", text: "Ankunft & Transfer ins Hotel (Dublin Express / Aircoach)" },
+      { time: "16:00", icon: "footprints", text: "Spaziergang Liffey → Ha’penny Bridge → Temple Bar" },
+      { time: "18:00", icon: "utensils", text: "Dinner: The Bank on College Green / Boxty House",
         links: [{ label: "Karte", url: "https://www.google.com/maps/search/?api=1&query=The+Bank+on+College+Green+Dublin" }] },
-      { time: "20:00", icon: "🍻", text: "Pub-Tour: The Church · O’Donoghue’s · The Cobblestone", place: "cobblestone",
+      { time: "20:00", icon: "beer", text: "Pub-Tour: The Church · O’Donoghue’s · The Cobblestone", place: "cobblestone",
         links: [{ label: "Tickets", url: "https://dublinpubcrawl.com/" }] }
     ]
   },
   {
     date: "Fr 17.10.", title: "Book of Kells & Guinness Storehouse", tip: "Kombi-Ticket spart ca. €7,50", image: "trinity",
     stops: [
-      { time: "12:00", icon: "📜", text: "Book of Kells Experience + Old Library", place: "kells",
+      { time: "12:00", icon: "scroll", text: "Book of Kells Experience + Old Library", place: "kells",
         links: [{ label: "Tickets", url: "https://www.tcd.ie/library/old-library/" }] },
-      { time: "14:15", icon: "🍺", text: "Guinness Storehouse + Gravity Bar", place: "guinness",
+      { time: "14:15", icon: "beer", text: "Guinness Storehouse + Gravity Bar", place: "guinness",
         links: [{ label: "Tickets", url: "https://www.guinness-storehouse.com/" }] },
-      { time: "17:00", icon: "🌇", text: "Spaziergang oder St. Stephen’s Green", place: "stephens" },
-      { time: "19:00", icon: "🍽️", text: "Dinner: Fade Street Social / The Church",
+      { time: "17:00", icon: "sunset", text: "Spaziergang oder St. Stephen’s Green", place: "stephens" },
+      { time: "19:00", icon: "utensils", text: "Dinner: Fade Street Social / The Church",
         links: [{ label: "Reservieren", url: "https://www.fadestreetsocial.com/" }] }
     ]
   },
   {
     date: "Sa 18.10.", title: "Game of Thrones Studio Tour", tip: "Treffpunkt Molly Malone · ca. €80 inkl. Bus", ni: true,
     stops: [
-      { time: "09:45", icon: "🚌", text: "Abfahrt Dublin → Banbridge (90 Min.)", place: "molly",
+      { time: "09:45", icon: "bus", text: "Abfahrt Dublin → Banbridge (90 Min.)", place: "molly",
         links: [{ label: "Tickets", url: "https://gameofthronesstudiotour.com/" }] },
-      { time: "11:15", icon: "🎬", text: "Selbstgeführte Tour (2–3 Std.)" },
-      { time: "13:30", icon: "🍴", text: "Lunch im Studio-Café oder The Boulevard Banbridge" },
-      { time: "15:00", icon: "🚌", text: "Rückfahrt nach Dublin" },
-      { time: "16:30", icon: "🏁", text: "Ankunft City Centre" },
-      { time: "19:00", icon: "🍽️", text: "Abendessen: The Woollen Mills / Fade Street Social" }
+      { time: "11:15", icon: "clapperboard", text: "Selbstgeführte Tour (2–3 Std.)" },
+      { time: "13:30", icon: "utensils", text: "Lunch im Studio-Café oder The Boulevard Banbridge" },
+      { time: "15:00", icon: "bus", text: "Rückfahrt nach Dublin" },
+      { time: "16:30", icon: "flag", text: "Ankunft City Centre" },
+      { time: "19:00", icon: "utensils", text: "Abendessen: The Woollen Mills / Fade Street Social" }
     ]
   },
   {
     date: "So 19.10.", title: "Giant’s Causeway, Dark Hedges & Belfast", tip: "Treffpunkt Molly Malone Statue", ni: true, image: "causeway",
     stops: [
-      { time: "06:30", icon: "🚌", text: "Abfahrt College Green / Molly Malone", place: "molly",
+      { time: "06:30", icon: "bus", text: "Abfahrt College Green / Molly Malone", place: "molly",
         links: [{ label: "Tickets", url: "https://www.irishdaytours.ie/" }] },
-      { time: "10:45", icon: "🌳", text: "Dark Hedges (Kingsroad aus Game of Thrones)" },
-      { time: "12:15", icon: "🌊", text: "Giant’s Causeway (UNESCO-Welterbe)" },
-      { time: "16:00", icon: "🏙️", text: "Belfast City (optional Black Cab Tour)" },
-      { time: "20:00", icon: "🏁", text: "Rückkehr nach Dublin" }
+      { time: "10:45", icon: "trees", text: "Dark Hedges (Kingsroad aus Game of Thrones)" },
+      { time: "12:15", icon: "waves", text: "Giant’s Causeway (UNESCO-Welterbe)" },
+      { time: "16:00", icon: "building-2", text: "Belfast City (optional Black Cab Tour)" },
+      { time: "20:00", icon: "flag", text: "Rückkehr nach Dublin" }
     ]
   },
   {
-    date: "Mo 20.10.", title: "Whiskey-Tag + ⚽ Bohemians vs St Pat’s", tip: "Anstoß 20:45 Uhr, Dalymount Park",
+    date: "Mo 20.10.", title: "Whiskey-Tag & Bohemians vs St Pat’s", tip: "Anstoß 20:45 Uhr, Dalymount Park",
     stops: [
-      { time: "11:00", icon: "🥃", text: "Teeling Whiskey Distillery – Trinity Tour mit Tasting", place: "teeling",
+      { time: "11:00", icon: "glass-water", text: "Teeling Whiskey Distillery – Trinity Tour mit Tasting", place: "teeling",
         links: [{ label: "Tickets", url: "https://teelingdistillery.com/" }] },
-      { time: "13:00", icon: "🍴", text: "Lunch: Brother Hubbard South / The Woollen Mills" },
-      { time: "16:00", icon: "🥃", text: "Jameson Distillery Bow St. (45-Min.-Tour)", place: "jameson",
+      { time: "13:00", icon: "utensils", text: "Lunch: Brother Hubbard South / The Woollen Mills" },
+      { time: "16:00", icon: "glass-water", text: "Jameson Distillery Bow St. (45-Min.-Tour)", place: "jameson",
         links: [{ label: "Tickets", url: "https://www.jamesonwhiskey.com/visit-us/bow-st-dublin" }] },
-      { time: "18:30", icon: "🍔", text: "Early Dinner nahe Stadion (The Back Page)", place: "backpage" },
-      { time: "20:45", icon: "⚽", text: "Bohemians vs St Patrick’s Athletic", place: "dalymount" }
+      { time: "18:30", icon: "hamburger", text: "Early Dinner nahe Stadion (The Back Page)", place: "backpage" },
+      { time: "20:45", icon: "goal", text: "Bohemians vs St Patrick’s Athletic", place: "dalymount" }
     ]
   },
   {
     date: "Di 21.10.", title: "Cliffs of Moher, Burren & Galway", tip: "Treffpunkt Molly Malone Statue", image: "moher",
     stops: [
-      { time: "06:50", icon: "🚌", text: "Abfahrt Dublin (10 Min. vorher da sein)", place: "molly",
+      { time: "06:50", icon: "bus", text: "Abfahrt Dublin (10 Min. vorher da sein)", place: "molly",
         links: [{ label: "Tickets", url: "https://www.irishdaytours.ie/" }] },
-      { time: "10:45", icon: "🌄", text: "Cliffs of Moher – Hauptstopp" },
-      { time: "12:45", icon: "🍲", text: "Lunch in Doolin (Gus O’Connor’s Pub)" },
-      { time: "14:00", icon: "🪨", text: "The Burren – Kalksteinlandschaft" },
-      { time: "15:45", icon: "🎶", text: "Galway – Spanish Arch & Straßenmusik" },
-      { time: "19:05", icon: "🏁", text: "Rückkehr nach Dublin" }
+      { time: "10:45", icon: "mountain", text: "Cliffs of Moher – Hauptstopp" },
+      { time: "12:45", icon: "soup", text: "Lunch in Doolin (Gus O’Connor’s Pub)" },
+      { time: "14:00", icon: "mountain", text: "The Burren – Kalksteinlandschaft" },
+      { time: "15:45", icon: "music", text: "Galway – Spanish Arch & Straßenmusik" },
+      { time: "19:05", icon: "flag", text: "Rückkehr nach Dublin" }
     ]
   },
   {
     date: "Mi 22.10.", title: "Parks, Kunst & Farewell", tip: "Entspannter Tag",
     stops: [
-      { time: "09:30", icon: "🎨", text: "Merrion Square & National Gallery / MoLI", place: "gallery" },
-      { time: "13:00", icon: "🍴", text: "Lunch: Avoca Café / Tang Café", place: "tang" },
-      { time: "14:30", icon: "🌳", text: "Phoenix Park / Botanic Gardens oder kurzer Howth-Trip", place: "phoenix" },
-      { time: "20:00", icon: "🍽️", text: "Farewell-Dinner: Fade Street Social / The Church" }
+      { time: "09:30", icon: "palette", text: "Merrion Square & National Gallery / MoLI", place: "gallery" },
+      { time: "13:00", icon: "utensils", text: "Lunch: Avoca Café / Tang Café", place: "tang" },
+      { time: "14:30", icon: "trees", text: "Phoenix Park / Botanic Gardens oder kurzer Howth-Trip", place: "phoenix" },
+      { time: "20:00", icon: "utensils", text: "Farewell-Dinner: Fade Street Social / The Church" }
     ]
   },
   {
     date: "Do 23.10.", title: "Abreise", tip: "Flug 08:55 ab DUB",
     stops: [
-      { time: "06:00", icon: "🧳", text: "Check-out & Transfer (Aircoach / Dublin Express)" },
-      { time: "08:55", icon: "✈️", text: "Rückflug ab Dublin Airport" }
+      { time: "06:00", icon: "luggage", text: "Check-out & Transfer (Aircoach / Dublin Express)" },
+      { time: "08:55", icon: "plane", text: "Rückflug ab Dublin Airport" }
     ]
   }
 ];
 
 const CATS = {
-  hist:  { label: "Geschichte",  icon: "🏛️", color: "#8a5a2b" },
-  brau:  { label: "Whiskey & Bier", icon: "🥃", color: "#c2701e" },
-  kunst: { label: "Kunst",       icon: "🎨", color: "#8e4c8a" },
-  bibl:  { label: "Bibliotheken", icon: "📚", color: "#4a5fa8" },
-  natur: { label: "Natur",       icon: "🌳", color: "#2f7d4f" },
-  film:  { label: "Filmorte",    icon: "🎬", color: "#b0414a" },
-  food:  { label: "Essen",       icon: "🍽️", color: "#c24f2b" },
-  night: { label: "Abends & Touren", icon: "🌙", color: "#34566f" },
-  trip:  { label: "Tagesausflüge", icon: "🚌", color: "#5e6b3a" }
+  hist:  { label: "Geschichte",  icon: "landmark", color: "#8a5a2b" },
+  brau:  { label: "Whiskey & Bier", icon: "glass-water", color: "#c2701e" },
+  kunst: { label: "Kunst",       icon: "palette", color: "#8e4c8a" },
+  bibl:  { label: "Bibliotheken", icon: "library", color: "#4a5fa8" },
+  natur: { label: "Natur",       icon: "trees", color: "#2f7d4f" },
+  film:  { label: "Filmorte",    icon: "clapperboard", color: "#b0414a" },
+  food:  { label: "Essen",       icon: "utensils", color: "#c24f2b" },
+  night: { label: "Abends & Touren", icon: "moon", color: "#34566f" },
+  trip:  { label: "Tagesausflüge", icon: "bus", color: "#5e6b3a" }
 };
 
 /* Orte. cats: erste Kategorie bestimmt die Farbe. Ohne lat/lng erscheint der Ort nur in der Liste. */
@@ -286,12 +285,12 @@ const CHECKLISTS = [
 ];
 
 const INFOS = [
-  { icon: "🚌", title: "Flughafen → Stadt", text: "Dublin Express oder Aircoach bis O’Connell St./Custom House, ca. 30 Min. Zum Hotel am City Quay dann ca. 10 Min. zu Fuß." },
-  { icon: "🎫", title: "Leap Visitor Card", text: "Am Flughafen (Spar, Travel Info) kaufen. Gilt 72 Std. ab der ersten Fahrt für Dublin Bus, Luas und DART – auch für Howth." },
-  { icon: "🇬🇧", title: "Nordirland (Sa & So)", text: "Gehört zum Vereinigten Königreich: Pfund Sterling, Reisepass mitnehmen, EU-Roaming je nach Tarif nicht inklusive." },
-  { icon: "🔌", title: "Steckdosen", text: "Typ G (britischer Stecker, 230 V). Adapter nicht vergessen." },
-  { icon: "💶", title: "Bezahlen & Trinkgeld", text: "Karte geht fast überall. Im Restaurant 10–12,5 % Trinkgeld, falls kein Service Charge berechnet wird; im Pub unüblich." },
-  { icon: "🆘", title: "Notruf", text: "112 oder 999 (Polizei, Rettung, Feuerwehr) – in Irland und Nordirland." }
+  { icon: "bus", title: "Flughafen → Stadt", text: "Dublin Express oder Aircoach bis O’Connell St./Custom House, ca. 30 Min. Zum Hotel am City Quay dann ca. 10 Min. zu Fuß." },
+  { icon: "ticket", title: "Leap Visitor Card", text: "Am Flughafen (Spar, Travel Info) kaufen. Gilt 72 Std. ab der ersten Fahrt für Dublin Bus, Luas und DART – auch für Howth." },
+  { icon: "id-card", title: "Nordirland (Sa & So)", text: "Gehört zum Vereinigten Königreich: Pfund Sterling, Reisepass mitnehmen, EU-Roaming je nach Tarif nicht inklusive." },
+  { icon: "plug", title: "Steckdosen", text: "Typ G (britischer Stecker, 230 V). Adapter nicht vergessen." },
+  { icon: "euro", title: "Bezahlen & Trinkgeld", text: "Karte geht fast überall. Im Restaurant 10–12,5 % Trinkgeld, falls kein Service Charge berechnet wird; im Pub unüblich." },
+  { icon: "siren", title: "Notruf", text: "112 oder 999 (Polizei, Rettung, Feuerwehr) – in Irland und Nordirland." }
 ];
 
 (window.TRIPS ||= []).push({ ...TRIP, images: IMAGES, days: DAYS, cats: CATS, places: PLACES, checklists: CHECKLISTS, infos: INFOS });

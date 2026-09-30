@@ -4,10 +4,9 @@
 const TRIP = {
   id: "florenz",
   title: "Florenz",
-  flag: "🇮🇹",
   icon: "/icons/florenz.svg",
   theme: "florenz", themeColor: "#9A4126",
-  subtitle: "Toskana · 11.–18. November",
+  subtitle: "Toskana · Kunst, Essen & Ausflüge",
   start: "2026-11-11",
   end: "2026-11-18",
   center: { lat: 43.7700, lng: 11.2545, zoom: 15, name: "Florenz" },
@@ -30,99 +29,99 @@ const DAYS = [
   {
     date: "Mi 11.11.", title: "Ankommen & erster Abendspaziergang", tip: "Flugzeiten noch eintragen",
     stops: [
-      { time: "14:00", icon: "✈️", text: "Ankunft & Transfer ins Hotel (ab FLR: Tram T2 bis Unità, ca. 20 Min.)" },
-      { time: "16:00", icon: "🚶", text: "Piazza della Signoria → Ponte Vecchio zum Sonnenuntergang", place: "pontevecchio" },
-      { time: "18:30", icon: "🍷", text: "Aperitivo am Weinfenster: I Fratellini", place: "fratellini" },
-      { time: "20:00", icon: "🍝", text: "Dinner: Trattoria Sostanza (Butterhähnchen, reservieren)", place: "sostanza" }
+      { time: "14:00", icon: "plane", text: "Ankunft & Transfer ins Hotel (ab FLR: Tram T2 bis Unità, ca. 20 Min.)" },
+      { time: "16:00", icon: "footprints", text: "Piazza della Signoria → Ponte Vecchio zum Sonnenuntergang", place: "pontevecchio" },
+      { time: "18:30", icon: "wine", text: "Aperitivo am Weinfenster: I Fratellini", place: "fratellini" },
+      { time: "20:00", icon: "utensils", text: "Dinner: Trattoria Sostanza (Butterhähnchen, reservieren)", place: "sostanza" }
     ]
   },
   {
     date: "Do 12.11.", title: "Dom, Kuppel & Medici", tip: "Kuppel nur mit gebuchtem Zeitfenster",
     stops: [
-      { time: "08:30", icon: "⛪", text: "Kuppel des Brunelleschi besteigen (463 Stufen)", place: "duomo",
+      { time: "08:30", icon: "church", text: "Kuppel des Brunelleschi besteigen (463 Stufen)", place: "duomo",
         links: [{ label: "Tickets", url: "https://duomo.firenze.it/" }] },
-      { time: "10:30", icon: "🏛️", text: "Baptisterium, Campanile & Museo dell’Opera (gleiches Ticket)", place: "opera" },
-      { time: "13:00", icon: "🥪", text: "Lunch im Mercato Centrale (1. Stock) oder Lampredotto bei Da Nerbone", place: "mercato" },
-      { time: "15:00", icon: "👑", text: "Medici-Kapellen & San Lorenzo", place: "medici" },
-      { time: "17:30", icon: "☕", text: "Café Gilli an der Piazza della Repubblica", place: "gilli" },
-      { time: "20:00", icon: "🍽️", text: "Dinner: Trattoria Za Za oder Buca Mario", place: "zaza" }
+      { time: "10:30", icon: "landmark", text: "Baptisterium, Campanile & Museo dell’Opera (gleiches Ticket)", place: "opera" },
+      { time: "13:00", icon: "sandwich", text: "Lunch im Mercato Centrale (1. Stock) oder Lampredotto bei Da Nerbone", place: "mercato" },
+      { time: "15:00", icon: "crown", text: "Medici-Kapellen & San Lorenzo", place: "medici" },
+      { time: "17:30", icon: "coffee", text: "Café Gilli an der Piazza della Repubblica", place: "gilli" },
+      { time: "20:00", icon: "utensils", text: "Dinner: Trattoria Za Za oder Buca Mario", place: "zaza" }
     ]
   },
   {
     date: "Fr 13.11.", title: "Uffizien & Palazzo Vecchio", tip: "Uffizien früh buchen: 8:15-Slot ist am ruhigsten",
     stops: [
-      { time: "08:15", icon: "🖼️", text: "Uffizien: Botticelli, Leonardo, Caravaggio (3–4 Std.)", place: "uffizi",
+      { time: "08:15", icon: "palette", text: "Uffizien: Botticelli, Leonardo, Caravaggio (3–4 Std.)", place: "uffizi",
         links: [{ label: "Tickets", url: "https://www.uffizi.it/en/tickets" }] },
-      { time: "12:30", icon: "🥪", text: "Schiacciata bei All’Antico Vinaio", place: "vinaio" },
-      { time: "14:00", icon: "🏰", text: "Palazzo Vecchio + Turm (Arnolfo-Turm, Aussicht)", place: "vecchio" },
-      { time: "16:30", icon: "🍨", text: "Gelato bei Vivoli oder Gelateria dei Neri", place: "vivoli" },
-      { time: "19:30", icon: "🍷", text: "Abend im Viertel Santa Croce / Sant’Ambrogio", place: "santacroce" }
+      { time: "12:30", icon: "sandwich", text: "Schiacciata bei All’Antico Vinaio", place: "vinaio" },
+      { time: "14:00", icon: "castle", text: "Palazzo Vecchio + Turm (Arnolfo-Turm, Aussicht)", place: "vecchio" },
+      { time: "16:30", icon: "ice-cream-cone", text: "Gelato bei Vivoli oder Gelateria dei Neri", place: "vivoli" },
+      { time: "19:30", icon: "wine", text: "Abend im Viertel Santa Croce / Sant’Ambrogio", place: "santacroce" }
     ]
   },
   {
     date: "Sa 14.11.", title: "Oltrarno & Piazzale Michelangelo", tip: "Sonnenuntergang ca. 16:50",
     stops: [
-      { time: "09:00", icon: "🏛️", text: "Palazzo Pitti & Boboli-Garten", place: "pitti",
+      { time: "09:00", icon: "landmark", text: "Palazzo Pitti & Boboli-Garten", place: "pitti",
         links: [{ label: "Tickets", url: "https://www.uffizi.it/en/pitti-palace" }] },
-      { time: "13:00", icon: "🍝", text: "Lunch im Oltrarno: Trattoria 4 Leoni oder Il Santo Bevitore", place: "quattroleoni" },
-      { time: "14:30", icon: "🛠️", text: "Werkstätten & Piazza Santo Spirito", place: "santospirito" },
-      { time: "15:45", icon: "🌹", text: "Aufstieg über den Rosengarten zum Piazzale Michelangelo", place: "piazzale" },
-      { time: "16:30", icon: "🌅", text: "Sonnenuntergang, danach San Miniato al Monte", place: "sanminiato" },
-      { time: "19:30", icon: "🍷", text: "Dinner & Wein im Oltrarno (Osteria Santo Spirito)", place: "osteriasantospirito" }
+      { time: "13:00", icon: "utensils", text: "Lunch im Oltrarno: Trattoria 4 Leoni oder Il Santo Bevitore", place: "quattroleoni" },
+      { time: "14:30", icon: "hammer", text: "Werkstätten & Piazza Santo Spirito", place: "santospirito" },
+      { time: "15:45", icon: "flower", text: "Aufstieg über den Rosengarten zum Piazzale Michelangelo", place: "piazzale" },
+      { time: "16:30", icon: "sunset", text: "Sonnenuntergang, danach San Miniato al Monte", place: "sanminiato" },
+      { time: "19:30", icon: "wine", text: "Dinner & Wein im Oltrarno (Osteria Santo Spirito)", place: "osteriasantospirito" }
     ]
   },
   {
     date: "So 15.11.", title: "Ausflug Pisa & Lucca", tip: "Regionalzug ab Santa Maria Novella, kein Ticket vorab nötig",
     stops: [
-      { time: "08:30", icon: "🚆", text: "Zug nach Pisa Centrale (ca. 1 Std.)", place: "smn",
+      { time: "08:30", icon: "train-front", text: "Zug nach Pisa Centrale (ca. 1 Std.)", place: "smn",
         links: [{ label: "Trenitalia", url: "https://www.trenitalia.com/" }] },
-      { time: "10:00", icon: "🗼", text: "Piazza dei Miracoli: Schiefer Turm, Dom, Baptisterium" },
-      { time: "13:00", icon: "🚆", text: "Weiter nach Lucca (30 Min.)" },
-      { time: "13:45", icon: "🍝", text: "Lunch & Spaziergang auf der Stadtmauer (Fahrrad leihen)" },
-      { time: "17:30", icon: "🚆", text: "Rückfahrt nach Florenz (ca. 1 Std. 20 Min.)" }
+      { time: "10:00", icon: "castle", text: "Piazza dei Miracoli: Schiefer Turm, Dom, Baptisterium" },
+      { time: "13:00", icon: "train-front", text: "Weiter nach Lucca (30 Min.)" },
+      { time: "13:45", icon: "utensils", text: "Lunch & Spaziergang auf der Stadtmauer (Fahrrad leihen)" },
+      { time: "17:30", icon: "train-front", text: "Rückfahrt nach Florenz (ca. 1 Std. 20 Min.)" }
     ]
   },
   {
     date: "Mo 16.11.", title: "Siena, San Gimignano & Chianti", tip: "Montag sind viele Museen in Florenz zu",
     stops: [
-      { time: "08:00", icon: "🚌", text: "Tagestour ab Florenz (oder Bus nach Siena, 1 Std. 15 Min.)", place: "smn" },
-      { time: "09:30", icon: "🏙️", text: "Siena: Piazza del Campo & Dom" },
-      { time: "13:00", icon: "🍷", text: "Weingut im Chianti mit Lunch & Verkostung" },
-      { time: "15:30", icon: "🗼", text: "San Gimignano: Geschlechtertürme & Gelato" },
-      { time: "19:00", icon: "🏁", text: "Rückkehr nach Florenz" }
+      { time: "08:00", icon: "bus", text: "Tagestour ab Florenz (oder Bus nach Siena, 1 Std. 15 Min.)", place: "smn" },
+      { time: "09:30", icon: "building-2", text: "Siena: Piazza del Campo & Dom" },
+      { time: "13:00", icon: "wine", text: "Weingut im Chianti mit Lunch & Verkostung" },
+      { time: "15:30", icon: "castle", text: "San Gimignano: Geschlechtertürme & Gelato" },
+      { time: "19:00", icon: "flag", text: "Rückkehr nach Florenz" }
     ]
   },
   {
     date: "Di 17.11.", title: "David, San Marco & Abschied", tip: "Accademia vorab buchen",
     stops: [
-      { time: "08:15", icon: "🗿", text: "Galleria dell’Accademia: Michelangelos David", place: "accademia",
+      { time: "08:15", icon: "person-standing", text: "Galleria dell’Accademia: Michelangelos David", place: "accademia",
         links: [{ label: "Tickets", url: "https://www.galleriaaccademiafirenze.it/en/" }] },
-      { time: "10:30", icon: "🎨", text: "Museo di San Marco (Fra-Angelico-Fresken)", place: "sanmarco" },
-      { time: "12:30", icon: "🧺", text: "Mercato di Sant’Ambrogio & Lunch bei Da Rocco", place: "santambrogio" },
-      { time: "14:30", icon: "⛪", text: "Santa Croce (Gräber von Michelangelo & Galileo)", place: "santacroce" },
-      { time: "17:00", icon: "🧴", text: "Officina Profumo-Farmaceutica di Santa Maria Novella", place: "farmaceutica" },
-      { time: "20:00", icon: "🥩", text: "Abschiedsessen: Bistecca alla fiorentina" }
+      { time: "10:30", icon: "palette", text: "Museo di San Marco (Fra-Angelico-Fresken)", place: "sanmarco" },
+      { time: "12:30", icon: "shopping-basket", text: "Mercato di Sant’Ambrogio & Lunch bei Da Rocco", place: "santambrogio" },
+      { time: "14:30", icon: "church", text: "Santa Croce (Gräber von Michelangelo & Galileo)", place: "santacroce" },
+      { time: "17:00", icon: "spray-can", text: "Officina Profumo-Farmaceutica di Santa Maria Novella", place: "farmaceutica" },
+      { time: "20:00", icon: "beef", text: "Abschiedsessen: Bistecca alla fiorentina" }
     ]
   },
   {
     date: "Mi 18.11.", title: "Abreise", tip: "Flugzeit noch eintragen",
     stops: [
-      { time: "09:00", icon: "☕", text: "Letzter Cappuccino (Ditta Artigianale)", place: "ditta" },
-      { time: "11:00", icon: "🧳", text: "Check-out & Transfer zum Flughafen" }
+      { time: "09:00", icon: "coffee", text: "Letzter Cappuccino (Ditta Artigianale)", place: "ditta" },
+      { time: "11:00", icon: "luggage", text: "Check-out & Transfer zum Flughafen" }
     ]
   }
 ];
 
 const CATS = {
-  kunst:    { label: "Museen & Kunst", icon: "🖼️", color: "#8e4c8a" },
-  kirche:   { label: "Kirchen",        icon: "⛪", color: "#4a5fa8" },
-  aussicht: { label: "Aussicht & Gärten", icon: "🌅", color: "#2f7d4f" },
-  food:     { label: "Essen",          icon: "🍝", color: "#c24f2b" },
-  wein:     { label: "Wein & Aperitivo", icon: "🍷", color: "#8a2436" },
-  gelato:   { label: "Gelato & Café",  icon: "🍨", color: "#c2701e" },
-  markt:    { label: "Märkte & Shopping", icon: "🧺", color: "#5e6b3a" },
-  info:     { label: "Praktisch",      icon: "🚆", color: "#34566f" },
-  trip:     { label: "Tagesausflüge",  icon: "🚌", color: "#6b5a3a" }
+  kunst:    { label: "Museen & Kunst", icon: "palette", color: "#8e4c8a" },
+  kirche:   { label: "Kirchen",        icon: "church", color: "#4a5fa8" },
+  aussicht: { label: "Aussicht & Gärten", icon: "sunset", color: "#2f7d4f" },
+  food:     { label: "Essen",          icon: "utensils", color: "#c24f2b" },
+  wein:     { label: "Wein & Aperitivo", icon: "wine", color: "#8a2436" },
+  gelato:   { label: "Gelato & Café",  icon: "ice-cream-cone", color: "#c2701e" },
+  markt:    { label: "Märkte & Shopping", icon: "shopping-basket", color: "#5e6b3a" },
+  info:     { label: "Praktisch",      icon: "train-front", color: "#34566f" },
+  trip:     { label: "Tagesausflüge",  icon: "bus", color: "#6b5a3a" }
 };
 
 /* Orte. Koordinaten gerundet; ohne lat/lng nur in der Liste. */
@@ -231,14 +230,14 @@ const CHECKLISTS = [
 ];
 
 const INFOS = [
-  { icon: "🎟️", title: "Tickets vorab", text: "Uffizien, Accademia und die Dom-Kuppel haben Zeitfenster und sind oft ausgebucht – vor der Reise buchen." },
-  { icon: "🚫", title: "Montags geschlossen", text: "Uffizien, Accademia und Palazzo Pitti haben montags Ruhetag. Deshalb ist Montag der Ausflugstag." },
-  { icon: "✈️", title: "Flughafen → Stadt", text: "Von Florenz (FLR) mit der Tram T2 bis Unità in ca. 20 Min. Von Pisa (PSA) mit dem PisaMover und Zug in ca. 1 Std. 15 Min." },
-  { icon: "🚆", title: "Zug", text: "Regionalzüge (Pisa, Lucca) am Bahnsteig oder in der Trenitalia-App kaufen; Papiertickets vor der Fahrt entwerten." },
-  { icon: "⛪", title: "Kirchen", text: "Schultern und Knie bedeckt, sonst kein Einlass. Während Messen keine Besichtigung." },
-  { icon: "💶", title: "Bezahlen & Trinkgeld", text: "„Coperto“ (Gedeck) steht auf der Rechnung und ist normal. Trinkgeld freiwillig, Aufrunden reicht. Kurtaxe zahlt man im Hotel." },
-  { icon: "☕", title: "Café wie die Italiener", text: "Espresso am Tresen ist deutlich günstiger als am Tisch. Cappuccino nur bis mittags." },
-  { icon: "🆘", title: "Notruf", text: "112 – europaweite Notrufnummer." }
+  { icon: "ticket", title: "Tickets vorab", text: "Uffizien, Accademia und die Dom-Kuppel haben Zeitfenster und sind oft ausgebucht – vor der Reise buchen." },
+  { icon: "calendar-x", title: "Montags geschlossen", text: "Uffizien, Accademia und Palazzo Pitti haben montags Ruhetag. Deshalb ist Montag der Ausflugstag." },
+  { icon: "plane", title: "Flughafen → Stadt", text: "Von Florenz (FLR) mit der Tram T2 bis Unità in ca. 20 Min. Von Pisa (PSA) mit dem PisaMover und Zug in ca. 1 Std. 15 Min." },
+  { icon: "train-front", title: "Zug", text: "Regionalzüge (Pisa, Lucca) am Bahnsteig oder in der Trenitalia-App kaufen; Papiertickets vor der Fahrt entwerten." },
+  { icon: "church", title: "Kirchen", text: "Schultern und Knie bedeckt, sonst kein Einlass. Während Messen keine Besichtigung." },
+  { icon: "euro", title: "Bezahlen & Trinkgeld", text: "„Coperto“ (Gedeck) steht auf der Rechnung und ist normal. Trinkgeld freiwillig, Aufrunden reicht. Kurtaxe zahlt man im Hotel." },
+  { icon: "coffee", title: "Café wie die Italiener", text: "Espresso am Tresen ist deutlich günstiger als am Tisch. Cappuccino nur bis mittags." },
+  { icon: "siren", title: "Notruf", text: "112 – europaweite Notrufnummer." }
 ];
 
 (window.TRIPS ||= []).push({ ...TRIP, images: IMAGES, days: DAYS, cats: CATS, places: PLACES, checklists: CHECKLISTS, infos: INFOS });

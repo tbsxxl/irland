@@ -11,7 +11,7 @@ const SHOTS = process.argv[3];
   for (const [name, opts] of [
     ["mobil", { viewport: { width: 390, height: 844 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true }],
     ["desktop", { viewport: { width: 1280, height: 900 } }],
-    ["dunkel", { viewport: { width: 390, height: 844 }, colorScheme: "dark", isMobile: true }]
+    ["tablet", { viewport: { width: 820, height: 1180 }, isMobile: true, hasTouch: true }]
   ]) {
     const ctx = await browser.newContext({ ...opts, serviceWorkers: "block", locale: "de-DE" });
     const page = await ctx.newPage();

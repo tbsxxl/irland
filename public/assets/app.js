@@ -1,10 +1,15 @@
 /* Reise-App: Übersicht aller Reisen unter / und je Reise Plan, Entdecken (Karte + Liste) und Infos unter /<id>/.
-   Daten kommen aus assets/trips/<id>.js (window.TRIPS). */
+   Daten kommen aus assets/trips/<id>.js (window.TRIPS), Icons aus assets/icons.svg (Lucide). */
 (() => {
   "use strict";
   const TRIPS = window.TRIPS || [];
+  // CARTO-Basemaps-Schlüssel (nur für Kartenkacheln; im CARTO-Dashboard auf die eigene Domain beschränken)
+  const CARTO_KEY = "cb1_45hl_1_a993a77a0790827a9e06d41f";
+
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const ic = (name) => `<svg class="i" aria-hidden="true"><use href="/assets/icons.svg#${esc(name)}"/></svg>`;
+  const num = (n) => String(n).replace(".", ",");
 
   // ---------- Reisezeitraum ----------
   const DAY_MS = 864e5;
@@ -15,9 +20,9 @@
   }
   function tripStatus(trip) {
     const i = dayIndex(trip), n = trip.days.length;
-    if (i < 0) return { kind: "soon", days: -i, text: i === -1 ? "✈️ Morgen geht’s los" : `⏳ Noch ${-i} Tage` };
-    if (i < n) return { kind: "now", days: 0, text: `📍 Heute: Tag ${i + 1} von ${n}` };
-    return { kind: "past", days: i, text: "✓ Reise abgeschlossen" };
+    if (i < 0) return { kind: "soon", days: -i, icon: "clock", text: i === -1 ? "Morgen geht’s los" : `Noch ${-i} Tage` };
+    if (i < n) return { kind: "now", days: 0, icon: "map-pin", text: `Heute: Tag ${i + 1} von ${n}` };
+    return { kind: "past", days: i, icon: "check", text: "Abgeschlossen" };
   }
   function dateRange(trip) {
     const a = dateOf(trip.start), b = dateOf(trip.end || trip.start);
@@ -26,10 +31,7 @@
       ? `${a.getDate()}.–${f(b, { day: "numeric", month: "long", year: "numeric" })}`
       : `${f(a, { day: "numeric", month: "short" })} – ${f(b, { day: "numeric", month: "short", year: "numeric" })}`;
   }
-  function setTheme(theme, color) {
-    document.documentElement.dataset.theme = theme;
-    document.querySelector('meta[name="theme-color"]').content = color;
-  }
+  const setStatus = (st) => { $("#status").innerHTML = st ? `${ic(st.icon)}${esc(st.text)}` : ""; };
   function registerSW() {
     if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
@@ -38,28 +40,33 @@
 
   // ---------- Übersicht aller Reisen ----------
   function renderHub() {
-    setTheme("hub", "#23495B");
     const order = { now: 0, soon: 1, past: 2 };
     const list = TRIPS.map((t) => ({ t, st: tripStatus(t) }))
       .sort((a, b) => order[a.st.kind] - order[b.st.kind] ||
         (a.st.kind === "past" ? b.t.start.localeCompare(a.t.start) : a.t.start.localeCompare(b.t.start)));
     const next = list.find((x) => x.st.kind !== "past");
     $("#subtitle").textContent = `${TRIPS.length} ${TRIPS.length === 1 ? "Reise" : "Reisen"} · Pläne, Karten & Checklisten`;
-    $("#status").textContent = !next ? "" : next.st.kind === "now"
-      ? `📍 Unterwegs: ${next.t.title}` : `✈️ Nächste Reise: ${next.t.title} in ${next.st.days} ${next.st.days === 1 ? "Tag" : "Tagen"}`;
-    $("#hubList").innerHTML = list.length ? list.map(({ t, st }) => {
-      const pill = st.kind === "past" ? `<span class="pill">✓ vorbei</span>`
-        : `<span class="pill ${st.kind === "now" ? "today" : "next"}">${esc(st.kind === "now" ? st.text.replace("📍 ", "") : st.text.replace("⏳ ", ""))}</span>`;
-      return `<a class="card trip-card ${st.kind === "past" ? "is-past" : ""}" href="/${esc(t.id)}/">
-        <img src="${esc(t.icon)}" alt="" width="72" height="72">
-        <div>
-          <div class="t">${esc(t.title)} ${esc(t.flag || "")}</div>
-          <div class="s">${esc(dateRange(t))}</div>
-          <div class="pills">${pill}<span class="pill">${t.days.length} Tage · ${t.places.length} Orte</span></div>
-        </div>
-        <span class="go" aria-hidden="true">›</span>
-      </a>`;
-    }).join("") : `<div class="card hub-empty">Noch keine Reise angelegt.</div>`;
+    setStatus(next && (next.st.kind === "now"
+      ? { icon: "map-pin", text: `Unterwegs: ${next.t.title}` }
+      : { icon: "plane", text: `${next.t.title} in ${next.st.days} ${next.st.days === 1 ? "Tag" : "Tagen"}` }));
+
+    const card = ({ t, st }) => `<a class="trip-card t-${esc(t.theme)} ${st.kind === "past" ? "is-past" : ""}" href="/${esc(t.id)}/">
+      <div class="trip-cover">
+        <img src="${esc(t.icon)}" alt="" width="56" height="56">
+        <div><div class="t">${esc(t.title)}</div><div class="d">${esc(dateRange(t))}</div></div>
+        <span class="badge">${esc(st.kind === "past" ? "Vorbei" : st.text)}</span>
+      </div>
+      <div class="trip-foot">
+        <span>${ic("calendar-days")}${t.days.length} Tage</span>
+        <span>${ic("map-pin")}${t.places.length} Orte</span>
+        <span class="go">${ic("chevron-right")}</span>
+      </div>
+    </a>`;
+    const upcoming = list.filter((x) => x.st.kind !== "past"), past = list.filter((x) => x.st.kind === "past");
+    $("#hubList").innerHTML = !list.length ? `<div class="card empty">Noch keine Reise angelegt.</div>` : [
+      upcoming.length ? `<div class="section"><div class="group-label">Anstehend</div><div class="hub-list">${upcoming.map(card).join("")}</div></div>` : "",
+      past.length ? `<div class="section"><div class="group-label">Vergangen</div><div class="hub-list">${past.map(card).join("")}</div></div>` : ""
+    ].join("");
     registerSW();
   }
 
@@ -96,69 +103,76 @@
     const h = Math.sin(dLat / 2) ** 2 + Math.cos(a.lat * rad) * Math.cos(b.lat * rad) * Math.sin(dLng / 2) ** 2;
     return 2 * R * Math.asin(Math.sqrt(h));
   }
-  const fmtKm = (d) => d < 1 ? `${Math.round(d * 1000 / 10) * 10} m` : `${d.toFixed(1).replace(".", ",")} km`;
+  const fmtKm = (d) => d < 1 ? `${Math.round(d * 100) * 10} m` : `${num(d.toFixed(1))} km`;
   const walk = (d) => { const m = Math.round(d * 13); return m < 60 ? `${Math.max(m, 1)} Min.` : `${Math.floor(m / 60)} Std. ${m % 60} Min.`; };
   const mapsSearch = (p) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " " + TRIP.center.name);
   const mapsRoute = (p) => `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
-  const ext = (url, label, cls = "btn btn-sm") => `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`;
+  const ext = (url, label, icon = "arrow-up-right", cls = "btn") =>
+    `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${ic(icon)}${esc(label)}</a>`;
+  const linkIcon = (label) => /ticket/i.test(label) ? "ticket" : /reserv/i.test(label) ? "utensils" : /karte/i.test(label) ? "map" : "arrow-up-right";
 
-  const tripDayIndex = () => dayIndex(TRIP);
+  // Bezugspunkt für Entfernungen: eigener Standort, sonst Hotel, sonst ein fester Punkt der Reise (z. B. der Dom)
+  const home = () => TRIP.hotel || TRIP.base;
+  const homeLabel = () => TRIP.hotel ? "vom Hotel" : TRIP.base.label;
 
   function renderHeader() {
-    setTheme(TRIP.theme, TRIP.themeColor);
+    document.documentElement.dataset.theme = TRIP.theme;
     document.title = `${TRIP.title} – Reiseplan`;
     $("#hubView").hidden = true;
     $("#tripView").hidden = false;
     $("#back").hidden = false;
     $("#heroIcon").src = TRIP.icon;
+    $("#eyebrow").textContent = dateRange(TRIP);
     $("#title").textContent = TRIP.title;
-    $("#wxTitle").textContent = "Wetter in " + TRIP.center.name;
     $("#subtitle").textContent = TRIP.subtitle;
-    $("#status").textContent = tripStatus(TRIP).text;
-    if (TRIP.notice) { $("#notice").textContent = "📝 " + TRIP.notice; $("#noticeBox").hidden = false; }
+    $("#wxTitle").textContent = "Wetter in " + TRIP.center.name;
+    setStatus(tripStatus(TRIP));
+    if (TRIP.notice) { $("#notice").textContent = TRIP.notice; $("#noticeBox").hidden = false; }
   }
 
   // ---------- Plan ----------
   function renderFacts() {
     $("#facts").innerHTML = TRIP.facts.map((f) =>
-      `<div class="card fact"><div class="label">${esc(f.label)}</div><div class="value">${esc(f.value)}</div></div>`).join("");
+      `<div class="row"><div class="k">${esc(f.label)}</div><div class="v">${esc(f.value)}</div></div>`).join("");
     $("#cost").textContent = TRIP.cost || "";
   }
 
   function renderDays() {
-    const today = tripDayIndex();
+    const today = dayIndex(TRIP);
     const now = new Date();
     const hhmm = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
 
     $("#daynav").innerHTML = DAYS.map((d, i) =>
-      `<a href="#tag-${i + 1}" class="${i === today ? "is-today" : ""}"><b>${i + 1}</b>${esc(d.date.split(" ")[0])}</a>`).join("");
+      `<a href="#tag-${i + 1}" class="${i === today ? "is-today" : ""}"><small>${esc(d.date.split(" ")[0])}</small><b>${esc(parseInt(d.date.split(" ")[1], 10) || i + 1)}</b></a>`).join("");
 
     $("#days").innerHTML = DAYS.map((d, i) => {
       const isToday = i === today;
       const nowIdx = isToday ? d.stops.reduce((acc, s, j) => (s.time <= hhmm ? j : acc), -1) : -1;
       const img = d.image && IMAGES[d.image];
-      const pills = [
-        isToday ? `<span class="pill today">Heute</span>` : "",
-        d.tip ? `<span class="pill">${esc(d.tip)}</span>` : "",
-        d.ni ? `<span class="pill warn">🇬🇧 Nordirland: Pass & £</span>` : ""
+      const tags = [
+        isToday ? `<span class="tag today">Heute</span>` : "",
+        d.tip ? `<span class="tag">${ic("info")}${esc(d.tip)}</span>` : "",
+        d.ni ? `<span class="tag warn">${ic("id-card")}Nordirland: Pass & Pfund</span>` : ""
       ].join("");
       const stops = d.stops.map((s, j) => {
         const place = s.place && byId[s.place];
         const acts = [
-          ...(s.links || []).map((l) => ext(l.url, l.label)),
-          place && hasPos(place) ? `<a class="btn btn-sm" href="#entdecken/${esc(place.id)}">🗺️ Karte</a>` : ""
+          ...(s.links || []).map((l) => ext(l.url, l.label, linkIcon(l.label))),
+          place && hasPos(place) ? `<a class="btn" href="#entdecken/${esc(place.id)}">${ic("map-pin")}Karte</a>` : ""
         ].join("");
         const cls = isToday ? (j === nowIdx ? "is-now" : j < nowIdx ? "is-past" : "") : "";
         return `<li class="stop ${cls}">
           <div class="time">${esc(s.time)}</div>
-          <div class="body"><div class="txt">${esc(s.icon)} ${esc(s.text)}</div><div class="acts">${acts}</div></div>
+          <div class="tile">${ic(s.icon)}</div>
+          <div><div class="txt">${esc(s.text)}</div><div class="acts">${acts}</div></div>
         </li>`;
       }).join("");
       return `<article class="card day ${isToday ? "is-today" : ""}" id="tag-${i + 1}">
-        ${img ? `<div class="day-img"><img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" decoding="async" width="960" height="420"><a href="${esc(img.page)}" target="_blank" rel="noopener">Foto: Wikimedia</a></div>` : ""}
+        ${img ? `<div class="day-img"><img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" decoding="async" width="960" height="480"><a href="${esc(img.page)}" target="_blank" rel="noopener">Foto: Wikimedia</a></div>` : ""}
         <div class="day-head">
-          <div class="day-num">${i + 1}</div>
-          <div><div class="day-date">${esc(d.date)}</div><h3 class="day-title">${esc(d.title)}</h3><div class="pills">${pills}</div></div>
+          <div class="day-kicker">Tag ${i + 1} · ${esc(d.date)}</div>
+          <h3 class="day-title">${esc(d.title)}</h3>
+          ${tags ? `<div class="day-meta">${tags}</div>` : ""}
         </div>
         <ol class="timeline">${stops}</ol>
       </article>`;
@@ -169,20 +183,21 @@
   }
 
   // ---------- Wetter (Open-Meteo) ----------
-  const WX_ICONS = [[[0], "☀️", "Sonnig"], [[1, 2], "🌤️", "Heiter"], [[3], "☁️", "Bewölkt"], [[45, 48], "🌫️", "Nebel"],
-    [[51, 53, 55, 56, 57], "🌦️", "Niesel"], [[61, 63, 65, 66, 67, 80, 81, 82], "🌧️", "Regen"],
-    [[71, 73, 75, 77, 85, 86], "🌨️", "Schnee"], [[95, 96, 99], "⛈️", "Gewitter"]];
-  const wxIcon = (c) => (WX_ICONS.find(([codes]) => codes.includes(c)) || [null, "🌡️", ""]).slice(1);
+  const WX = [[[0], "sun", "Sonnig", "sun"], [[1, 2], "cloud-sun", "Heiter", "sun"], [[3], "cloud", "Bewölkt"], [[45, 48], "cloud-fog", "Nebel"],
+    [[51, 53, 55, 56, 57], "cloud-drizzle", "Niesel", "rain"], [[61, 63, 65, 66, 67, 80, 81, 82], "cloud-rain", "Regen", "rain"],
+    [[71, 73, 75, 77, 85, 86], "cloud-snow", "Schnee"], [[95, 96, 99], "cloud-lightning", "Gewitter", "rain"]];
 
   function drawWeather(data, stamp) {
     const d = data.daily;
     $("#weather").innerHTML = d.time.map((t, i) => {
-      const [icon, label] = wxIcon(d.weather_code[i]);
-      const day = new Date(t + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "numeric" });
-      return `<div class="card wx" title="${esc(label)}">
-        <div class="d">${esc(day)}</div><div class="i" aria-label="${esc(label)}">${icon}</div>
+      const [, icon, label, tone = ""] = WX.find(([codes]) => codes.includes(d.weather_code[i])) || [0, "cloud", ""];
+      const day = i === 0 ? "Heute" : new Date(t + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short" }).replace(".", "");
+      const rain = d.precipitation_probability_max[i];
+      return `<div class="wx" title="${esc(label)}">
+        <div class="d">${esc(day)}</div>
+        <div class="ic ${tone}" role="img" aria-label="${esc(label)}">${ic(icon)}</div>
         <div class="t">${Math.round(d.temperature_2m_max[i])}° <span>${Math.round(d.temperature_2m_min[i])}°</span></div>
-        <div class="r">💧 ${d.precipitation_probability_max[i] ?? "–"} % · 💨 ${Math.round(d.wind_speed_10m_max[i])}</div>
+        <div class="r">${rain >= 20 ? `${ic("droplet")}${rain} %` : "&nbsp;"}</div>
       </div>`;
     }).join("");
     $("#wxUpdated").textContent = "Stand " + new Date(stamp).toLocaleString("de-DE", { weekday: "short", hour: "2-digit", minute: "2-digit" });
@@ -201,7 +216,7 @@
       drawWeather(data, at);
     } catch {
       if (!cached) {
-        $("#weather").innerHTML = `<div class="wx-empty card">Keine Verbindung – Wetter später noch einmal laden.</div>`;
+        $("#weather").innerHTML = `<div class="wx-empty">Keine Verbindung – das Wetter lädt, sobald du wieder online bist.</div>`;
         $("#wxUpdated").textContent = "offline";
       }
     }
@@ -211,9 +226,6 @@
   const state = { cats: new Set(), q: "", near: false, sort: "cat", me: null, focus: null };
   let map = null, layer = null, markers = {}, meMarker = null;
 
-  // Bezugspunkt für Entfernungen: eigener Standort, sonst Hotel, sonst ein fester Punkt der Reise (z. B. der Dom)
-  const home = () => TRIP.hotel || TRIP.base;
-  const homeLabel = () => TRIP.hotel ? "vom Hotel" : TRIP.base.label;
   const refPoint = () => state.me || home();
   const refLabel = () => state.me ? "von dir" : homeLabel();
   const catsOf = (p) => p.cats.map((c) => CATS[c]).filter(Boolean);
@@ -228,72 +240,74 @@
       (!state.near || (hasPos(p) && km(home(), p) <= TRIP.near)));
   }
 
+  function syncChips() {
+    $("#chips").querySelectorAll(".chip").forEach((c) =>
+      c.setAttribute("aria-pressed", String(c.dataset.cat ? state.cats.has(c.dataset.cat) : state.cats.size === 0)));
+  }
   function renderChips() {
-    const chips = [`<button class="chip" type="button" data-cat="" aria-pressed="true">Alle</button>`]
+    $("#chips").innerHTML = [`<button class="chip" type="button" data-cat="" aria-pressed="true">Alle</button>`]
       .concat(Object.entries(CATS).map(([k, c]) =>
-        `<button class="chip" type="button" data-cat="${k}" aria-pressed="false" style="--c:${c.color}"><span class="dot"></span>${c.icon} ${esc(c.label)}</button>`));
-    $("#chips").innerHTML = chips.join("");
+        `<button class="chip" type="button" data-cat="${esc(k)}" aria-pressed="false" style="--c:${esc(c.color)}">${ic(c.icon)}${esc(c.label)}</button>`))
+      .join("");
     $("#chips").addEventListener("click", (e) => {
       const b = e.target.closest(".chip"); if (!b) return;
       const cat = b.dataset.cat;
       if (!cat) state.cats.clear();
       else state.cats.has(cat) ? state.cats.delete(cat) : state.cats.add(cat);
-      $("#chips").querySelectorAll(".chip").forEach((c) =>
-        c.setAttribute("aria-pressed", String(c.dataset.cat ? state.cats.has(c.dataset.cat) : state.cats.size === 0)));
+      syncChips();
       refresh();
     });
   }
 
-  function placeCard(p) {
+  function placeRow(p) {
     const cat = CATS[p.cats[0]];
     const d = hasPos(p) ? km(refPoint(), p) : null;
     const meta = [
-      p.rating ? `<span class="star">★ ${String(p.rating).replace(".", ",")}</span>` : "",
-      p.kind ? esc(p.kind) : "", p.price ? `<b>${esc(p.price)}</b>` : "",
-      d !== null ? `${fmtKm(d)} ${refLabel()}${d < 4 ? ` · 🚶 ${walk(d)}` : ""}` : ""
-    ].filter(Boolean).join(" · ");
+      p.rating ? `<span class="star">${ic("star")}${num(p.rating)}</span>` : "",
+      p.kind ? `<span>${esc(p.kind)}</span>` : "",
+      p.price ? `<span>${esc(p.price)}</span>` : "",
+      d !== null ? `<span>${fmtKm(d)} ${esc(refLabel())}${d < 4 ? ` · ${walk(d)} zu Fuß` : ""}</span>` : ""
+    ].filter(Boolean).join("");
     const acts = [
-      hasPos(p) ? `<button class="btn btn-sm" type="button" data-show="${esc(p.id)}">🗺️ Karte</button>` : "",
-      hasPos(p) ? ext(mapsRoute(p), "Route") : "",
-      p.url ? ext(p.url, "Website") : ext(mapsSearch(p), "Google Maps")
+      hasPos(p) ? `<button class="btn" type="button" data-show="${esc(p.id)}">${ic("map-pin")}Karte</button>` : "",
+      hasPos(p) ? ext(mapsRoute(p), "Route", "route") : "",
+      p.url ? ext(p.url, "Website", "globe") : ext(mapsSearch(p), "Suchen", "search")
     ].join("");
-    return `<article class="card place ${state.focus === p.id ? "is-focus" : ""}" id="p-${esc(p.id)}" style="--c:${cat.color}">
-      <div>
-        <div class="top"><div class="name">${esc(p.name)}${p.free ? `<span class="free">FREI</span>` : ""}</div></div>
+    return `<div class="row has-tile place ${state.focus === p.id ? "is-focus" : ""}" id="p-${esc(p.id)}">
+      <div class="tile" style="--c:${esc(cat.color)}">${ic(cat.icon)}</div>
+      <div class="main">
+        <div class="title">${esc(p.name)}${p.free ? `<span class="free">FREI</span>` : ""}</div>
         ${meta ? `<div class="meta">${meta}</div>` : ""}
         ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
         <div class="acts">${acts}</div>
       </div>
-    </article>`;
+    </div>`;
   }
 
   function renderList(list) {
-    $("#count").textContent = `${list.length} ${list.length === 1 ? "Ort" : "Orte"}${state.near ? ` im Umkreis von ${String(TRIP.near).replace(".", ",")} km ${TRIP.hotel ? "um das Hotel" : TRIP.base.around}` : ""}`;
-    if (!list.length) { $("#list").innerHTML = `<div class="empty card">Nichts gefunden. Filter zurücksetzen?</div>`; return; }
+    $("#count").textContent = `${list.length} ${list.length === 1 ? "Ort" : "Orte"}${state.near ? ` im Umkreis von ${num(TRIP.near)} km ${TRIP.hotel ? "um das Hotel" : TRIP.base.around}` : ""}`;
+    if (!list.length) { $("#list").innerHTML = `<div class="list empty">Nichts gefunden. Filter zurücksetzen?</div>`; return; }
     if (state.sort === "cat") {
       const groups = {};
-      list.forEach((p) => {
-        const g = p.cats.find((c) => state.cats.has(c)) || p.cats[0];
-        (groups[g] ||= []).push(p);
-      });
+      list.forEach((p) => { (groups[p.cats.find((c) => state.cats.has(c)) || p.cats[0]] ||= []).push(p); });
       $("#list").innerHTML = Object.keys(CATS).filter((k) => groups[k]).map((k) =>
-        `<h3 class="group-title">${CATS[k].icon} ${esc(CATS[k].label)} <span class="muted">${groups[k].length}</span></h3>
-         <div class="places">${groups[k].map(placeCard).join("")}</div>`).join("");
+        `<div class="group"><div class="group-label">${esc(CATS[k].label)} · ${groups[k].length}</div>
+         <div class="list">${groups[k].map(placeRow).join("")}</div></div>`).join("");
     } else {
       const sorted = [...list].sort(state.sort === "dist"
         ? (a, b) => (hasPos(a) ? km(refPoint(), a) : 1e9) - (hasPos(b) ? km(refPoint(), b) : 1e9)
         : (a, b) => (b.rating || 0) - (a.rating || 0));
-      $("#list").innerHTML = `<div class="places">${sorted.map(placeCard).join("")}</div>`;
+      $("#list").innerHTML = `<div class="group"><div class="list">${sorted.map(placeRow).join("")}</div></div>`;
     }
   }
 
   function popupHtml(p) {
-    const cats = catsOf(p).map((c) => c.icon + " " + c.label).join(" · ");
     const d = km(refPoint(), p);
-    return `<b>${esc(p.name)}</b><div class="muted">${esc(cats)}${p.rating ? ` · ★ ${String(p.rating).replace(".", ",")}` : ""}</div>
-      ${p.note ? `<div>${esc(p.note)}</div>` : ""}
-      <div class="muted">${fmtKm(d)} ${refLabel()} · 🚶 ${walk(d)}</div>
-      <div class="acts">${ext(mapsRoute(p), "Route", "btn btn-sm btn-primary")}${p.url ? ext(p.url, "Website") : ""}</div>`;
+    return `<div class="pt">${esc(p.name)}</div>
+      <div class="pm">${esc(catsOf(p).map((c) => c.label).join(" · "))}${p.rating ? ` · ★ ${num(p.rating)}` : ""}</div>
+      ${p.note ? `<div class="pn">${esc(p.note)}</div>` : ""}
+      <div class="pm">${fmtKm(d)} ${esc(refLabel())} · ${walk(d)} zu Fuß</div>
+      <div class="acts">${ext(mapsRoute(p), "Route", "route", "btn btn-fill")}${p.url ? ext(p.url, "Website", "globe") : ""}</div>`;
   }
 
   function refresh() {
@@ -307,37 +321,34 @@
     });
   }
 
-  function tileUrl() {
-    const dark = matchMedia("(prefers-color-scheme: dark)").matches;
-    return `https://{s}.basemaps.cartocdn.com/rastertiles/${dark ? "dark_all" : "voyager"}/{z}/{x}/{y}{r}.png`;
-  }
+  const pinIcon = (html, cls, size, color = "") => L.divIcon({
+    className: "", html: `<div class="${cls}"${color ? ` style="--c:${esc(color)}"` : ""}>${html}</div>`,
+    iconSize: [size, size], iconAnchor: [size / 2, size / 2], popupAnchor: [0, -size / 2]
+  });
 
   function initMap() {
     if (map || !window.L) return;
     map = L.map("map", { scrollWheelZoom: false, zoomControl: false }).setView([TRIP.center.lat, TRIP.center.lng], TRIP.center.zoom || 14);
     L.control.zoom({ position: "bottomright" }).addTo(map);
-    const tiles = L.tileLayer(tileUrl(), {
-      subdomains: "abcd", maxZoom: 19, detectRetina: false,
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OSM</a> © <a href="https://carto.com/attributions">CARTO</a>'
+    L.tileLayer(`https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
+      maxZoom: 19,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>'
     }).addTo(map);
-    matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => tiles.setUrl(tileUrl()));
-    map.attributionControl.setPrefix(false);
+    map.attributionControl.setPrefix(false).setPosition("bottomleft");
 
     layer = L.layerGroup().addTo(map);
     PLACES.filter(hasPos).forEach((p) => {
-      const color = CATS[p.cats[0]].color;
-      const m = L.circleMarker([p.lat, p.lng], { radius: 8, color: "#fff", weight: 2, fillColor: color, fillOpacity: 1 })
-        .bindPopup(popupHtml(p), { maxWidth: 260 })
-        .bindTooltip(p.name, { direction: "top", offset: [0, -6] });
+      const cat = CATS[p.cats[0]];
+      const m = L.marker([p.lat, p.lng], { icon: pinIcon(ic(cat.icon), "pin", 26, cat.color), title: p.name, riseOnHover: true })
+        .bindPopup(popupHtml(p), { maxWidth: 270 });
       m.on("popupopen", () => highlight(p.id));
       markers[p.id] = m;
     });
 
     const H = TRIP.hotel;
-    if (H) L.marker([H.lat, H.lng], {
-      title: H.name, zIndexOffset: 1000,
-      icon: L.divIcon({ className: "", html: `<div class="pin-hotel"><span>🏨</span></div>`, iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -30] })
-    }).addTo(map).bindPopup(`<b>${esc(H.name)}</b><div class="muted">${esc(H.address)}</div><div class="acts">${ext(H.url, "Website")}</div>`);
+    if (H) L.marker([H.lat, H.lng], { title: H.name, zIndexOffset: 1000, icon: pinIcon(ic("bed-double"), "pin pin-home", 34) })
+      .addTo(map)
+      .bindPopup(`<div class="pt">${esc(H.name)}</div><div class="pm">${esc(H.address)}</div><div class="acts">${ext(H.url, "Website", "globe")}</div>`);
 
     refresh();
   }
@@ -349,24 +360,24 @@
   }
 
   function showOnMap(id) {
-    const p = byId[id]; if (!p || !hasPos(p)) return;
+    const p = byId[id]; if (!p || !hasPos(p) || !map) return;
     // Ort sichtbar machen, falls er gerade herausgefiltert ist
     if (!visiblePlaces().some((x) => x.id === id)) {
       state.cats.clear(); state.q = ""; state.near = false;
       $("#q").value = ""; $("#nearBtn").setAttribute("aria-pressed", "false");
-      $("#chips").querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(!c.dataset.cat)));
+      syncChips();
       refresh();
     }
     highlight(id);
-    $("#map").scrollIntoView({ behavior: "smooth", block: "start" });
+    $(".mapbox").scrollIntoView({ behavior: "smooth", block: "start" });
     map.setView([p.lat, p.lng], Math.max(map.getZoom(), 16), { animate: true });
     markers[id].openPopup();
   }
 
   function locate() {
     const btn = $("#locateBtn");
-    if (!navigator.geolocation) { btn.textContent = "📍 Nicht verfügbar"; return; }
-    btn.textContent = "📍 Suche …";
+    if (!navigator.geolocation || !map) return;
+    btn.setAttribute("aria-busy", "true");
     navigator.geolocation.getCurrentPosition((pos) => {
       const { latitude: lat, longitude: lng, accuracy } = pos.coords;
       state.me = { lat, lng };
@@ -375,23 +386,29 @@
           .addTo(map).bindPopup(`Du bist hier (± ${Math.round(accuracy)} m)`);
       } else meMarker.setLatLng([lat, lng]);
       map.setView([lat, lng], Math.max(map.getZoom(), 15));
-      btn.textContent = "📍 Standort aktiv";
       btn.setAttribute("aria-pressed", "true");
+      btn.removeAttribute("aria-busy");
       refresh();
-    }, () => { btn.textContent = "📍 Kein Zugriff"; setTimeout(() => (btn.textContent = "📍 Mein Standort"), 2500); },
+    }, () => { btn.removeAttribute("aria-busy"); btn.title = "Kein Zugriff auf den Standort"; },
     { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 });
   }
 
   function initDiscover() {
-    $("#nearBtn").textContent = `${TRIP.hotel ? "🏨" : "📍"} ≤ ${String(TRIP.near).replace(".", ",")} km ${homeLabel()}`;
+    $("#nearBtn").innerHTML = `${ic(TRIP.hotel ? "bed-double" : "map-pin")}≤ ${num(TRIP.near)} km ${esc(homeLabel())}`;
+    $("#q").placeholder = `Suchen in ${PLACES.length} Orten`;
     renderChips();
     let t;
     $("#q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value.trim(); refresh(); }, 120); });
-    $("#sort").addEventListener("change", (e) => { state.sort = e.target.value; refresh(); });
+    $("#sort").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-sort]"); if (!b) return;
+      state.sort = b.dataset.sort;
+      $("#sort").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      refresh();
+    });
     $("#nearBtn").addEventListener("click", (e) => {
       state.near = !state.near;
       e.currentTarget.setAttribute("aria-pressed", String(state.near));
-      if (map) state.near ? map.setView([home().lat, home().lng], 15) : null;
+      if (map && state.near) map.setView([home().lat, home().lng], 15);
       refresh();
     });
     $("#locateBtn").addEventListener("click", locate);
@@ -405,23 +422,23 @@
   // ---------- Infos ----------
   function renderInfos() {
     const H = TRIP.hotel;
-    $("#hotel").innerHTML = !H ? `<div><div class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Hotel</div>
-      <div style="font-weight:600">Noch nicht eingetragen</div><div class="muted" style="font-size:14px">Entfernungen gelten bis dahin ${esc(TRIP.base.label)}.</div></div>` : `<div><div class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Hotel</div>
-      <div style="font-weight:600">${esc(H.name)}</div><div class="muted" style="font-size:14px">${esc(H.address)}</div></div>
-      <div class="acts">${ext(mapsRoute(H), "Route", "btn btn-sm btn-primary")}${ext(H.url, "Website")}</div>`;
+    $("#hotel").innerHTML = H
+      ? `<div class="row has-tile"><div class="tile">${ic("bed-double")}</div>
+          <div class="main"><div class="title">${esc(H.name)}</div><div class="text">${esc(H.address)}</div>
+          <div class="acts" style="margin-top:10px">${ext(mapsRoute(H), "Route", "route", "btn btn-fill")}${ext(H.url, "Website", "globe")}</div></div></div>`
+      : `<div class="row has-tile"><div class="tile" style="--c:#8E8E93">${ic("bed-double")}</div>
+          <div class="main"><div class="title">Noch nicht eingetragen</div><div class="text">Entfernungen gelten bis dahin ${esc(TRIP.base.label)}.</div></div></div>`;
 
     const checks = store.get("checks", {});
-    $("#checklists").innerHTML = CHECKLISTS.map((l) => `<div class="card" data-list="${esc(l.id)}">
-      <div class="check-head"><h3>${esc(l.title)}</h3><span class="muted" data-progress></span></div>
-      <div class="progress"><i></i></div>
-      <ul class="checklist">${l.items.map((it) => {
+    $("#checklists").innerHTML = CHECKLISTS.map((l) => `<div data-list="${esc(l.id)}">
+      <div class="check-head"><div class="group-label">${esc(l.title)}</div><span class="muted" data-progress></span></div>
+      <div class="list">${l.items.map((it) => {
         const key = l.id + "." + it.id;
-        return `<li><label><input type="checkbox" data-key="${esc(key)}" ${checks[key] ? "checked" : ""}><span>${esc(it.text)}</span></label></li>`;
-      }).join("")}</ul></div>`).join("");
+        return `<label class="row check"><input type="checkbox" data-key="${esc(key)}" ${checks[key] ? "checked" : ""}><span>${esc(it.text)}</span></label>`;
+      }).join("")}</div></div>`).join("");
     const progress = () => document.querySelectorAll("[data-list]").forEach((box) => {
-      const all = box.querySelectorAll("input"), done = box.querySelectorAll("input:checked");
-      box.querySelector("[data-progress]").textContent = `${done.length}/${all.length}`;
-      box.querySelector(".progress i").style.width = (done.length / all.length * 100) + "%";
+      const all = box.querySelectorAll("input").length, done = box.querySelectorAll("input:checked").length;
+      box.querySelector("[data-progress]").textContent = done === all ? "Alles erledigt" : `${done} von ${all}`;
     });
     $("#checklists").addEventListener("change", (e) => {
       const k = e.target.dataset.key; if (!k) return;
@@ -433,10 +450,10 @@
     progress();
 
     $("#infolist").innerHTML = INFOS.map((i) =>
-      `<div class="card info"><div class="ic" aria-hidden="true">${i.icon}</div><div><h3>${esc(i.title)}</h3><p>${esc(i.text)}</p></div></div>`).join("");
+      `<div class="row has-tile info-row"><div class="tile">${ic(i.icon)}</div><div class="main"><div class="title">${esc(i.title)}</div><div class="text">${esc(i.text)}</div></div></div>`).join("");
   }
 
-  // ---------- Tabs (über die Adresse: #plan, #entdecken, #entdecken/<ort>, #infos, #tag-3) ----------
+  // ---------- Reiter (über die Adresse: #plan, #entdecken, #entdecken/<ort>, #infos, #tag-3) ----------
   const TABS = ["plan", "entdecken", "infos"];
   function route() {
     const h = decodeURIComponent(location.hash.slice(1));
@@ -459,7 +476,6 @@
     TABS.forEach((t) => $("#tab-" + t).addEventListener("click", () => {
       if (location.hash === "#" + t) route(); else location.hash = t;
     }));
-    // Pfeiltasten in der Tab-Leiste
     $(".tablist").addEventListener("keydown", (e) => {
       if (!["ArrowLeft", "ArrowRight"].includes(e.key)) return;
       const cur = TABS.findIndex((t) => $("#tab-" + t).getAttribute("aria-selected") === "true");

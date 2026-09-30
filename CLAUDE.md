@@ -11,7 +11,14 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Alte Links `/#entdecken` usw. leiten nach `/irland/#…` weiter.
 - Reiter über die Adresse: `#plan`, `#entdecken`, `#entdecken/<ort-id>`, `#infos`, `#tag-3`.
 - Florenz ist ein Entwurf: `hotel: null`, Entfernungen ab `base` (Dom); Flugzeiten fehlen noch.
-- Selbst gehostet: Schriften (Inter, Fraunces), Leaflet 1.9.4 unter `assets/vendor/`. Extern nur Karten-Kacheln (CARTO),
+- Design: hell (kein Dunkelmodus), Apple-Stil – Systemschrift (SF Pro, sonst Inter), große Überschrift, iOS-Listen
+  (`.list` > `.row`, farbige `.tile`), Segmented Control, Tab-Leiste unten auf dem Handy. Akzentfarbe je Reise über
+  `[data-theme="<id>"], .t-<id>` in `app.css` (`--brand`, `--grad-a/b`). Keine Emojis in der Oberfläche.
+- Icons: Lucide-Sprite `public/assets/icons.svg`, eingebunden per `ic("name")` in `app.js`. `icon:` in den Reisedaten
+  sind Lucide-Namen. Neue Icons: `tools/build-icons.js` neu ausführen (Anleitung im Kopf der Datei).
+  App-Icons der Reisen als SVG in `public/icons/` (Verlauf + weiße Linien), `reisen.svg` → PNGs fürs Manifest.
+- Karte: CARTO Voyager mit API-Schlüssel (`CARTO_KEY` oben in `app.js`), Attribution OSM + CARTO muss sichtbar bleiben.
+- Selbst gehostet: Schrift Inter, Leaflet 1.9.4 unter `assets/vendor/`. Extern nur Karten-Kacheln (CARTO),
   Wetter (Open-Meteo) und Fotos (Wikimedia) – bei neuen Quellen die CSP in `public/_headers` erweitern.
 - Browser-Speicher pro Reise mit Präfix `<id>.`: `checks` (Checklisten), `wx` (letzte Wettervorhersage), `tab`.
 - Bei Änderungen an Dateien unter `public/assets/`: `?v=` in `index.html` und `sw.js` sowie `VERSION` in `sw.js` hochzählen.
