@@ -1,36 +1,46 @@
 <!doctype html>
-<html lang="de">
+<html lang="de" data-theme="hub">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Dublin & Nordirland – Reiseplan</title>
-  <meta name="description" content="8 Tage Dublin & Nordirland: Tagesplan, Karte mit allen Tipps, Wetter und Checklisten.">
-  <meta name="theme-color" content="#1E6A4E">
+  <title>Reisen</title>
+  <meta name="description" content="Alle Reisen: Tagesplan, Karte mit allen Tipps, Wetter und Checklisten.">
+  <meta name="theme-color" content="#23495B">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Irland">
+  <meta name="apple-mobile-web-app-title" content="Reisen">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
   <link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/assets/app.css?v=1">
-  <script src="/assets/data.js?v=1" defer></script>
+  <link rel="stylesheet" href="/assets/app.css?v=2">
+  <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
+  <script src="/assets/trips/florenz.js?v=2" defer></script>
+  <script src="/assets/trips/irland.js?v=2" defer></script>
   <script src="/assets/vendor/leaflet/leaflet.js" defer></script>
-  <script src="/assets/app.js?v=1" defer></script>
+  <script src="/assets/app.js?v=2" defer></script>
 </head>
 <body>
   <header class="hero">
     <div class="wrap">
-      <img src="/icons/icon-192.png" alt="" width="64" height="64">
-      <div>
-        <h1 id="title">Dublin & Nordirland</h1>
-        <p id="subtitle">Solo-Reise · 16.–23. Oktober</p>
+      <img id="heroIcon" src="/icons/hub-192.png" alt="" width="64" height="64">
+      <div class="inner">
+        <a class="back" id="back" href="/" hidden>‹ Alle Reisen</a>
+        <h1 id="title">Reisen</h1>
+        <p id="subtitle"></p>
         <div class="status" id="status"></div>
       </div>
     </div>
   </header>
 
+  <div class="view" id="hubView">
+    <main class="wrap">
+      <div class="hub-list" id="hubList"></div>
+    </main>
+  </div>
+
+  <div class="view" id="tripView" hidden>
   <nav class="tabs" aria-label="Bereiche">
     <div class="wrap">
       <div class="tablist" role="tablist">
@@ -53,13 +63,14 @@
   <main class="wrap">
     <!-- ========= PLAN ========= -->
     <section class="panel" id="plan" role="tabpanel" aria-labelledby="tab-plan">
+      <div class="section" id="noticeBox" hidden><div class="card notice" id="notice"></div></div>
       <div class="section">
         <div class="facts" id="facts"></div>
       </div>
 
       <div class="section">
         <div class="section-head">
-          <h2>Wetter in Dublin</h2>
+          <h2 id="wxTitle">Wetter</h2>
           <span class="muted" id="wxUpdated">lädt …</span>
         </div>
         <div class="weather" id="weather"><div class="wx-empty card">Hole Vorhersage …</div></div>
@@ -81,14 +92,14 @@
         <div id="map" role="region" aria-label="Karte"></div>
         <div class="maptools">
           <button class="btn btn-sm" type="button" id="locateBtn">📍 Mein Standort</button>
-          <button class="btn btn-sm" type="button" id="nearBtn" aria-pressed="false">🏨 ≤ 2 km vom Hotel</button>
+          <button class="btn btn-sm" type="button" id="nearBtn" aria-pressed="false">In der Nähe</button>
         </div>
       </div>
 
       <div class="filters">
         <div class="search">
           <label class="visually-hidden" for="q">Suche</label>
-          <input id="q" type="search" placeholder="Suchen: Whiskey, frei, Frühstück …" autocomplete="off" enterkeyhint="search">
+          <input id="q" type="search" placeholder="Suchen: Museum, frei, Frühstück …" autocomplete="off" enterkeyhint="search">
           <label class="visually-hidden" for="sort">Sortierung</label>
           <select id="sort">
             <option value="cat">Nach Thema</option>
@@ -118,6 +129,7 @@
       </div>
     </section>
   </main>
+  </div>
 
   <footer class="wrap">
     Wetter: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> ·
