@@ -1,16 +1,16 @@
 /* Offline: App-Dateien vorab (alle Reisen laufen über dieselbe Seite), Seite netzwerk-zuerst, Karten-Kacheln/Fotos/Wetter aus dem Cache als Rückfall.
    Bei Änderungen an App-Dateien VERSION hochzählen. */
-const VERSION = "v2";
+const VERSION = "v3";
 const APP = "irland-app-" + VERSION;
 const RUNTIME = "irland-runtime";
 const MAX_RUNTIME = 400;
 const PRECACHE = [
   "/", "/manifest.webmanifest",
-  "/assets/app.css?v=2", "/assets/app.js?v=2",
-  "/assets/trips/florenz.js?v=2", "/assets/trips/irland.js?v=2",
+  "/assets/app.css?v=3", "/assets/app.js?v=3", "/assets/icons.svg",
+  "/assets/trips/florenz.js?v=3", "/assets/trips/irland.js?v=3",
   "/assets/vendor/leaflet/leaflet.css", "/assets/vendor/leaflet/leaflet.js",
-  "/assets/fonts/inter.woff2", "/assets/fonts/fraunces.woff2",
-  "/icons/hub-192.png", "/icons/favicon-32.png", "/icons/irland-192.png", "/icons/florenz.svg"
+  "/assets/fonts/inter.woff2",
+  "/icons/favicon-32.png", "/icons/reisen.svg", "/icons/irland.svg", "/icons/florenz.svg"
 ];
 
 self.addEventListener("install", (e) => {

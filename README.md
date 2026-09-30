@@ -14,8 +14,9 @@ Läuft offline weiter (Service Worker) und lässt sich auf dem iPhone zum Homesc
    Daten, Tage, Orte, Kategorien, Checklisten und Infos anpassen. `hotel: null` ist erlaubt, dann gilt `base`.
 2. In `public/index.html` ein `<script src="/assets/trips/lissabon.js?v=…" defer>` ergänzen und die Datei in
    `public/sw.js` unter `PRECACHE` eintragen.
-3. Icon unter `public/icons/` ablegen (SVG reicht) und optional ein Farbschema `[data-theme="lissabon"]` in
-   `public/assets/app.css` anlegen (sonst grün wie Irland).
+3. Icon unter `public/icons/` ablegen (SVG wie `florenz.svg`) und ein Farbschema `[data-theme="lissabon"],.t-lissabon`
+   in `public/assets/app.css` anlegen (sonst Blau). `icon:`-Werte sind Namen von [Lucide](https://lucide.dev/icons)-Icons;
+   neue Namen mit `node tools/build-icons.js <lucide-static>/icons` in den Sprite übernehmen.
 
 Nach Änderungen an Dateien in `public/assets/` den `?v=` in `index.html` und `sw.js` sowie `VERSION` in `sw.js` hochzählen.
 

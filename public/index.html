@@ -5,136 +5,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Reisen</title>
   <meta name="description" content="Alle Reisen: Tagesplan, Karte mit allen Tipps, Wetter und Checklisten.">
-  <meta name="theme-color" content="#23495B">
+  <meta name="theme-color" content="#F2F2F7">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Reisen">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/assets/app.css?v=2">
+  <link rel="stylesheet" href="/assets/app.css?v=3">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=2" defer></script>
-  <script src="/assets/trips/irland.js?v=2" defer></script>
+  <script src="/assets/trips/florenz.js?v=3" defer></script>
+  <script src="/assets/trips/irland.js?v=3" defer></script>
   <script src="/assets/vendor/leaflet/leaflet.js" defer></script>
-  <script src="/assets/app.js?v=2" defer></script>
+  <script src="/assets/app.js?v=3" defer></script>
 </head>
 <body>
-  <header class="hero">
+  <header class="top">
     <div class="wrap">
-      <img id="heroIcon" src="/icons/hub-192.png" alt="" width="64" height="64">
-      <div class="inner">
-        <a class="back" id="back" href="/" hidden>‹ Alle Reisen</a>
-        <h1 id="title">Reisen</h1>
-        <p id="subtitle"></p>
-        <div class="status" id="status"></div>
+      <a class="back" id="back" href="/" hidden><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#chevron-left"/></svg>Reisen</a>
+      <div class="titlebar">
+        <div>
+          <p class="eyebrow" id="eyebrow"></p>
+          <h1 id="title">Reisen</h1>
+          <p class="sub" id="subtitle"></p>
+        </div>
+        <img class="appicon" id="heroIcon" src="/icons/reisen.svg" alt="" width="60" height="60">
       </div>
+      <div class="status" id="status"></div>
     </div>
   </header>
 
-  <div class="view" id="hubView">
+  <!-- ========= ÜBERSICHT ========= -->
+  <div id="hubView">
     <main class="wrap">
-      <div class="hub-list" id="hubList"></div>
+      <div id="hubList"></div>
     </main>
   </div>
 
-  <div class="view" id="tripView" hidden>
-  <nav class="tabs" aria-label="Bereiche">
-    <div class="wrap">
-      <div class="tablist" role="tablist">
-        <button class="tab" role="tab" id="tab-plan" aria-controls="plan" aria-selected="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="3"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>
-          Plan
-        </button>
-        <button class="tab" role="tab" id="tab-entdecken" aria-controls="entdecken" aria-selected="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
-          Entdecken
-        </button>
-        <button class="tab" role="tab" id="tab-infos" aria-controls="infos" aria-selected="false">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V6a3 3 0 0 1 3-3h9"/></svg>
-          Infos
-        </button>
-      </div>
-    </div>
-  </nav>
-
-  <main class="wrap">
-    <!-- ========= PLAN ========= -->
-    <section class="panel" id="plan" role="tabpanel" aria-labelledby="tab-plan">
-      <div class="section" id="noticeBox" hidden><div class="card notice" id="notice"></div></div>
-      <div class="section">
-        <div class="facts" id="facts"></div>
-      </div>
-
-      <div class="section">
-        <div class="section-head">
-          <h2 id="wxTitle">Wetter</h2>
-          <span class="muted" id="wxUpdated">lädt …</span>
-        </div>
-        <div class="weather" id="weather"><div class="wx-empty card">Hole Vorhersage …</div></div>
-      </div>
-
-      <div class="section">
-        <div class="section-head">
-          <h2>Tag für Tag</h2>
-          <span class="muted" id="cost"></span>
-        </div>
-        <nav class="daynav" id="daynav" aria-label="Tage"></nav>
-        <div class="days" id="days"></div>
-      </div>
-    </section>
-
-    <!-- ========= ENTDECKEN ========= -->
-    <section class="panel" id="entdecken" role="tabpanel" aria-labelledby="tab-entdecken" hidden>
-      <div class="card mapbox">
-        <div id="map" role="region" aria-label="Karte"></div>
-        <div class="maptools">
-          <button class="btn btn-sm" type="button" id="locateBtn">📍 Mein Standort</button>
-          <button class="btn btn-sm" type="button" id="nearBtn" aria-pressed="false">In der Nähe</button>
+  <!-- ========= REISE ========= -->
+  <div id="tripView" hidden>
+    <nav class="tabs" aria-label="Bereiche">
+      <div class="wrap">
+        <div class="tablist" role="tablist">
+          <button class="tab" role="tab" id="tab-plan" aria-controls="plan" aria-selected="true"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#calendar-days"/></svg>Plan</button>
+          <button class="tab" role="tab" id="tab-entdecken" aria-controls="entdecken" aria-selected="false"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#map"/></svg>Entdecken</button>
+          <button class="tab" role="tab" id="tab-infos" aria-controls="infos" aria-selected="false"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#list-checks"/></svg>Infos</button>
         </div>
       </div>
+    </nav>
 
-      <div class="filters">
-        <div class="search">
-          <label class="visually-hidden" for="q">Suche</label>
-          <input id="q" type="search" placeholder="Suchen: Museum, frei, Frühstück …" autocomplete="off" enterkeyhint="search">
-          <label class="visually-hidden" for="sort">Sortierung</label>
-          <select id="sort">
-            <option value="cat">Nach Thema</option>
-            <option value="dist">Nach Entfernung</option>
-            <option value="rating">Nach Bewertung</option>
-          </select>
+    <main class="wrap">
+      <!-- Plan -->
+      <section class="panel" id="plan" role="tabpanel" aria-labelledby="tab-plan">
+        <div class="section" id="noticeBox" hidden>
+          <div class="notice"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#pencil-line"/></svg><span id="notice"></span></div>
         </div>
-        <div class="chips" id="chips"></div>
-      </div>
+        <div class="section"><div class="list facts" id="facts"></div></div>
 
-      <div class="count" id="count" aria-live="polite"></div>
-      <div id="list"></div>
-    </section>
+        <div class="section">
+          <div class="section-head"><h2 id="wxTitle">Wetter</h2><span class="muted" id="wxUpdated">lädt …</span></div>
+          <div class="card weather" id="weather"><div class="wx-empty">Hole Vorhersage …</div></div>
+        </div>
 
-    <!-- ========= INFOS ========= -->
-    <section class="panel" id="infos" role="tabpanel" aria-labelledby="tab-infos" hidden>
-      <div class="section">
-        <div class="card hotel" id="hotel"></div>
-      </div>
-      <div class="section">
-        <div class="section-head"><h2>Checklisten</h2><span class="muted">wird auf diesem Gerät gespeichert</span></div>
-        <div class="checklists" id="checklists"></div>
-      </div>
-      <div class="section">
-        <div class="section-head"><h2>Gut zu wissen</h2></div>
-        <div class="infos" id="infolist"></div>
-      </div>
-    </section>
-  </main>
+        <div class="section">
+          <div class="section-head"><h2>Tag für Tag</h2><span class="muted" id="cost"></span></div>
+          <nav class="daynav" id="daynav" aria-label="Tage"></nav>
+          <div class="days" id="days"></div>
+        </div>
+      </section>
+
+      <!-- Entdecken -->
+      <section class="panel" id="entdecken" role="tabpanel" aria-labelledby="tab-entdecken" hidden>
+        <div class="mapbox">
+          <div id="map" role="region" aria-label="Karte"></div>
+          <div class="maptools">
+            <button class="float" type="button" id="nearBtn" aria-pressed="false">In der Nähe</button>
+            <button class="float round" type="button" id="locateBtn" aria-label="Mein Standort" title="Mein Standort"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#locate-fixed"/></svg></button>
+          </div>
+        </div>
+
+        <div class="filters">
+          <div class="search">
+            <svg class="i" aria-hidden="true"><use href="/assets/icons.svg#search"/></svg>
+            <label class="visually-hidden" for="q">Suche</label>
+            <input id="q" type="search" placeholder="Suchen" autocomplete="off" enterkeyhint="search">
+          </div>
+          <div class="segmented" id="sort" role="group" aria-label="Sortierung">
+            <button type="button" data-sort="cat" aria-pressed="true">Thema</button>
+            <button type="button" data-sort="dist" aria-pressed="false">Entfernung</button>
+            <button type="button" data-sort="rating" aria-pressed="false">Bewertung</button>
+          </div>
+          <div class="chips" id="chips"></div>
+        </div>
+
+        <div class="count" id="count" aria-live="polite"></div>
+        <div id="list"></div>
+      </section>
+
+      <!-- Infos -->
+      <section class="panel" id="infos" role="tabpanel" aria-labelledby="tab-infos" hidden>
+        <div class="section"><div class="group-label">Unterkunft</div><div class="list" id="hotel"></div></div>
+        <div class="section infos-2" id="checklists"></div>
+        <div class="section"><div class="group-label">Gut zu wissen</div><div class="list" id="infolist"></div></div>
+      </section>
+    </main>
   </div>
 
   <footer class="wrap">
     Wetter: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> ·
     Karte: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>, © <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> ·
-    Fotos: Wikimedia Commons
+    Icons: <a href="https://lucide.dev" target="_blank" rel="noopener">Lucide</a> · Fotos: Wikimedia Commons
   </footer>
 </body>
 </html>
