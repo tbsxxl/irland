@@ -1,12 +1,90 @@
-/* Reiseplan-App: Plan, Entdecken (Karte + Liste), Infos. Daten kommen aus data.js. */
+/* Reise-App: Übersicht aller Reisen unter / und je Reise Plan, Entdecken (Karte + Liste) und Infos unter /<id>/.
+   Daten kommen aus assets/trips/<id>.js (window.TRIPS). */
 (() => {
   "use strict";
-  const { TRIP, DAYS, PLACES, CATS, CHECKLISTS, INFOS, IMAGES } = window;
+  const TRIPS = window.TRIPS || [];
   const $ = (s, r = document) => r.querySelector(s);
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  // ---------- Reisezeitraum ----------
+  const DAY_MS = 864e5;
+  const dateOf = (iso) => new Date(iso + "T00:00:00");
+  function dayIndex(trip, now = new Date()) {
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.round((today - dateOf(trip.start)) / DAY_MS);
+  }
+  function tripStatus(trip) {
+    const i = dayIndex(trip), n = trip.days.length;
+    if (i < 0) return { kind: "soon", days: -i, text: i === -1 ? "✈️ Morgen geht’s los" : `⏳ Noch ${-i} Tage` };
+    if (i < n) return { kind: "now", days: 0, text: `📍 Heute: Tag ${i + 1} von ${n}` };
+    return { kind: "past", days: i, text: "✓ Reise abgeschlossen" };
+  }
+  function dateRange(trip) {
+    const a = dateOf(trip.start), b = dateOf(trip.end || trip.start);
+    const f = (d, o) => d.toLocaleDateString("de-DE", o);
+    return a.getMonth() === b.getMonth()
+      ? `${a.getDate()}.–${f(b, { day: "numeric", month: "long", year: "numeric" })}`
+      : `${f(a, { day: "numeric", month: "short" })} – ${f(b, { day: "numeric", month: "short", year: "numeric" })}`;
+  }
+  function setTheme(theme, color) {
+    document.documentElement.dataset.theme = theme;
+    document.querySelector('meta[name="theme-color"]').content = color;
+  }
+  function registerSW() {
+    if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+      navigator.serviceWorker.register("/sw.js").catch(() => {});
+    }
+  }
+
+  // ---------- Übersicht aller Reisen ----------
+  function renderHub() {
+    setTheme("hub", "#23495B");
+    const order = { now: 0, soon: 1, past: 2 };
+    const list = TRIPS.map((t) => ({ t, st: tripStatus(t) }))
+      .sort((a, b) => order[a.st.kind] - order[b.st.kind] ||
+        (a.st.kind === "past" ? b.t.start.localeCompare(a.t.start) : a.t.start.localeCompare(b.t.start)));
+    const next = list.find((x) => x.st.kind !== "past");
+    $("#subtitle").textContent = `${TRIPS.length} ${TRIPS.length === 1 ? "Reise" : "Reisen"} · Pläne, Karten & Checklisten`;
+    $("#status").textContent = !next ? "" : next.st.kind === "now"
+      ? `📍 Unterwegs: ${next.t.title}` : `✈️ Nächste Reise: ${next.t.title} in ${next.st.days} ${next.st.days === 1 ? "Tag" : "Tagen"}`;
+    $("#hubList").innerHTML = list.length ? list.map(({ t, st }) => {
+      const pill = st.kind === "past" ? `<span class="pill">✓ vorbei</span>`
+        : `<span class="pill ${st.kind === "now" ? "today" : "next"}">${esc(st.kind === "now" ? st.text.replace("📍 ", "") : st.text.replace("⏳ ", ""))}</span>`;
+      return `<a class="card trip-card ${st.kind === "past" ? "is-past" : ""}" href="/${esc(t.id)}/">
+        <img src="${esc(t.icon)}" alt="" width="72" height="72">
+        <div>
+          <div class="t">${esc(t.title)} ${esc(t.flag || "")}</div>
+          <div class="s">${esc(dateRange(t))}</div>
+          <div class="pills">${pill}<span class="pill">${t.days.length} Tage · ${t.places.length} Orte</span></div>
+        </div>
+        <span class="go" aria-hidden="true">›</span>
+      </a>`;
+    }).join("") : `<div class="card hub-empty">Noch keine Reise angelegt.</div>`;
+    registerSW();
+  }
+
+  // ---------- Welche Seite? ----------
+  const slug = decodeURIComponent(location.pathname.split("/").filter(Boolean)[0] || "");
+  const TRIP = TRIPS.find((t) => t.id === slug);
+  if (!TRIP) {
+    // Alte Links aus der Zeit, als die Seite nur Irland war (/#entdecken usw.)
+    const legacy = () => {
+      if (/^#(plan|entdecken|infos|tag-)/.test(location.hash) && TRIPS.some((t) => t.id === "irland")) {
+        location.replace("/irland/" + location.hash); return true;
+      }
+      return false;
+    };
+    if (!slug && legacy()) return;
+    if (slug) history.replaceState(null, "", "/");
+    window.addEventListener("hashchange", legacy);
+    renderHub();
+    return;
+  }
+
+  const { days: DAYS, places: PLACES, cats: CATS, checklists: CHECKLISTS, infos: INFOS, images: IMAGES = {} } = TRIP;
   const store = {
-    get(k, d) { try { const v = localStorage.getItem("irland." + k); return v ? JSON.parse(v) : d; } catch { return d; } },
-    set(k, v) { try { localStorage.setItem("irland." + k, JSON.stringify(v)); } catch { /* privat/voll */ } }
+    get(k, d) { try { const v = localStorage.getItem(TRIP.id + "." + k); return v ? JSON.parse(v) : d; } catch { return d; } },
+    set(k, v) { try { localStorage.setItem(TRIP.id + "." + k, JSON.stringify(v)); } catch { /* privat/voll */ } }
   };
   const byId = Object.fromEntries(PLACES.map((p) => [p.id, p]));
   const hasPos = (p) => typeof p.lat === "number" && typeof p.lng === "number";
@@ -20,34 +98,31 @@
   }
   const fmtKm = (d) => d < 1 ? `${Math.round(d * 1000 / 10) * 10} m` : `${d.toFixed(1).replace(".", ",")} km`;
   const walk = (d) => { const m = Math.round(d * 13); return m < 60 ? `${Math.max(m, 1)} Min.` : `${Math.floor(m / 60)} Std. ${m % 60} Min.`; };
-  const mapsSearch = (p) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " Dublin");
+  const mapsSearch = (p) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " " + TRIP.center.name);
   const mapsRoute = (p) => `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
   const ext = (url, label, cls = "btn btn-sm") => `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${esc(label)} ↗</a>`;
 
-  // ---------- Reisezeitraum ----------
-  const DAY_MS = 864e5;
-  const startDate = new Date(TRIP.start + "T00:00:00");
-  function tripDayIndex(now = new Date()) {
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    return Math.round((today - startDate) / DAY_MS);
-  }
+  const tripDayIndex = () => dayIndex(TRIP);
 
   function renderHeader() {
+    setTheme(TRIP.theme, TRIP.themeColor);
+    document.title = `${TRIP.title} – Reiseplan`;
+    $("#hubView").hidden = true;
+    $("#tripView").hidden = false;
+    $("#back").hidden = false;
+    $("#heroIcon").src = TRIP.icon;
     $("#title").textContent = TRIP.title;
+    $("#wxTitle").textContent = "Wetter in " + TRIP.center.name;
     $("#subtitle").textContent = TRIP.subtitle;
-    const i = tripDayIndex();
-    let s = "";
-    if (i < 0) s = i === -1 ? "✈️ Morgen geht’s los" : `⏳ Noch ${-i} Tage`;
-    else if (i < DAYS.length) s = `📍 Heute: Tag ${i + 1} von ${DAYS.length}`;
-    else s = "✓ Reise abgeschlossen";
-    $("#status").textContent = s;
+    $("#status").textContent = tripStatus(TRIP).text;
+    if (TRIP.notice) { $("#notice").textContent = "📝 " + TRIP.notice; $("#noticeBox").hidden = false; }
   }
 
   // ---------- Plan ----------
   function renderFacts() {
     $("#facts").innerHTML = TRIP.facts.map((f) =>
       `<div class="card fact"><div class="label">${esc(f.label)}</div><div class="value">${esc(f.value)}</div></div>`).join("");
-    $("#cost").textContent = TRIP.cost;
+    $("#cost").textContent = TRIP.cost || "";
   }
 
   function renderDays() {
@@ -116,7 +191,7 @@
   async function initWeather() {
     const cached = store.get("wx");
     if (cached) drawWeather(cached.data, cached.at);
-    const url = "https://api.open-meteo.com/v1/forecast?latitude=53.35&longitude=-6.26&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&wind_speed_unit=kmh&timezone=Europe%2FDublin&forecast_days=7";
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${TRIP.center.lat}&longitude=${TRIP.center.lng}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&wind_speed_unit=kmh&timezone=auto&forecast_days=7`;
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
@@ -136,8 +211,11 @@
   const state = { cats: new Set(), q: "", near: false, sort: "cat", me: null, focus: null };
   let map = null, layer = null, markers = {}, meMarker = null;
 
-  const refPoint = () => state.me || TRIP.hotel;
-  const refLabel = () => state.me ? "von dir" : "vom Hotel";
+  // Bezugspunkt für Entfernungen: eigener Standort, sonst Hotel, sonst ein fester Punkt der Reise (z. B. der Dom)
+  const home = () => TRIP.hotel || TRIP.base;
+  const homeLabel = () => TRIP.hotel ? "vom Hotel" : TRIP.base.label;
+  const refPoint = () => state.me || home();
+  const refLabel = () => state.me ? "von dir" : homeLabel();
   const catsOf = (p) => p.cats.map((c) => CATS[c]).filter(Boolean);
   const searchText = (p) => [p.name, p.note, p.kind, p.price, ...catsOf(p).map((c) => c.label), p.free ? "frei kostenlos gratis" : ""].join(" ").toLowerCase();
   PLACES.forEach((p) => { p._s = searchText(p); });
@@ -147,7 +225,7 @@
     return PLACES.filter((p) =>
       (state.cats.size === 0 || p.cats.some((c) => state.cats.has(c))) &&
       terms.every((t) => p._s.includes(t)) &&
-      (!state.near || (hasPos(p) && km(TRIP.hotel, p) <= 2)));
+      (!state.near || (hasPos(p) && km(home(), p) <= TRIP.near)));
   }
 
   function renderChips() {
@@ -190,7 +268,7 @@
   }
 
   function renderList(list) {
-    $("#count").textContent = `${list.length} ${list.length === 1 ? "Ort" : "Orte"}${state.near ? " im Umkreis von 2 km um das Hotel" : ""}`;
+    $("#count").textContent = `${list.length} ${list.length === 1 ? "Ort" : "Orte"}${state.near ? ` im Umkreis von ${String(TRIP.near).replace(".", ",")} km ${TRIP.hotel ? "um das Hotel" : TRIP.base.around}` : ""}`;
     if (!list.length) { $("#list").innerHTML = `<div class="empty card">Nichts gefunden. Filter zurücksetzen?</div>`; return; }
     if (state.sort === "cat") {
       const groups = {};
@@ -236,7 +314,7 @@
 
   function initMap() {
     if (map || !window.L) return;
-    map = L.map("map", { scrollWheelZoom: false, zoomControl: false }).setView([53.3455, -6.2635], 14);
+    map = L.map("map", { scrollWheelZoom: false, zoomControl: false }).setView([TRIP.center.lat, TRIP.center.lng], TRIP.center.zoom || 14);
     L.control.zoom({ position: "bottomright" }).addTo(map);
     const tiles = L.tileLayer(tileUrl(), {
       subdomains: "abcd", maxZoom: 19, detectRetina: false,
@@ -256,7 +334,7 @@
     });
 
     const H = TRIP.hotel;
-    L.marker([H.lat, H.lng], {
+    if (H) L.marker([H.lat, H.lng], {
       title: H.name, zIndexOffset: 1000,
       icon: L.divIcon({ className: "", html: `<div class="pin-hotel"><span>🏨</span></div>`, iconSize: [34, 34], iconAnchor: [17, 34], popupAnchor: [0, -30] })
     }).addTo(map).bindPopup(`<b>${esc(H.name)}</b><div class="muted">${esc(H.address)}</div><div class="acts">${ext(H.url, "Website")}</div>`);
@@ -305,6 +383,7 @@
   }
 
   function initDiscover() {
+    $("#nearBtn").textContent = `${TRIP.hotel ? "🏨" : "📍"} ≤ ${String(TRIP.near).replace(".", ",")} km ${homeLabel()}`;
     renderChips();
     let t;
     $("#q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value.trim(); refresh(); }, 120); });
@@ -312,7 +391,7 @@
     $("#nearBtn").addEventListener("click", (e) => {
       state.near = !state.near;
       e.currentTarget.setAttribute("aria-pressed", String(state.near));
-      if (map) state.near ? map.setView([TRIP.hotel.lat, TRIP.hotel.lng], 15) : null;
+      if (map) state.near ? map.setView([home().lat, home().lng], 15) : null;
       refresh();
     });
     $("#locateBtn").addEventListener("click", locate);
@@ -326,7 +405,8 @@
   // ---------- Infos ----------
   function renderInfos() {
     const H = TRIP.hotel;
-    $("#hotel").innerHTML = `<div><div class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Hotel</div>
+    $("#hotel").innerHTML = !H ? `<div><div class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Hotel</div>
+      <div style="font-weight:600">Noch nicht eingetragen</div><div class="muted" style="font-size:14px">Entfernungen gelten bis dahin ${esc(TRIP.base.label)}.</div></div>` : `<div><div class="muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:.04em">Hotel</div>
       <div style="font-weight:600">${esc(H.name)}</div><div class="muted" style="font-size:14px">${esc(H.address)}</div></div>
       <div class="acts">${ext(mapsRoute(H), "Route", "btn btn-sm btn-primary")}${ext(H.url, "Website")}</div>`;
 
@@ -399,7 +479,5 @@
   renderInfos();
   initTabs();
   initWeather();
-  if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
-    navigator.serviceWorker.register("/sw.js").catch(() => {});
-  }
+  registerSW();
 })();

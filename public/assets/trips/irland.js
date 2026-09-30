@@ -1,8 +1,16 @@
-/* Reisedaten: Plan, Orte, Checklisten. Alles, was man inhaltlich ändern will, steht hier. */
-window.TRIP = {
+/* Reise: Dublin & Nordirland (Oktober 2025). Aufbau siehe README.md. */
+(() => {
+const TRIP = {
+  id: "irland",
   title: "Dublin & Nordirland",
+  flag: "🇮🇪",
+  icon: "/icons/irland-192.png",
+  theme: "irland", themeColor: "#1E6A4E",
+  center: { lat: 53.3455, lng: -6.2635, zoom: 14, name: "Dublin" },
+  near: 2,
   subtitle: "Solo-Reise · 16.–23. Oktober",
   start: "2025-10-16",          // Tag 1 (für „Heute“-Markierung und Countdown)
+  end: "2025-10-23",
   cost: "€1.050–1.250 ohne Flug",
   hotel: {
     name: "Staycity Aparthotels Dublin City Quay",
@@ -20,7 +28,7 @@ window.TRIP = {
 
 /* Bilder von Wikimedia Commons (Lizenz/Urheber auf der jeweiligen Dateiseite). */
 const WM = "https://upload.wikimedia.org/wikipedia/commons/";
-window.IMAGES = {
+const IMAGES = {
   trinity: {
     src: WM + "thumb/d/d7/The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg/960px-The_entrance_of_the_historic_Trinity_College_%28Unsplash%29.jpg",
     alt: "Eingang des Trinity College Dublin",
@@ -44,7 +52,7 @@ window.IMAGES = {
 };
 
 /* Tagesplan. stop.place verweist auf eine Ort-ID aus PLACES (für „Karte“). */
-window.DAYS = [
+const DAYS = [
   {
     date: "Do 16.10.", title: "Ankunft & Temple Bar", tip: "Tipp: The Cobblestone (Live-Musik)",
     stops: [
@@ -133,7 +141,7 @@ window.DAYS = [
   }
 ];
 
-window.CATS = {
+const CATS = {
   hist:  { label: "Geschichte",  icon: "🏛️", color: "#8a5a2b" },
   brau:  { label: "Whiskey & Bier", icon: "🥃", color: "#c2701e" },
   kunst: { label: "Kunst",       icon: "🎨", color: "#8e4c8a" },
@@ -146,7 +154,7 @@ window.CATS = {
 };
 
 /* Orte. cats: erste Kategorie bestimmt die Farbe. Ohne lat/lng erscheint der Ort nur in der Liste. */
-window.PLACES = [
+const PLACES = [
   // Geschichte & Museen
   { id: "kilmainham", cats: ["hist"], name: "Kilmainham Gaol", rating: 4.6, note: "Ehemaliges Gefängnis, Führung unbedingt vorab buchen", lat: 53.34190, lng: -6.30953, url: "https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/" },
   { id: "guinness", cats: ["hist", "brau"], name: "Guinness Storehouse", rating: 4.3, note: "Mit Gravity Bar und Blick über die Stadt", lat: 53.34190, lng: -6.28670, url: "https://www.guinness-storehouse.com/" },
@@ -248,7 +256,7 @@ window.PLACES = [
 ];
 
 /* Checklisten (Häkchen werden nur im Browser gespeichert). */
-window.CHECKLISTS = [
+const CHECKLISTS = [
   {
     id: "book", title: "Buchungen",
     items: [
@@ -277,7 +285,7 @@ window.CHECKLISTS = [
   }
 ];
 
-window.INFOS = [
+const INFOS = [
   { icon: "🚌", title: "Flughafen → Stadt", text: "Dublin Express oder Aircoach bis O’Connell St./Custom House, ca. 30 Min. Zum Hotel am City Quay dann ca. 10 Min. zu Fuß." },
   { icon: "🎫", title: "Leap Visitor Card", text: "Am Flughafen (Spar, Travel Info) kaufen. Gilt 72 Std. ab der ersten Fahrt für Dublin Bus, Luas und DART – auch für Howth." },
   { icon: "🇬🇧", title: "Nordirland (Sa & So)", text: "Gehört zum Vereinigten Königreich: Pfund Sterling, Reisepass mitnehmen, EU-Roaming je nach Tarif nicht inklusive." },
@@ -285,3 +293,6 @@ window.INFOS = [
   { icon: "💶", title: "Bezahlen & Trinkgeld", text: "Karte geht fast überall. Im Restaurant 10–12,5 % Trinkgeld, falls kein Service Charge berechnet wird; im Pub unüblich." },
   { icon: "🆘", title: "Notruf", text: "112 oder 999 (Polizei, Rettung, Feuerwehr) – in Irland und Nordirland." }
 ];
+
+(window.TRIPS ||= []).push({ ...TRIP, images: IMAGES, days: DAYS, cats: CATS, places: PLACES, checklists: CHECKLISTS, infos: INFOS });
+})();
