@@ -1,0 +1,11 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "irland",
+  "compatibility_date": "2026-09-01",
+  // Reine statische Seite: Cloudflare liefert den Ordner public/ aus, kein Worker-Code.
+  "assets": {
+    "directory": "./public",
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "single-page-application"
+  }
+}
