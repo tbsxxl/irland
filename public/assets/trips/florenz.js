@@ -29,7 +29,7 @@ const IMAGES = {};
    Rom am Samstag, Oltrarno am Sonntag (Pitti offen), Ausflug am Montag (Uffizien, Accademia, Pitti zu). */
 const DAYS = [
   {
-    date: "Mi 11.11.", title: "Ankommen, Altstadt & Piazzale Michelangelo", tip: "Sonnenuntergang ca. 16:50",
+    date: "Mi 11.11.", image: "florenz", title: "Ankommen, Altstadt & Piazzale Michelangelo", tip: "Sonnenuntergang ca. 16:50",
     stops: [
       { time: "14:00", icon: "plane", text: "Ankunft & Transfer ins Hotel (ab FLR: Tram T2 bis Unità, ca. 20 Min.)" },
       { time: "15:15", icon: "footprints", text: "Erster Rundgang: Piazza della Signoria & Altstadt", place: "signoria" },
@@ -41,7 +41,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Do 12.11.", title: "Duomo, Kuppel & David", tip: "Kuppel nur mit gebuchtem Zeitfenster",
+    date: "Do 12.11.", image: "david", title: "Duomo, Kuppel & David", tip: "Kuppel nur mit gebuchtem Zeitfenster",
     stops: [
       { time: "08:30", icon: "church", text: "Kuppel des Brunelleschi besteigen (463 Stufen)", place: "duomo",
         links: [{ label: "Tickets", url: "https://duomo.firenze.it/" }] },
@@ -54,7 +54,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Fr 13.11.", title: "Uffizien, Palazzo Vecchio & Santa Croce", tip: "Uffizien: 8:15-Slot ist am ruhigsten",
+    date: "Fr 13.11.", image: "venus", title: "Uffizien, Palazzo Vecchio & Santa Croce", tip: "Uffizien: 8:15-Slot ist am ruhigsten",
     stops: [
       { time: "08:15", icon: "palette", text: "Uffizien: Geburt der Venus, Primavera, Leonardo, Michelangelo, Raffael, Caravaggio", place: "uffizi",
         links: [{ label: "Tickets", url: "https://www.uffizi.it/en/tickets" }] },
@@ -67,7 +67,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Sa 14.11.", title: "Tagesausflug Rom", tip: "Zug ca. 1:30 Std. – früh buchen spart viel",
+    date: "Sa 14.11.", image: "kolosseum", title: "Tagesausflug Rom", tip: "Zug ca. 1:30 Std. – früh buchen spart viel",
     alt: "Vatikan statt Kolosseum möglich",
     stops: [
       { time: "07:00", icon: "train-front", text: "Frecciarossa ab Firenze S.M.N. nach Roma Termini", place: "smn",
@@ -98,7 +98,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Mo 16.11.", title: "Ausflug Pisa & Lucca", tip: "Montags haben Uffizien, Accademia & Pitti zu",
+    date: "Mo 16.11.", image: "pisa", title: "Ausflug Pisa & Lucca", tip: "Montags haben Uffizien, Accademia & Pitti zu",
     alt: "Oder als Tour: Siena, San Gimignano, Pisa & Weingut (ab 86 €)",
     stops: [
       { time: "08:30", icon: "train-front", text: "Regionalzug nach Pisa Centrale (ca. 1 Std.)", place: "smn",
@@ -111,7 +111,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Di 17.11.", title: "Freier Tag, Shopping & Abschied", tip: "Leder: Scuola del Cuoio & Märkte um San Lorenzo",
+    date: "Di 17.11.", image: "pontevecchio", title: "Freier Tag, Shopping & Abschied", tip: "Leder: Scuola del Cuoio & Märkte um San Lorenzo",
     alt: "Oder: Pastakochkurs mit Wein (ab 25 €)",
     stops: [
       { time: "10:00", icon: "shopping-bag", text: "Leder-Shopping: Scuola del Cuoio hinter Santa Croce", place: "cuoio" },
@@ -306,6 +306,193 @@ const PLACES = [
   { id: "tonnarello", cats: ["rom", "food"], city: "Rom", rating: 4.9, reviews: 558, price: "€€–€€€", kind: "Römisch · Trastevere", name: "Tonnarello" },
   { id: "vaccinari", cats: ["rom", "food"], city: "Rom", rating: 4.9, reviews: 1823, price: "€€–€€€", kind: "Authentisch römisch", name: "I Vaccinari" }
 ];
+
+/* Weitere Einträge aus den Tripadvisor-Listen (Stand Okt. 2026, ohne gesponserte Einträge).
+   Ohne Koordinaten: erscheinen nur in der Liste, „Suchen“ öffnet die Kartensuche. */
+const TA = (q) => "https://www.tripadvisor.de/Search?q=" + encodeURIComponent(q);
+const fl = (id, cats, name, rating, reviews, extra = {}) => ({ id, cats, name, rating, reviews, ...extra });
+const eat = (id, name, rating, reviews, price, kind, extra = {}) => ({ id, cats: ["food"], name, rating, reviews, price, kind, ...extra });
+const tour = (id, name, rating, reviews, price, kind, extra = {}) =>
+  ({ id, cats: ["touren", ...(extra.cats || [])], name, rating, reviews, price: "ab " + price + " €", kind, url: TA(name + (extra.city ? " " + extra.city : " Florenz")), ...extra, ...(extra.cats ? { cats: ["touren", ...extra.cats] } : {}) });
+const rom = (id, name, rating, reviews, note, extra = {}) => ({ id, cats: ["rom"], city: "Rom", name, rating, reviews, note, ...extra });
+const romEat = (id, name, rating, reviews, price, kind, extra = {}) => ({ id, cats: ["rom", "food"], city: "Rom", name, rating, reviews, price, kind, ...extra });
+
+PLACES.push(
+  // Florenz: Sehenswürdigkeiten
+  fl("piazzaduomo", ["aussicht"], "Piazza del Duomo", 4.7, 22823, { note: "Meistbesuchter Platz, Blick auf Dom, Campanile & Baptisterium", free: true, lat: 43.77310, lng: 11.25560 }),
+  fl("kuppel", ["aussicht", "kirche"], "Cupola del Brunelleschi", 4.7, 6809, { note: "Aufstieg nur mit Zeitfenster (Kombiticket)", url: "https://duomo.firenze.it/" }),
+  fl("palvecchiomuseo", ["kunst"], "Museo di Palazzo Vecchio", 4.6, 1515, { note: "Prunkräume & Blick vom Turm" }),
+  fl("nettuno", ["aussicht"], "Fontana del Nettuno", 4.3, 1165, { note: "Neptunbrunnen an der Piazza della Signoria", free: true }),
+  fl("perseus", ["kunst"], "Perseus mit dem Haupt der Medusa (Cellini)", 4.7, 1798, { note: "In der Loggia dei Lanzi", free: true }),
+  fl("leonardomuseo", ["kunst"], "Museo Leonardo da Vinci", 4.4, 2135, { note: "Nachgebaute Maschinen zum Ausprobieren, nahe Dom" }),
+  fl("leonardointeractive", ["kunst"], "Leonardo Interactive Museum", 4.2, 1217, { note: "Interaktive Maschinen, gut bei Regen" }),
+  fl("palatina", ["kunst"], "Galleria Palatina (Palazzo Pitti)", 4.5, 1576, { note: "Raffael & Tizian, im Pitti-Ticket" }),
+  fl("piazzasantacroce", ["aussicht"], "Piazza di Santa Croce", 4.3, 1166, { free: true }),
+  fl("piazzasantospirito", ["aussicht", "wein"], "Piazza Santo Spirito", 4.3, 583, { note: "Abends voller Bars – schönster Platz der Oltrarno", free: true }),
+  fl("oltrarno", ["aussicht", "markt"], "Oltrarno", 4.4, 219, { note: "Viertel jenseits des Arno: Werkstätten, Trattorien" }),
+  fl("oblate", ["kunst", "gelato"], "Biblioteca delle Oblate", 4.4, 184, { note: "Bibliothek mit Dachcafé und Blick auf die Kuppel", free: true }),
+  fl("arsetfides", ["kirche"], "Ars et Fides", 5.0, 528, { note: "Ehrenamtliche Führungen in Kirchen (Spende)" }),
+  fl("cascine", ["markt"], "Mercato delle Cascine", 3.9, 87, { note: "Großer Wochenmarkt dienstags vormittags im Cascine-Park" }),
+  fl("david2", ["markt"], "David 2 Leather Factory", 4.6, 149, { note: "Lederjacken nach Maß, nahe Dom" }),
+  fl("guccigarden", ["kunst", "markt"], "Gucci Garden", 3.9, 752, { note: "Modemuseum an der Piazza della Signoria" }),
+  fl("serialkiller", ["kunst"], "Museum Serial Killer", 4.9, 37, { note: "Klein & schaurig" }),
+
+  // Florenz: Essen (Tripadvisor-Rangliste)
+  eat("niccolini", "Caffè del Teatro Niccolini", 4.9, 1221, "€€–€€€", "Café & Frühstück, Blick auf den Dom", { cats: ["gelato"] }),
+  eat("alagrande", "Ala Grande Caffè", 4.8, 912, "€", "Café", { cats: ["gelato"] }),
+  eat("cancellomacci", "Osteria Cancello dei Macci", 4.9, 1026, "€€€€", "Toskanisch, gehoben"),
+  eat("mamaeat", "Mama Eat Firenze", 4.8, 1780, "€€–€€€", "Pizza, auch glutenfrei"),
+  eat("bottaio", "Antico Bottaio", 4.9, 647, "€€–€€€", "Meeresfrüchte"),
+  eat("giglio", "Osteria Giglio d’oro", 4.9, 2517, "€€–€€€", "Steakhaus"),
+  eat("conviviale", "Braceria Conviviale", 5.0, 147, "€€–€€€", "Steakhaus"),
+  eat("cupola", "Ristorante La Cupola", 4.8, 2070, "€€€€", "Steakhaus"),
+  eat("brandolino", "Ristorante Brandolino", 4.8, 1650, "€€–€€€", "Toskanisch"),
+  eat("carnivori", "I Carnivori Firenze", 4.9, 734, "€€–€€€", "Steakhaus"),
+  eat("volo", "Il Volo Steakhouse", 4.9, 270, "€€–€€€", "Steakhaus"),
+  eat("granaio", "Ristorante Il Granaio", 4.9, 807, "€€–€€€", "Steakhaus"),
+  eat("dolcevita", "Osteria La Dolce Vita", 4.8, 900, "€€–€€€", "Steakhaus"),
+  eat("boccanegra", "Boccanegra", 4.6, 2347, "€€–€€€", "Italienisch"),
+  eat("manzo", "Manzo Firenze", 4.7, 854, "€€–€€€", "Steakhaus"),
+  eat("cavurrino", "Osteria Cavurrino", 4.9, 309, "€€–€€€", "Steakhaus · „keine Touristenfalle“"),
+  eat("pizzagnolo", "PizzAgnolo", 4.8, 1801, "€€–€€€", "Pizza"),
+  eat("vinsanto", "Casa del Vin Santo", 4.8, 853, "€€–€€€", "Toskanisch & Pizza"),
+  eat("fratellinitratt", "Trattoria I Fratellini", 4.9, 2472, "€€€€", "Bistecca (nicht die Weinbar)"),
+  eat("buchettasc", "La Buchetta Santa Croce", 5.0, 255, "€€–€€€", "Steakhaus"),
+  eat("aldone", "Steakhouse Da Aldone", 4.8, 221, "€€–€€€", "Steakhaus"),
+  eat("barretto", "Il Barretto", 4.7, 2267, "€€–€€€", "Meeresfrüchte, Toskanisch"),
+  eat("trepanche", "Osteria delle Tre Panche", 4.3, 878, "€€–€€€", "Toskanisch"),
+  eat("tuscani", "I’ Tuscani San Pancrazio", 4.7, 3625, "€€–€€€", "Bistecca"),
+  eat("taj", "Ristorante Taj Palace", 4.9, 1647, "€€–€€€", "Indisch"),
+  eat("alfredo", "Trattoria Alfredo", 4.6, 2593, "€€–€€€", "Toskanisch, „wie bei Mama“"),
+  eat("vecchiomercato", "Trattoria Vecchio Mercato", 4.5, 2359, "€€–€€€", "Italienisch"),
+  eat("bucaniccolini", "Buca Niccolini", 4.7, 4013, "€€–€€€", "Italienisch & Pizza"),
+  eat("brindellone", "I’Brindellone", 4.5, 2615, "€€–€€€", "Toskanisch, Oltrarno"),
+  eat("allagriglia", "Ristorante Alla Griglia", 4.5, 2791, "€€–€€€", "Steakhaus"),
+  eat("museobistecca", "Museo della Bistecca", 4.8, 811, "€€–€€€", "Steakhaus"),
+  eat("lorenzomedici", "Pizzeria Lorenzo de’ Medici", 4.3, 4300, "€€–€€€", "Pizza"),
+  eat("osteriafiore", "Osteria del Fiore", 4.7, 879, "€€–€€€", "Steakhaus, Aussicht"),
+  eat("giovanniosteria", "L’Osteria di Giovanni", 4.6, 4151, "€€–€€€", "Italienisch"),
+  eat("auditore", "Auditore Ristorante Braceria", 4.8, 3931, "€€–€€€", "Steakhaus, nahe Uffizien"),
+  eat("tendarossa", "La Tenda Rossa", 4.8, 430, "€€–€€€", "Steakhaus"),
+  eat("trattgiovanni", "Trattoria Giovanni", 4.6, 2184, "€€–€€€", "Toskanisch"),
+  eat("vecchisapori", "Osteria Vini e Vecchi Sapori", 4.6, 2626, "€€–€€€", "Klein, urig, nahe Signoria"),
+  eat("lavigna", "Osteria La Vigna", 4.9, 233, "€€–€€€", "Toskanisch, Bistecca"),
+  eat("labistecca", "La Bistecca – Osteria Fiorentina", 4.5, 2040, "€€–€€€", "Steakhaus"),
+  eat("santamaria", "Il Santa Maria Steakhouse", 4.7, 625, "€€–€€€", "Steakhaus"),
+  eat("amici", "Amici di Ponte Vecchio", 4.7, 1816, "€", "Toskanisches Streetfood"),
+  eat("jiawei", "Ravioleria Jiawei", 4.9, 406, "€", "Chinesische Teigtaschen, spät offen"),
+  eat("braceria11", "Braceria All’11", 4.8, 571, "€€–€€€", "Steakhaus"),
+
+  // Florenz: weitere Touren & Kurse
+  tour("accademiatour2", "Accademia Gallery Tour mit Eintrittskarte", 4.9, 4437, 48, "1–2 Std., auch Deutsch"),
+  tour("accademiakurz", "Accademia-Führung mit Tourleiter", 4.7, 78, 20, "1 Std., auch Deutsch"),
+  tour("pastatiramisu", "Pasta & Tiramisu Kochkurs mit Wein", 5.0, 2540, 49, "3 Std."),
+  tour("pizzakurs", "Pizzakurs mit Gelato & Wein", 4.9, 1713, 47, "3 Std."),
+  tour("steaktour", "Kulinarische Abendtour mit Florentiner Steak & Wein", 4.8, 329, 72, "3–4 Std.", { cats: ["food"] }),
+  tour("vespa", "Chianti Vespa Tour mit Weinprobe & Essen", 4.9, 1197, 105, "6–7 Std.", { cats: ["wein"] }),
+  tour("weinsafari", "Weinsafari Toskana (kleine Gruppe)", 5.0, 2455, 130, "6–9 Std.", { cats: ["wein"] }),
+  tour("chiantivineyard", "Halbtägiger Chianti-Ausflug mit Weinproben", 4.7, 1864, 55, "5 Std.", { cats: ["wein"] }),
+  tour("chiantierlebnis", "Chianti Weinerlebnis mit Verkostungen", 4.5, 493, 35, "5–6 Std.", { cats: ["wein"] }),
+  tour("monteriggioni", "San Gimignano, Siena, Monteriggioni & Chianti mit Mittagessen", 4.8, 2904, 79, "Ganztags", { cats: ["trip"] }),
+  tour("pisasienasg", "Pisa, Siena, San Gimignano mit Weingut", 4.7, 4517, 65, "Ganztags", { cats: ["trip"] }),
+  tour("sienasgpanorama", "Siena & San Gimignano mit Panoramablick", 4.9, 215, 49, "Ganztags, Kleingruppe", { cats: ["trip"] }),
+  tour("sienachiantiwines", "Siena, San Gimignano & Chianti Wines Day Tour", 4.8, 2545, 65, "Ganztags", { cats: ["trip"] }),
+  tour("domkuppeltour", "Dom-Tour mit Kuppelaufstieg", 4.9, 367, 109, "3 Std., auch Deutsch"),
+  tour("domterrassen", "Dom & Terrassen oder First Entry Dome Climb", 4.8, 512, 82, "2–4 Std."),
+  tour("domgefuehrt", "Dom-Führung mit Prioritätseintritt", 4.8, 124, 30, "1–2 Std."),
+  tour("bestof", "David & Accademia mit Duomo (Kleingruppe)", 4.7, 754, 55, "2½–3½ Std."),
+  tour("davidUffizien", "David, Accademia & Uffizien (Kleingruppe)", 4.6, 264, 45, "3 Std."),
+  tour("rundgang", "Rundgang durch Florenz (Trinkgeld-Tour)", 4.9, 375, 3, "2–3 Std."),
+  tour("biketour", "Florenz Highlights per Rad (E-Bike möglich)", 4.8, 84, 40, "3 Std."),
+  tour("ebikehills", "E-Bike-Tour in die Hügel mit Olivenöl-Verkostung", 5.0, 41, 55, "2½ Std."),
+  tour("golfcart", "Private Golfcart-Tour", 4.8, 193, 68, "1–2 Std., auch Deutsch"),
+  tour("leonardoticket", "Eintritt Leonardo da Vinci-Museum", 4.5, 1499, 11, "1–1½ Std."),
+
+  // Rom: weitere Sehenswürdigkeiten
+  rom("villaborghese", "Villa Borghese", 4.5, 8195, "Großer Park, ruhiger Rückzug"),
+  rom("colonna", "Palazzo Colonna", 4.8, 1256, "Prunkgalerie, nur an bestimmten Tagen offen"),
+  rom("lateran", "San Giovanni in Laterano", 4.7, 8148, "Bischofskirche von Rom"),
+  rom("doriapamphilj", "Galleria Doria Pamphilj", 4.6, 2815, "Privatsammlung mit Caravaggio & Velázquez, vormittags leer"),
+  rom("centrostorico", "Centro Storico", 4.8, 6150, "Gassen zwischen Pantheon, Navona und Campo de’ Fiori"),
+  rom("palazzomassimo", "Palazzo Massimo (Museo Nazionale Romano)", 4.7, 2475, "Antike Fresken der Villa der Livia, nahe Termini"),
+  rom("welcometorome", "Welcome to Rome", 4.8, 1568, "Multimedia-Show zur Stadtgeschichte"),
+  rom("vierstroeme", "Vierströmebrunnen", 4.6, 5270, "Berninis Brunnen auf der Piazza Navona", { free: true }),
+  rom("clemente", "San Clemente", 4.7, 4457, "Kirche über Kirche über römischem Haus – „Stadt unter der Stadt“"),
+  rom("mariatrastevere", "Santa Maria in Trastevere", 4.6, 4213, "Goldene Mosaiken", { free: true }),
+  rom("popolo", "Piazza del Popolo", 4.3, 4426, "Großer Platz am Nordende der Via del Corso", { free: true }),
+  rom("capitolini", "Kapitolinische Museen", 4.5, 3029, "Am Kapitolsplatz, Blick aufs Forum"),
+  rom("kapuziner", "Kapuzinergruft", 4.2, 2692, "Knochenkapellen an der Via Veneto"),
+  rom("caracalla", "Caracalla-Thermen", 4.4, 2678, "Riesige Ruinen der Kaiserthermen"),
+  rom("campofiori", "Campo de’ Fiori", 4.1, 3696, "Markt am Vormittag, abends Bars"),
+  rom("vincoli", "San Pietro in Vincoli", 4.6, 5557, "Michelangelos Moses – 10 Min. vom Kolosseum", { free: true }),
+  rom("callisto", "Katakomben von San Callisto", 4.4, 2218, "An der Via Appia, nur mit Führung"),
+  rom("domusaurea", "Domus Aurea", 4.5, 1521, "Neros Goldenes Haus, Führung mit VR"),
+  rom("angeli", "Santa Maria degli Angeli e dei Martiri", 4.7, 2847, "Michelangelos Kirche in den Diokletiansthermen, nahe Termini", { free: true }),
+  rom("corso", "Via del Corso", 4.2, 1441, "Einkaufsstraße zwischen Piazza Venezia und Popolo"),
+  rom("piazzavenezia", "Piazza Venezia", 4.5, 3478, "Verkehrsknoten vor dem Vittoriano"),
+  rom("gianicolo", "Gianicolo", 4.6, 1726, "Aussichtshügel über Trastevere"),
+  rom("stadioolimpico", "Stadio Olimpico", 3.8, 1656, "Lazio & AS Rom – Spielplan prüfen"),
+  rom("gesu", "Chiesa del Gesù", 4.7, 1606, "Barocke Jesuitenkirche", { free: true }),
+  rom("barberini", "Palazzo Barberini", 4.2, 1239, "Caravaggio & Deckenfresken"),
+  rom("coppede", "Quartiere Coppedè", 4.6, 684, "Verspieltes Jugendstil-Viertel"),
+  rom("vittoria", "Santa Maria della Vittoria", 4.7, 2652, "Berninis Verzückung der heiligen Theresa", { free: true }),
+  rom("testaccio", "Mercato di Testaccio", 4.3, 376, "Markthalle mit Streetfood"),
+  rom("trionfale", "Mercato Trionfale", 4.4, 375, "Bauernmarkt nahe Vatikan"),
+  rom("farnesina", "Villa Farnesina", 4.6, 868, "Raffael-Fresken in Trastevere"),
+  rom("paolo", "San Paolo fuori le Mura", 4.8, 2242, "Patriarchalbasilika, weniger überlaufen"),
+  rom("leonardorom", "Museo Leonardo da Vinci (Rom)", 3.8, 745, "Eher enttäuschend laut Bewertungen"),
+  rom("prassede", "Santa Prassede", 4.7, 1264, "Byzantinische Mosaiken nahe Santa Maria Maggiore", { free: true }),
+  rom("mariapopolo", "Santa Maria del Popolo", 4.6, 1389, "Zwei Caravaggios an der Piazza del Popolo", { free: true }),
+  rom("domitian", "Domitian-Stadion", 4.4, 924, "Antikes Stadion unter der Piazza Navona"),
+
+  // Rom: Restaurants (Tripadvisor-Rangliste)
+  romEat("comenavortadorotea", "Come ’na Vorta – Santa Dorotea", 4.9, 1393, "€€–€€€", "Römisch · Trastevere"),
+  romEat("adeva", "ADEVA Cucina Moderna", 4.9, 1688, "€€–€€€", "Modern italienisch"),
+  romEat("ornelli", "Ornelli Black Angus Steakhouse", 4.8, 2627, "€€€€", "Steakhaus"),
+  romEat("docenobistrot", "DOC EnoBistrot", 4.9, 2680, "€€–€€€", "Italienisch & Steak"),
+  romEat("bonosanpietro", "Bono Bottega Nostrana – San Pietro", 4.9, 2151, "€", "Deli, nahe Vatikan"),
+  romEat("acasatua", "A Casa Tua", 4.9, 1178, "€€–€€€", "Römisch"),
+  romEat("sushisen", "Sushisen", 4.5, 2232, "€€–€€€", "Sushi, Michelin-gelistet"),
+  romEat("comenavortarufina", "Come ’na Vorta – Rufina", 4.9, 604, "€€–€€€", "Pasta & Pizza"),
+  romEat("bonocucina", "Bono Cucina", 4.8, 1705, "€€–€€€", "Italienisch"),
+  romEat("comenavortaflorida", "Come ’na Vorta – Via Florida", 4.8, 4838, "€€–€€€", "Pasta, nahe Torre Argentina"),
+  romEat("tonnarellomaria", "Tonnarello Santa Maria", 4.8, 708, "€€–€€€", "Römisch"),
+  romEat("rame", "Ramè Sushi Naturale Italiano", 4.9, 212, "€€–€€€", "Sushi"),
+  romEat("bonosantacroce", "Bono Bottega Nostrana – Santa Croce", 5.0, 91, "€", "Sandwiches & Frühstück"),
+  romEat("fuorinorma", "Fuorinorma", 4.8, 1548, "€", "Deli"),
+  romEat("dacicero", "Da Cicero", 4.9, 2861, "€€–€€€", "Pizza & Pinsa"),
+  romEat("colonnette", "Le Colonnette", 4.9, 644, "€€€€", "Meeresfrüchte"),
+  romEat("lume", "Lume – Osteria alle Scalette", 4.9, 604, "€€–€€€", "Italienisch"),
+  romEat("enotico", "Enotico Bistrot", 4.9, 840, "€€–€€€", "Italienisch"),
+  romEat("parola", "Osteria della Parola", 4.9, 168, "€€–€€€", "Einfache römische Küche"),
+  romEat("cantinacucina", "Cantina & Cucina", 4.7, 18788, "€€–€€€", "Italienisch, nahe Navona"),
+  romEat("tonnarellopietro", "Tonnarello San Pietro", 4.8, 2192, "€€–€€€", "Römisch, nahe Vatikan"),
+  romEat("primo", "Primo Urban Bistrot", 5.0, 446, "€€–€€€", "Italienisch"),
+  romEat("mimicocoroma", "Mimì e Cocò Roma", 4.9, 791, "€€–€€€", "Carbonara-Tipp"),
+  romEat("iolanda", "Iolanda Vino e Cucina", 5.0, 318, "€€€€", "Gehobene Küche"),
+  romEat("ferrofuoco", "Il Ferro e il Fuoco", 4.9, 480, "€€€€", "Gehobene Küche"),
+  romEat("adhocpopolo", "Ad Hoc – Piazza del Popolo", 4.7, 7446, "€€€€", "Gehobene Küche"),
+  romEat("enea", "Enea Ristorante", 4.9, 346, "€€€€", "Gehobene Küche"),
+
+  // Rom: Food-Touren (nur mit späterem Rückzug sinnvoll)
+  tour("trasteveretwilight", "Rome Twilight Trastevere Food Tour (Eating Europe)", 4.9, 6598, 104, "4 Std., abends", { city: "Rom", cats: ["rom", "food"] }),
+  tour("romkulinarik", "Kulinarische Tour durch Rom mit ortskundigem Guide", 4.8, 2651, 47, "2½ Std.", { city: "Rom", cats: ["rom", "food"] }),
+  tour("rom15", "Rom Essen & Wein: 15 Verkostungen in Trastevere & Ghetto", 4.9, 3707, 73, "2 Std.", { city: "Rom", cats: ["rom", "food"] })
+);
+
+/* Bilder (Wikimedia Commons). Lädt ein Bild nicht, blendet die Seite es aus. */
+const WMF = (file) => ({
+  src: "https://commons.wikimedia.org/wiki/Special:FilePath/" + encodeURIComponent(file) + "?width=960",
+  page: "https://commons.wikimedia.org/wiki/File:" + encodeURIComponent(file)
+});
+Object.assign(IMAGES, {
+  david: { ...WMF("Michelangelo's David 2015.jpg"), alt: "Michelangelos David in der Accademia" },
+  venus: { ...WMF("Sandro Botticelli - La nascita di Venere - Google Art Project - edited.jpg"), alt: "Botticellis Geburt der Venus, Uffizien" },
+  kolosseum: { ...WMF("Colosseo 2020.jpg"), alt: "Das Kolosseum in Rom" },
+  pisa: { ...WMF("The Leaning Tower of Pisa SB.jpeg"), alt: "Der Schiefe Turm von Pisa" },
+  florenz: { ...WMF("Florence Duomo from Michelangelo hill.jpg"), alt: "Blick vom Piazzale Michelangelo auf Florenz" },
+  pontevecchio: { ...WMF("Ponte Vecchio, Florence, Italy.jpg"), alt: "Ponte Vecchio über dem Arno" }
+});
 
 const CHECKLISTS = [
   {

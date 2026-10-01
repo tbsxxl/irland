@@ -1,13 +1,13 @@
 /* Offline: App-Dateien vorab (alle Reisen laufen über dieselbe Seite), Seite netzwerk-zuerst, Karten-Kacheln/Fotos/Wetter aus dem Cache als Rückfall.
    Bei Änderungen an App-Dateien VERSION hochzählen. */
-const VERSION = "v6";
+const VERSION = "v7";
 const APP = "irland-app-" + VERSION;
 const RUNTIME = "irland-runtime";
 const MAX_RUNTIME = 400;
 const PRECACHE = [
   "/", "/manifest.webmanifest",
-  "/assets/app.css?v=6", "/assets/app.js?v=6", "/assets/icons.svg",
-  "/assets/trips/florenz.js?v=6", "/assets/trips/irland.js?v=6",
+  "/assets/app.css?v=7", "/assets/app.js?v=7", "/assets/icons.svg",
+  "/assets/trips/florenz.js?v=7", "/assets/trips/irland.js?v=7",
   "/assets/vendor/leaflet/leaflet.css", "/assets/vendor/leaflet/leaflet.js",
   "/assets/fonts/inter.woff2",
   "/icons/favicon-32.png", "/icons/reisen.svg", "/icons/irland.svg", "/icons/florenz.svg"
@@ -62,7 +62,7 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(networkFirst(req, APP, 3000).catch(() => caches.match("/", { cacheName: APP })));
   } else if (url.origin === location.origin) {
     e.respondWith(cacheFirst(req, APP));
-  } else if (url.hostname.endsWith("basemaps.cartocdn.com") || url.hostname === "upload.wikimedia.org") {
+  } else if (url.hostname.endsWith("basemaps.cartocdn.com") || url.hostname.endsWith("wikimedia.org")) {
     e.respondWith(cacheFirst(req, RUNTIME));
   }
   // Wetter: normal übers Netz, die App merkt sich die letzte Vorhersage selbst.
