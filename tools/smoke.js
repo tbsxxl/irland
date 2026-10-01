@@ -76,7 +76,7 @@ const SHOTS = process.argv[3];
       const bad = await page.evaluate((id) => {
         const t = window.TRIPS.find((x) => x.id === id), ids = new Set(t.places.map((p) => p.id)), out = [];
         if (ids.size !== t.places.length) out.push("doppelte Orts-IDs");
-        t.days.forEach((d) => d.stops.forEach((s) => s.place && !ids.has(s.place) && out.push("fehlender Ort " + s.place)));
+        t.days.forEach((d) => [...d.stops, ...(d.extras || [])].forEach((s) => s.place && !ids.has(s.place) && out.push("fehlender Ort " + s.place)));
         t.places.forEach((p) => p.cats.forEach((c) => !t.cats[c] && out.push(`unbekannte Kategorie ${c} bei ${p.id}`)));
         return out;
       }, trip.id);

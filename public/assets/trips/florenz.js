@@ -20,115 +20,143 @@ const TRIP = {
   facts: [
     { label: "Dauer", value: "8 Tage / 7 Nächte" },
     { label: "Wetter November", value: "8–15 °C, regnerisch, Sonnenuntergang ca. 16:50" },
-    { label: "Ausflüge", value: "Sa Rom · Mo Pisa & Lucca (oder Siena & Chianti)" }
+    { label: "Tempo", value: "Entspannt: ein Highlight pro Tag, Extras nur bei Lust" }
   ]
 };
 
 const IMAGES = {};
 
-/* Tagesplan nach Tobis Vorschlag (7 Programmtage + Abreise).
+/* Tagesplan, entspannte Version: pro Tag höchstens ein großer Programmpunkt, Pausen eingeplant.
+   `extras` = „Falls noch Zeit ist“ (optional, nicht im Kalender-Export).
    Rom am Samstag, Oltrarno am Sonntag (Pitti offen), Ausflug am Montag (Uffizien, Accademia, Pitti zu). */
 const DAYS = [
   {
-    date: "Mi 11.11.", wiki: "it:Piazzale Michelangelo", title: "Ankommen, Altstadt & Piazzale Michelangelo", tip: "Sonnenuntergang ca. 16:50",
+    date: "Mi 11.11.", wiki: "it:Piazzale Michelangelo", title: "Ankommen & Sonnenuntergang am Piazzale", tip: "Sonnenuntergang ca. 16:50",
     stops: [
       { time: "14:00", icon: "plane", text: "Ankunft & Transfer ins Hotel (ab FLR: Tram T2 bis Unità, ca. 20 Min.)" },
-      { time: "15:15", icon: "footprints", text: "Erster Rundgang: Piazza della Signoria & Altstadt", place: "signoria" },
-      { time: "16:00", icon: "camera", text: "Ponte Vecchio im Abendlicht", place: "pontevecchio" },
+      { time: "15:15", icon: "footprints", text: "Erster Bummel: Piazza della Signoria & Altstadt", place: "signoria" },
+      { time: "16:00", icon: "camera", text: "Über den Ponte Vecchio", place: "pontevecchio" },
       { time: "16:30", icon: "sunset", text: "Piazzale Michelangelo zum Sonnenuntergang", place: "piazzale" },
-      { time: "17:15", icon: "church", text: "Ein Stück weiter oben: San Miniato al Monte – ruhiger und genauso schön", place: "sanminiato" },
       { time: "19:30", icon: "wine", text: "Aperitivo am Weinfenster: I Fratellini", place: "fratellini" },
-      { time: "20:30", icon: "utensils", text: "Dinner: Trattoria Za Za oder Buca Mario", place: "zaza" }
+      { time: "20:30", icon: "utensils", text: "Dinner: Trattoria Za Za", place: "zaza" }
+    ],
+    extras: [
+      { icon: "church", text: "San Miniato al Monte – 10 Min. oberhalb des Piazzale, ruhig und frei", place: "sanminiato" },
+      { icon: "users", text: "Bei früher Ankunft: Storyteller-Stadtführung als Einstieg (Trinkgeld)", place: "storyteller" }
     ]
   },
   {
-    date: "Do 12.11.", wiki: "David (Michelangelo)", title: "Duomo, Kuppel & David", tip: "Kuppel nur mit gebuchtem Zeitfenster",
+    date: "Do 12.11.", wiki: "David (Michelangelo)", title: "Kuppel & David", tip: "Nur ein Aufstieg heute – Kuppel mit Zeitfenster",
     stops: [
       { time: "08:30", icon: "church", text: "Kuppel des Brunelleschi besteigen (463 Stufen)", place: "duomo",
         links: [{ label: "Tickets", url: "https://duomo.firenze.it/" }] },
-      { time: "10:00", icon: "landmark", text: "Kombiticket: Campanile, Baptisterium & Dommuseum", place: "opera" },
+      { time: "10:15", icon: "landmark", text: "Ohne Treppen: Baptisterium & Dommuseum (im Kombiticket)", place: "opera" },
       { time: "12:30", icon: "sandwich", text: "Mercato Centrale: Lampredotto bei Da Nerbone oder Schiacciata", place: "mercato" },
-      { time: "14:30", icon: "person-standing", text: "Galleria dell’Accademia: Michelangelos David im Original", place: "accademia",
+      { time: "14:30", icon: "person-standing", text: "Galleria dell’Accademia: Michelangelos David", place: "accademia",
         links: [{ label: "Tickets", url: "https://www.galleriaaccademiafirenze.it/en/" }] },
-      { time: "16:30", icon: "coffee", text: "Pause im Caffè Gilli an der Piazza della Repubblica", place: "gilli" },
+      { time: "16:00", icon: "coffee", text: "Pause – Hotel oder Caffè Gilli an der Piazza della Repubblica", place: "gilli" },
       { time: "20:00", icon: "utensils", text: "Dinner: Trattoria Sostanza (Butterhähnchen, reservieren)", place: "sostanza" }
+    ],
+    extras: [
+      { icon: "landmark", text: "Campanile di Giotto (414 Stufen) – nur wenn die Beine noch wollen, sonst am Dienstag", place: "campanile" },
+      { icon: "crown", text: "Medici-Kapellen & San Lorenzo, gleich beim Mercato Centrale", place: "medici" },
+      { icon: "coffee", text: "Dachcafé der Biblioteca delle Oblate mit Blick auf die Kuppel", place: "oblate" }
     ]
   },
   {
-    date: "Fr 13.11.", wiki: "The Birth of Venus", title: "Uffizien, Palazzo Vecchio & Santa Croce", tip: "Uffizien: 8:15-Slot ist am ruhigsten",
+    date: "Fr 13.11.", wiki: "The Birth of Venus", title: "Uffizien & Palazzo Vecchio", tip: "Uffizien: 8:15-Slot ist am ruhigsten",
     stops: [
       { time: "08:15", icon: "palette", text: "Uffizien: Geburt der Venus, Primavera, Leonardo, Michelangelo, Raffael, Caravaggio", place: "uffizi",
         links: [{ label: "Tickets", url: "https://www.uffizi.it/en/tickets" }] },
       { time: "12:30", icon: "sandwich", text: "Schiacciata bei All’Antico Vinaio oder I’ Girone De’ Ghiotti", place: "vinaio" },
-      { time: "14:00", icon: "castle", text: "Palazzo Vecchio – die Turmbesteigung lohnt sich", place: "vecchio" },
-      { time: "16:00", icon: "church", text: "Santa Croce: Gräber von Michelangelo, Galileo & Machiavelli", place: "santacroce" },
-      { time: "17:30", icon: "ice-cream-cone", text: "Gelato bei Vivoli", place: "vivoli" },
-      { time: "20:00", icon: "wine", text: "Abend im Viertel Santa Croce / Sant’Ambrogio" },
-      { time: "21:30", icon: "moon", text: "Optional: Abendtour „Die dunkle Seite von Florenz“ (ab 3 €)", place: "darkside" }
+      { time: "14:30", icon: "castle", text: "Palazzo Vecchio – die Turmbesteigung lohnt sich", place: "vecchio" },
+      { time: "16:30", icon: "ice-cream-cone", text: "Gelato bei Vivoli & Pause", place: "vivoli" },
+      { time: "20:00", icon: "wine", text: "Abendessen im Viertel Santa Croce / Sant’Ambrogio" }
+    ],
+    extras: [
+      { icon: "church", text: "Santa Croce – Gräber von Michelangelo, Galileo & Machiavelli (sonst am Dienstag)", place: "santacroce" },
+      { icon: "moon", text: "Abendtour „Die dunkle Seite von Florenz“ (ab 3 €)", place: "darkside" },
+      { icon: "palette", text: "Bargello – Donatello & Michelangelo, meist ruhig", place: "bargello" }
     ]
   },
   {
-    date: "Sa 14.11.", wiki: "Colosseum", title: "Tagesausflug Rom", tip: "Zug ca. 1:30 Std. – früh buchen spart viel",
+    date: "Sa 14.11.", wiki: "Colosseum", title: "Tagesausflug Rom – das Wichtigste", tip: "Rückfahrt 18 Uhr – zum Abendessen zurück in Florenz",
     alt: "Vatikan statt Kolosseum möglich",
     stops: [
       { time: "07:00", icon: "train-front", text: "Frecciarossa ab Firenze S.M.N. nach Roma Termini", place: "smn",
         links: [{ label: "Trenitalia", url: "https://www.trenitalia.com/" }, { label: "Italo", url: "https://www.italotreno.com/" }] },
-      { time: "08:45", icon: "landmark", text: "Kolosseum, Forum Romanum & Palatin (ca. 3 Std., Kombiticket mit Zeitfenster)",
+      { time: "08:45", icon: "landmark", text: "Kolosseum, Forum Romanum & Palatin (Kombiticket mit Zeitfenster)", place: "kolosseum",
         links: [{ label: "Tickets", url: "https://parcocolosseo.it/" }] },
-      { time: "12:00", icon: "footprints", text: "Über Kapitolsplatz und Piazza Venezia zum Pantheon", place: "kapitol" },
-      { time: "12:45", icon: "landmark", text: "Pantheon, gleich dahinter Santa Maria sopra Minerva", place: "pantheon" },
+      { time: "12:15", icon: "footprints", text: "Gemütlich über Kapitolsplatz und Piazza Venezia zum Pantheon", place: "pantheon" },
       { time: "13:15", icon: "utensils", text: "Cacio e Pepe oder Carbonara: Come ’na Vorta (Torre Argentina) oder Mimì & Cocò", place: "comenavorta" },
-      { time: "14:30", icon: "church", text: "Auf dem Weg: Sant’Ignazio mit der Scheinkuppel", place: "ignazio" },
       { time: "15:00", icon: "droplets", text: "Trevi-Brunnen (Besucherlimit bzw. kleine Gebühr)", place: "trevi" },
-      { time: "15:45", icon: "footprints", text: "Spanische Treppe", place: "spanischetreppe" },
-      { time: "16:45", icon: "palette", text: "Eventuell Piazza Navona & Caravaggios in San Luigi dei Francesi", place: "navona" },
-      { time: "18:00", icon: "wine", text: "Aperitivo, dann zurück nach Termini" },
-      { time: "20:30", icon: "train-front", text: "Frecciarossa zurück nach Florenz (ca. 22:00 an)" }
+      { time: "16:00", icon: "coffee", text: "Kaffee & Gelato, dann ohne Eile zu Fuß zum Bahnhof Termini", place: "termini" },
+      { time: "18:00", icon: "train-front", text: "Frecciarossa zurück nach Florenz (ca. 19:35 an)" },
+      { time: "20:30", icon: "pizza", text: "Lockeres Abendessen: Pizzeria Livio oder PizzAgnolo", place: "livio" }
+    ],
+    extras: [
+      { icon: "church", text: "Auf dem Weg, je 10 Min. und frei: Santa Maria sopra Minerva & Sant’Ignazio", place: "ignazio" },
+      { icon: "footprints", text: "Spanische Treppe", place: "spanischetreppe" },
+      { icon: "palette", text: "Piazza Navona & Caravaggios in San Luigi dei Francesi", place: "navona" },
+      { icon: "train-front", text: "Mehr Rom? Späteren Zug (ca. 20:30) nehmen und in Rom zu Abend essen" }
     ]
   },
   {
-    date: "So 15.11.", wiki: "Palazzo Pitti", title: "Oltrarno: Palazzo Pitti & Boboli", tip: "Werkstätten haben sonntags oft zu – Shopping am Dienstag",
+    date: "So 15.11.", wiki: "Palazzo Pitti", title: "Oltrarno ganz in Ruhe", tip: "Später Start – Werkstätten haben sonntags oft zu",
     stops: [
-      { time: "09:00", icon: "landmark", text: "Palazzo Pitti & Boboli-Gärten", place: "pitti",
+      { time: "10:00", icon: "landmark", text: "Palazzo Pitti & Boboli-Garten", place: "pitti",
         links: [{ label: "Tickets", url: "https://www.uffizi.it/en/pitti-palace" }] },
       { time: "13:00", icon: "utensils", text: "Lunch im Oltrarno: Trattoria 4 Leoni", place: "quattroleoni" },
-      { time: "14:30", icon: "palette", text: "Cappella Brancacci (Masaccio-Fresken)", place: "brancacci" },
-      { time: "15:30", icon: "church", text: "Santo Spirito – Kirche, Platz & Gassen", place: "santospirito" },
-      { time: "16:30", icon: "sunset", text: "Giardino Bardini mit Blick auf den Dom", place: "bardini" },
-      { time: "19:30", icon: "wine", text: "Dinner im Oltrarno: Il Santo Bevitore oder Osteria Santo Spirito", place: "santobevitore" }
+      { time: "14:30", icon: "coffee", text: "Kaffee an der Piazza Santo Spirito, Kirche & Gassen", place: "santospirito" },
+      { time: "16:00", icon: "bed-double", text: "Pause im Hotel" },
+      { time: "19:30", icon: "wine", text: "Dinner im Oltrarno: Il Santo Bevitore", place: "santobevitore" }
+    ],
+    extras: [
+      { icon: "palette", text: "Cappella Brancacci – Masaccio-Fresken (Reservierung prüfen)", place: "brancacci" },
+      { icon: "sunset", text: "Giardino Bardini – bergauf, aber mit dem schönsten Domblick", place: "bardini" },
+      { icon: "music", text: "Abends: Opernkonzert in Santa Monaca (ab 35 €)", place: "oper" }
     ]
   },
   {
-    date: "Mo 16.11.", wiki: "Leaning Tower of Pisa", title: "Ausflug Pisa & Lucca", tip: "Montags haben Uffizien, Accademia & Pitti zu",
-    alt: "Oder als Tour: Siena, San Gimignano, Pisa & Weingut (ab 86 €)",
+    date: "Mo 16.11.", wiki: "San Gimignano", title: "Toskana-Tour: einsteigen & fahren lassen", tip: "Wie in Irland: Bustour, um Tickets & Wege kümmert sich der Guide",
+    alt: "Oder ruhiger: nur Lucca mit Radtour auf der Stadtmauer (Zug)",
     stops: [
-      { time: "08:30", icon: "train-front", text: "Regionalzug nach Pisa Centrale (ca. 1 Std.)", place: "smn",
-        links: [{ label: "Trenitalia", url: "https://www.trenitalia.com/" }] },
-      { time: "10:00", icon: "castle", text: "Piazza dei Miracoli: Schiefer Turm, Dom, Baptisterium" },
-      { time: "13:00", icon: "train-front", text: "Weiter nach Lucca (ca. 30 Min.)" },
-      { time: "13:45", icon: "utensils", text: "Mittagessen in der Altstadt" },
-      { time: "15:00", icon: "bike", text: "Mit dem Rad auf der Stadtmauer rund um Lucca" },
-      { time: "17:30", icon: "train-front", text: "Rückfahrt nach Florenz (ca. 1 Std. 20 Min.)" }
+      { time: "08:00", icon: "bus", text: "Bustour ab Florenz: Siena, San Gimignano, Pisa & Weingut (ab 86 €, Treffpunkt laut Buchung)", place: "toskanatour" },
+      { time: "09:30", icon: "landmark", text: "Siena: Piazza del Campo & Dom", place: "siena" },
+      { time: "12:30", icon: "wine", text: "Mittagessen mit Weinprobe auf einem Chianti-Weingut", place: "chianti" },
+      { time: "14:30", icon: "castle", text: "San Gimignano: Geschlechtertürme & Gelato", place: "sangimignano" },
+      { time: "16:30", icon: "camera", text: "Pisa: Schiefer Turm & Piazza dei Miracoli", place: "pisa" },
+      { time: "19:30", icon: "flag", text: "Zurück in Florenz – Abend frei" }
+    ],
+    extras: [
+      { icon: "utensils", text: "Spätes, leichtes Abendessen: La Fettunta oder Panini Toscani", place: "fettunta" }
     ]
   },
   {
-    date: "Di 17.11.", wiki: "Ponte Vecchio", title: "Freier Tag, Shopping & Abschied", tip: "Leder: Scuola del Cuoio & Märkte um San Lorenzo",
-    alt: "Oder: Pastakochkurs mit Wein (ab 25 €)",
+    date: "Di 17.11.", wiki: "Ponte Vecchio", title: "Freier Tag, Santa Croce & Abschied", tip: "Leder: Scuola del Cuoio direkt hinter Santa Croce",
     stops: [
-      { time: "10:00", icon: "shopping-bag", text: "Leder-Shopping: Scuola del Cuoio hinter Santa Croce", place: "cuoio" },
+      { time: "10:00", icon: "church", text: "Santa Croce (falls am Freitag ausgelassen)", place: "santacroce" },
+      { time: "11:15", icon: "shopping-bag", text: "Leder-Shopping: Scuola del Cuoio", place: "cuoio" },
       { time: "12:30", icon: "shopping-basket", text: "Mercato di Sant’Ambrogio & Lunch bei Da Rocco", place: "santambrogio" },
-      { time: "14:30", icon: "store", text: "Lederstände um San Lorenzo & Werkstätten im Oltrarno", place: "sanlorenzomarkt" },
-      { time: "16:00", icon: "spray-can", text: "Officina Profumo-Farmaceutica di Santa Maria Novella", place: "farmaceutica" },
+      { time: "15:00", icon: "store", text: "Bummeln: Lederstände um San Lorenzo", place: "sanlorenzomarkt" },
       { time: "16:45", icon: "camera", text: "Noch einmal Ponte Vecchio zum Sonnenuntergang", place: "pontevecchio" },
       { time: "20:00", icon: "beef", text: "Abschiedsessen Bistecca: Buca Mario, La Buchetta oder Osteria Vecchio Cancello", place: "bucamario" }
+    ],
+    extras: [
+      { icon: "landmark", text: "Campanile di Giotto, falls am Donnerstag ausgelassen", place: "campanile" },
+      { icon: "spray-can", text: "Officina Profumo-Farmaceutica di Santa Maria Novella", place: "farmaceutica" },
+      { icon: "utensils", text: "Statt Shopping: Pastakochkurs mit Wein (ab 25 €)", place: "pastakurs" },
+      { icon: "shopping-basket", text: "Früh: Wochenmarkt im Cascine-Park (dienstags vormittags)", place: "cascine" }
     ]
   },
   {
     date: "Mi 18.11.", wiki: "Florence Cathedral", title: "Abreise", tip: "Flugzeit noch eintragen",
     stops: [
-      { time: "07:30", icon: "camera", text: "Optional: Ponte Vecchio früh morgens – fast menschenleer", place: "pontevecchio" },
       { time: "09:00", icon: "coffee", text: "Letzter Cappuccino (Ditta Artigianale)", place: "ditta" },
       { time: "11:00", icon: "luggage", text: "Check-out & Transfer zum Flughafen" }
+    ],
+    extras: [
+      { icon: "camera", text: "Früh um 7:30: Ponte Vecchio fast menschenleer", place: "pontevecchio" }
     ]
   }
 ];
@@ -492,11 +520,11 @@ const CHECKLISTS = [
       { id: "accademia", text: "Accademia (David) – Do 14:30" },
       { id: "sostanza", text: "Tisch bei Sostanza – Do" },
       { id: "uffizi", text: "Uffizien – Fr 08:15" },
-      { id: "romzug", text: "Frecciarossa Florenz ⇄ Rom (hin ~7 Uhr, zurück ~20:30) – Sa" },
+      { id: "romzug", text: "Frecciarossa Florenz ⇄ Rom (hin 7 Uhr, zurück 18 Uhr) – Sa" },
       { id: "kolosseum", text: "Kolosseum, Forum & Palatin mit Zeitfenster – Sa" },
       { id: "pitti", text: "Palazzo Pitti & Boboli – So" },
-      { id: "brancacci", text: "Cappella Brancacci (Reservierung prüfen) – So" },
-      { id: "ausflug", text: "Mo: Zug Pisa/Lucca – oder Tour Siena/San Gimignano/Chianti" }
+      { id: "brancacci", text: "Optional: Cappella Brancacci (Reservierung prüfen) – So" },
+      { id: "ausflug", text: "Toskana-Bustour (Siena, San Gimignano, Pisa) – Mo" }
     ]
   },
   {

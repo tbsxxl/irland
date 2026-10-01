@@ -33,6 +33,6 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
   Die GitHub Action „Fotos laden“ (`.github/workflows/photos.yml`, `tools/fetch-photos.js`) lädt sie bei Änderungen an
   `public/assets/trips/**` auf `main` herunter und committet sie – danach Branch neu holen. Live-API nur als Rückfall.
   Tests bilden Wikipedia nach (Service Worker blockiert, sonst umgeht er die Mocks).
-- Optionale Tagesfelder: `tip`, `alt` (Alternative), `ni` (Nordirland-Hinweis), `image` (feste Bilder in `IMAGES`), `wiki`.
+- Optionale Tagesfelder: `extras` (Liste „Falls noch Zeit ist“, gleiche Felder wie Programmpunkte ohne `time`, nicht im Kalender-Export/Jetzt-Karte), `tip`, `alt` (Alternative), `ni` (Nordirland-Hinweis), `image` (feste Bilder in `IMAGES`), `wiki`.
 - Bei Änderungen an Dateien unter `public/assets/`: `?v=` in `index.html` und `sw.js` sowie `VERSION` in `sw.js` hochzählen.
 - Prüfen: `npx wrangler dev`, dann `node tools/smoke.js` (Playwright; externe Anfragen werden blockiert).
