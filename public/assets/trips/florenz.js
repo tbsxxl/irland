@@ -252,7 +252,7 @@ const PLACES = [
   { id: "siena", wiki: "Siena", cats: ["trip"], name: "Siena", note: "Piazza del Campo & Dom · Bus ca. 1 Std. 15 Min." },
   { id: "sangimignano", wiki: "San Gimignano", cats: ["trip"], name: "San Gimignano", note: "Mittelalterliche Türme, am besten per Tour" },
   { id: "chianti", wiki: "Chianti", cats: ["trip", "wein"], name: "Chianti", note: "Weingüter, Greve & Castellina – per Tour oder Mietwagen" },
-  { id: "rom", wiki: "Rome", cats: ["trip", "rom"], name: "Rom", note: "Frecciarossa ab S.M.N. ca. 1:30 Std. bis Roma Termini · hin gegen 7 Uhr, zurück gegen 20–21 Uhr", url: "https://www.trenitalia.com/" },
+  { id: "rom", wiki: "Rome", cats: ["trip"], name: "Rom", note: "Frecciarossa ab S.M.N. ca. 1:30 Std. bis Roma Termini · hin gegen 7 Uhr, zurück gegen 20–21 Uhr", url: "https://www.trenitalia.com/" },
   { id: "pisalucca", wiki: "Leaning Tower of Pisa", cats: ["trip"], name: "Pisa & Lucca", note: "Gut an einem Tag kombinierbar, in Lucca Rad fahren auf der Stadtmauer" },
   { id: "bologna", wiki: "Bologna", cats: ["trip", "food"], name: "Bologna", note: "Essen & Arkaden · Schnellzug nur ca. 40 Min." },
 
