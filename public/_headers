@@ -19,3 +19,9 @@
 
 /sw.js
   Cache-Control: no-cache
+
+/photos/*
+  Cache-Control: public, max-age=604800, stale-while-revalidate=2592000
+
+/photos/photos.json
+  Cache-Control: no-cache
