@@ -265,3 +265,20 @@ a.row .trail{color:var(--label-3);font-size:18px}
 .toast.out{opacity:0;transition:opacity .3s}
 @keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
 .star small{font-weight:400;color:var(--label-2);margin-left:3px;font-size:12px}
+
+/* ---------- Fotos (Wikipedia) ---------- */
+[data-wiki] img{opacity:0;transition:opacity .35s var(--ease)}
+[data-wiki].is-loaded img{opacity:1}
+.ph{flex:0 0 auto;width:64px;height:64px;margin:2px 0 0 4px;border-radius:12px;overflow:hidden;background:var(--fill-2)}
+.ph img{width:100%;height:100%;object-fit:cover}
+.day-img[data-wiki]:not(.is-loaded){background:var(--fill-2)}
+.pimg{margin:-12px -14px 10px;height:120px;overflow:hidden;border-radius:14px 14px 0 0;background:var(--fill-2)}
+.pimg img{width:100%;height:100%;object-fit:cover}
+.pimg:not(.is-loaded){display:none}
+.trip-cover{overflow:hidden}
+.cover-photo{position:absolute;inset:0;z-index:0}
+.cover-photo img{width:100%;height:100%;object-fit:cover}
+.cover-photo::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 20%,color-mix(in srgb,var(--grad-b) 80%,rgba(0,0,0,.6)) 100%)}
+.trip-cover > :not(.cover-photo){position:relative;z-index:1}
+.trip-cover .badge{position:absolute}
+.trip-cover:has(.cover-photo.is-loaded){min-height:180px}

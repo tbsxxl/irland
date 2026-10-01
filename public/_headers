@@ -3,7 +3,7 @@
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: camera=(), microphone=(), payment=(), geolocation=(self)
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com https://upload.wikimedia.org https://commons.wikimedia.org; connect-src 'self' https://api.open-meteo.com https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com https://upload.wikimedia.org https://commons.wikimedia.org; font-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com https://upload.wikimedia.org https://commons.wikimedia.org; connect-src 'self' https://api.open-meteo.com https://en.wikipedia.org https://de.wikipedia.org https://it.wikipedia.org https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com https://upload.wikimedia.org https://commons.wikimedia.org; font-src 'self'; manifest-src 'self'; worker-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'none'
 
 /assets/*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800

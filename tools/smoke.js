@@ -19,7 +19,12 @@ const SHOTS = process.argv[3];
     page.on("pageerror", (e) => errors.push("JS: " + e.message));
     page.on("console", (m) => m.type() === "error" && !/Failed to load resource|ERR_/.test(m.text()) && errors.push("Konsole: " + m.text()));
     page.on("response", (r) => r.url().startsWith(BASE) && r.status() >= 400 && errors.push(`${r.status()} ${r.url()}`));
-    await page.route(/^https?:\/\/(?!localhost|127\.0\.0\.1)/, (r) => r.abort());
+    // Wikipedia/Wikimedia nachgebildet (aus der Testumgebung nicht erreichbar)
+    const png = require("fs").readFileSync(require("path").join(__dirname, "../public/icons/hub-192.png"));
+    await page.route(/wikipedia\.org\/api\/rest_v1\/page\/summary\//, (r) => r.fulfill({ contentType: "application/json", headers: { "access-control-allow-origin": "*" },
+      body: JSON.stringify({ thumbnail: { source: "https://upload.wikimedia.org/x/320px-a.png" }, originalimage: { source: "https://upload.wikimedia.org/x/a.png", width: 800 }, content_urls: { desktop: { page: "https://en.wikipedia.org/wiki/X" } } }) }));
+    await page.route(/upload\.wikimedia\.org/, (r) => r.fulfill({ contentType: "image/png", body: png }));
+    await page.route(/^https?:\/\/(?!localhost|127\.0\.0\.1|upload\.wikimedia|[a-z]{2}\.wikipedia)/, (r) => r.abort());
     // Übersicht
     await page.goto(BASE, { waitUntil: "load" });
     const cards = await page.locator(".trip-card").count();
@@ -60,7 +65,23 @@ const SHOTS = process.argv[3];
         const ics = require("fs").readFileSync(await dl.path(), "utf8");
         if (!/BEGIN:VEVENT/.test(ics) || !/END:VCALENDAR/.test(ics)) errors.push(`${trip.id}: Kalenderdatei unvollständig`);
       }
-      stats.push(`${trip.id} ${all} Orte`);
+      // Fotos in der Liste und auf den Tageskarten
+      await page.goto(url + "#entdecken", { waitUntil: "load" }); await page.waitForTimeout(800);
+      const photos = await page.locator(".ph.is-loaded").count();
+      if (!photos) errors.push(`${trip.id}: keine Fotos in der Liste`);
+      await page.goto(url + "#plan", { waitUntil: "load" }); await page.waitForTimeout(800);
+      const dayPhotos = await page.locator(".day-img.is-loaded").count();
+      if (!dayPhotos) errors.push(`${trip.id}: keine Tagesfotos`);
+      // Datenprüfung: Orte der Programmpunkte und Kategorien existieren
+      const bad = await page.evaluate((id) => {
+        const t = window.TRIPS.find((x) => x.id === id), ids = new Set(t.places.map((p) => p.id)), out = [];
+        if (ids.size !== t.places.length) out.push("doppelte Orts-IDs");
+        t.days.forEach((d) => d.stops.forEach((s) => s.place && !ids.has(s.place) && out.push("fehlender Ort " + s.place)));
+        t.places.forEach((p) => p.cats.forEach((c) => !t.cats[c] && out.push(`unbekannte Kategorie ${c} bei ${p.id}`)));
+        return out;
+      }, trip.id);
+      errors.push(...bad.map((b) => `${trip.id}: ${b}`));
+      stats.push(`${trip.id} ${all} Orte, ${photos} Fotos sichtbar`);
     }
     // Während der Reise: „Jetzt / Als Nächstes“ (Uhr auf Florenz, Do 12.11. 10:00 gestellt)
     const ctx2 = await browser.newContext({ ...opts, serviceWorkers: "block" });

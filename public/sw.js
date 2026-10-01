@@ -1,13 +1,15 @@
 /* Offline: App-Dateien vorab (alle Reisen laufen über dieselbe Seite), Seite netzwerk-zuerst, Karten-Kacheln/Fotos/Wetter aus dem Cache als Rückfall.
    Bei Änderungen an App-Dateien VERSION hochzählen. */
-const VERSION = "v7";
+const VERSION = "v8";
 const APP = "irland-app-" + VERSION;
 const RUNTIME = "irland-runtime";
-const MAX_RUNTIME = 400;
+const MAX_RUNTIME = 300;          // Kartenkacheln
+const IMAGES = "irland-img";      // Fotos (Wikipedia/Wikimedia), eigener kleinerer Cache
+const MAX_IMAGES = 150;
 const PRECACHE = [
   "/", "/manifest.webmanifest",
-  "/assets/app.css?v=7", "/assets/app.js?v=7", "/assets/icons.svg",
-  "/assets/trips/florenz.js?v=7", "/assets/trips/irland.js?v=7",
+  "/assets/app.css?v=8", "/assets/app.js?v=8", "/assets/icons.svg",
+  "/assets/trips/florenz.js?v=8", "/assets/trips/irland.js?v=8",
   "/assets/vendor/leaflet/leaflet.css", "/assets/vendor/leaflet/leaflet.js",
   "/assets/fonts/inter.woff2",
   "/icons/favicon-32.png", "/icons/reisen.svg", "/icons/irland.svg", "/icons/florenz.svg"
@@ -23,9 +25,9 @@ self.addEventListener("activate", (e) => {
     .then(() => self.clients.claim()));
 });
 
-async function trim(cache) {
+async function trim(cache, max) {
   const keys = await cache.keys();
-  for (let i = 0; i < keys.length - MAX_RUNTIME; i++) await cache.delete(keys[i]);
+  for (let i = 0; i < keys.length - max; i++) await cache.delete(keys[i]);
 }
 
 async function networkFirst(req, cacheName, timeoutMs) {
@@ -49,7 +51,7 @@ async function cacheFirst(req, cacheName) {
   const hit = await cache.match(req);
   if (hit) return hit;
   const res = await fetch(req);
-  if (res.ok || res.type === "opaque") { cache.put(req, res.clone()); if (cacheName === RUNTIME) trim(cache); }
+  if (res.ok || res.type === "opaque") { cache.put(req, res.clone()); if (cacheName === RUNTIME) trim(cache, MAX_RUNTIME); if (cacheName === IMAGES) trim(cache, MAX_IMAGES); }
   return res;
 }
 
@@ -62,8 +64,10 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(networkFirst(req, APP, 3000).catch(() => caches.match("/", { cacheName: APP })));
   } else if (url.origin === location.origin) {
     e.respondWith(cacheFirst(req, APP));
-  } else if (url.hostname.endsWith("basemaps.cartocdn.com") || url.hostname.endsWith("wikimedia.org")) {
+  } else if (url.hostname.endsWith("basemaps.cartocdn.com")) {
     e.respondWith(cacheFirst(req, RUNTIME));
+  } else if (url.hostname.endsWith("wikimedia.org")) {
+    e.respondWith(cacheFirst(req, IMAGES));
   }
   // Wetter: normal übers Netz, die App merkt sich die letzte Vorhersage selbst.
 });
