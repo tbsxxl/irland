@@ -130,7 +130,7 @@ main{padding-top:8px}
 .day{overflow:hidden}
 .day.is-today{box-shadow:0 0 0 2px var(--brand),var(--shadow)}
 .day-img{position:relative;aspect-ratio:2/1;background:var(--fill)}
-.day-img img{width:100%;height:100%;object-fit:cover}
+.day-img img{width:100%;height:100%;object-fit:cover;object-position:center 30%}
 .day-img a{position:absolute;right:8px;bottom:8px;font-size:10px;color:#fff;background:rgba(0,0,0,.4);padding:2px 7px;border-radius:999px}
 .day-head{padding:16px 16px 6px}
 .day-kicker{font-size:13px;font-weight:600;color:var(--brand);text-transform:uppercase;letter-spacing:.02em}
