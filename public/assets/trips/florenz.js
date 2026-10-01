@@ -19,95 +19,108 @@ const TRIP = {
   facts: [
     { label: "Dauer", value: "8 Tage / 7 Nächte" },
     { label: "Wetter November", value: "8–15 °C, regnerisch, Sonnenuntergang ca. 16:50" },
-    { label: "Unterwegs", value: "Altstadt zu Fuß, Ausflüge mit dem Zug ab Santa Maria Novella" }
+    { label: "Ausflüge", value: "Sa Rom · Mo Pisa & Lucca (oder Siena & Chianti)" }
   ]
 };
 
 const IMAGES = {};
 
-/* Tagesplan. Montag sind Uffizien, Accademia und Palazzo Pitti geschlossen → Ausflugstag. */
+/* Tagesplan nach Tobis Vorschlag (7 Programmtage + Abreise).
+   Rom am Samstag, Oltrarno am Sonntag (Pitti offen), Ausflug am Montag (Uffizien, Accademia, Pitti zu). */
 const DAYS = [
   {
-    date: "Mi 11.11.", title: "Ankommen & erster Abendspaziergang", tip: "Flugzeiten noch eintragen",
+    date: "Mi 11.11.", title: "Ankommen, Altstadt & Piazzale Michelangelo", tip: "Sonnenuntergang ca. 16:50",
     stops: [
       { time: "14:00", icon: "plane", text: "Ankunft & Transfer ins Hotel (ab FLR: Tram T2 bis Unità, ca. 20 Min.)" },
-      { time: "16:00", icon: "footprints", text: "Piazza della Signoria → Ponte Vecchio zum Sonnenuntergang", place: "pontevecchio" },
-      { time: "18:30", icon: "wine", text: "Aperitivo am Weinfenster: I Fratellini", place: "fratellini" },
+      { time: "15:15", icon: "footprints", text: "Erster Rundgang: Piazza della Signoria & Altstadt", place: "signoria" },
+      { time: "16:00", icon: "camera", text: "Ponte Vecchio im Abendlicht", place: "pontevecchio" },
+      { time: "16:30", icon: "sunset", text: "Piazzale Michelangelo zum Sonnenuntergang", place: "piazzale" },
+      { time: "17:15", icon: "church", text: "Ein Stück weiter oben: San Miniato al Monte – ruhiger und genauso schön", place: "sanminiato" },
+      { time: "19:30", icon: "wine", text: "Aperitivo am Weinfenster: I Fratellini", place: "fratellini" },
+      { time: "20:30", icon: "utensils", text: "Dinner: Trattoria Za Za oder Buca Mario", place: "zaza" }
+    ]
+  },
+  {
+    date: "Do 12.11.", title: "Duomo, Kuppel & David", tip: "Kuppel nur mit gebuchtem Zeitfenster",
+    stops: [
+      { time: "08:30", icon: "church", text: "Kuppel des Brunelleschi besteigen (463 Stufen)", place: "duomo",
+        links: [{ label: "Tickets", url: "https://duomo.firenze.it/" }] },
+      { time: "10:00", icon: "landmark", text: "Kombiticket: Campanile, Baptisterium & Dommuseum", place: "opera" },
+      { time: "12:30", icon: "sandwich", text: "Mercato Centrale: Lampredotto bei Da Nerbone oder Schiacciata", place: "mercato" },
+      { time: "14:30", icon: "person-standing", text: "Galleria dell’Accademia: Michelangelos David im Original", place: "accademia",
+        links: [{ label: "Tickets", url: "https://www.galleriaaccademiafirenze.it/en/" }] },
+      { time: "16:30", icon: "coffee", text: "Pause im Caffè Gilli an der Piazza della Repubblica", place: "gilli" },
       { time: "20:00", icon: "utensils", text: "Dinner: Trattoria Sostanza (Butterhähnchen, reservieren)", place: "sostanza" }
     ]
   },
   {
-    date: "Do 12.11.", title: "Dom, Kuppel & Medici", tip: "Kuppel nur mit gebuchtem Zeitfenster",
+    date: "Fr 13.11.", title: "Uffizien, Palazzo Vecchio & Santa Croce", tip: "Uffizien: 8:15-Slot ist am ruhigsten",
     stops: [
-      { time: "08:30", icon: "church", text: "Kuppel des Brunelleschi besteigen (463 Stufen)", place: "duomo",
-        links: [{ label: "Tickets", url: "https://duomo.firenze.it/" }] },
-      { time: "10:30", icon: "landmark", text: "Baptisterium, Campanile & Museo dell’Opera (gleiches Ticket)", place: "opera" },
-      { time: "13:00", icon: "sandwich", text: "Lunch im Mercato Centrale (1. Stock) oder Lampredotto bei Da Nerbone", place: "mercato" },
-      { time: "15:00", icon: "crown", text: "Medici-Kapellen & San Lorenzo", place: "medici" },
-      { time: "17:30", icon: "coffee", text: "Café Gilli an der Piazza della Repubblica", place: "gilli" },
-      { time: "20:00", icon: "utensils", text: "Dinner: Trattoria Za Za oder Buca Mario", place: "zaza" }
-    ]
-  },
-  {
-    date: "Fr 13.11.", title: "Uffizien & Palazzo Vecchio", tip: "Uffizien früh buchen: 8:15-Slot ist am ruhigsten",
-    stops: [
-      { time: "08:15", icon: "palette", text: "Uffizien: Botticelli, Leonardo, Caravaggio (3–4 Std.)", place: "uffizi",
+      { time: "08:15", icon: "palette", text: "Uffizien: Geburt der Venus, Primavera, Leonardo, Michelangelo, Raffael, Caravaggio", place: "uffizi",
         links: [{ label: "Tickets", url: "https://www.uffizi.it/en/tickets" }] },
       { time: "12:30", icon: "sandwich", text: "Schiacciata bei All’Antico Vinaio", place: "vinaio" },
-      { time: "14:00", icon: "castle", text: "Palazzo Vecchio + Turm (Arnolfo-Turm, Aussicht)", place: "vecchio" },
-      { time: "16:30", icon: "ice-cream-cone", text: "Gelato bei Vivoli oder Gelateria dei Neri", place: "vivoli" },
-      { time: "19:30", icon: "wine", text: "Abend im Viertel Santa Croce / Sant’Ambrogio", place: "santacroce" }
+      { time: "14:00", icon: "castle", text: "Palazzo Vecchio – die Turmbesteigung lohnt sich", place: "vecchio" },
+      { time: "16:00", icon: "church", text: "Santa Croce: Gräber von Michelangelo, Galileo & Machiavelli", place: "santacroce" },
+      { time: "17:30", icon: "ice-cream-cone", text: "Gelato bei Vivoli", place: "vivoli" },
+      { time: "20:00", icon: "wine", text: "Abend im Viertel Santa Croce / Sant’Ambrogio" }
     ]
   },
   {
-    date: "Sa 14.11.", title: "Oltrarno & Piazzale Michelangelo", tip: "Sonnenuntergang ca. 16:50",
+    date: "Sa 14.11.", title: "Tagesausflug Rom", tip: "Zug ca. 1:30 Std. – früh buchen spart viel",
+    alt: "Vatikan statt Kolosseum möglich",
     stops: [
-      { time: "09:00", icon: "landmark", text: "Palazzo Pitti & Boboli-Garten", place: "pitti",
+      { time: "07:00", icon: "train-front", text: "Frecciarossa ab Firenze S.M.N. nach Roma Termini", place: "smn",
+        links: [{ label: "Trenitalia", url: "https://www.trenitalia.com/" }, { label: "Italo", url: "https://www.italotreno.com/" }] },
+      { time: "08:45", icon: "landmark", text: "Kolosseum, Forum Romanum & Palatin (ca. 3 Std., Kombiticket mit Zeitfenster)",
+        links: [{ label: "Tickets", url: "https://parcocolosseo.it/" }] },
+      { time: "12:00", icon: "footprints", text: "Zu Fuß über die Piazza Venezia zum Pantheon" },
+      { time: "13:00", icon: "utensils", text: "Mittagessen in der Nähe: Cacio e Pepe oder Carbonara" },
+      { time: "14:30", icon: "droplets", text: "Trevi-Brunnen (Besucherlimit bzw. kleine Gebühr)" },
+      { time: "15:30", icon: "footprints", text: "Spanische Treppe, danach eventuell Piazza Navona" },
+      { time: "18:00", icon: "wine", text: "Aperitivo, dann zurück nach Termini" },
+      { time: "20:30", icon: "train-front", text: "Frecciarossa zurück nach Florenz (ca. 22:00 an)" }
+    ]
+  },
+  {
+    date: "So 15.11.", title: "Oltrarno: Palazzo Pitti & Boboli", tip: "Werkstätten haben sonntags oft zu – Shopping am Dienstag",
+    stops: [
+      { time: "09:00", icon: "landmark", text: "Palazzo Pitti & Boboli-Gärten", place: "pitti",
         links: [{ label: "Tickets", url: "https://www.uffizi.it/en/pitti-palace" }] },
-      { time: "13:00", icon: "utensils", text: "Lunch im Oltrarno: Trattoria 4 Leoni oder Il Santo Bevitore", place: "quattroleoni" },
-      { time: "14:30", icon: "hammer", text: "Werkstätten & Piazza Santo Spirito", place: "santospirito" },
-      { time: "15:45", icon: "flower", text: "Aufstieg über den Rosengarten zum Piazzale Michelangelo", place: "piazzale" },
-      { time: "16:30", icon: "sunset", text: "Sonnenuntergang, danach San Miniato al Monte", place: "sanminiato" },
-      { time: "19:30", icon: "wine", text: "Dinner & Wein im Oltrarno (Osteria Santo Spirito)", place: "osteriasantospirito" }
+      { time: "13:00", icon: "utensils", text: "Lunch im Oltrarno: Trattoria 4 Leoni", place: "quattroleoni" },
+      { time: "14:30", icon: "palette", text: "Cappella Brancacci (Masaccio-Fresken)", place: "brancacci" },
+      { time: "15:30", icon: "church", text: "Santo Spirito – Kirche, Platz & Gassen", place: "santospirito" },
+      { time: "16:30", icon: "sunset", text: "Giardino Bardini mit Blick auf den Dom", place: "bardini" },
+      { time: "19:30", icon: "wine", text: "Dinner im Oltrarno: Il Santo Bevitore oder Osteria Santo Spirito", place: "santobevitore" }
     ]
   },
   {
-    date: "So 15.11.", title: "Ausflug Pisa & Lucca", tip: "Regionalzug ab Santa Maria Novella, kein Ticket vorab nötig",
+    date: "Mo 16.11.", title: "Ausflug Pisa & Lucca", tip: "Montags haben Uffizien, Accademia & Pitti zu",
+    alt: "Oder: Siena, San Gimignano & Chianti (Tour oder Mietwagen)",
     stops: [
-      { time: "08:30", icon: "train-front", text: "Zug nach Pisa Centrale (ca. 1 Std.)", place: "smn",
+      { time: "08:30", icon: "train-front", text: "Regionalzug nach Pisa Centrale (ca. 1 Std.)", place: "smn",
         links: [{ label: "Trenitalia", url: "https://www.trenitalia.com/" }] },
       { time: "10:00", icon: "castle", text: "Piazza dei Miracoli: Schiefer Turm, Dom, Baptisterium" },
-      { time: "13:00", icon: "train-front", text: "Weiter nach Lucca (30 Min.)" },
-      { time: "13:45", icon: "utensils", text: "Lunch & Spaziergang auf der Stadtmauer (Fahrrad leihen)" },
+      { time: "13:00", icon: "train-front", text: "Weiter nach Lucca (ca. 30 Min.)" },
+      { time: "13:45", icon: "utensils", text: "Mittagessen in der Altstadt" },
+      { time: "15:00", icon: "bike", text: "Mit dem Rad auf der Stadtmauer rund um Lucca" },
       { time: "17:30", icon: "train-front", text: "Rückfahrt nach Florenz (ca. 1 Std. 20 Min.)" }
     ]
   },
   {
-    date: "Mo 16.11.", title: "Siena, San Gimignano & Chianti", tip: "Montag sind viele Museen in Florenz zu",
-    alt: "Alternative: Tagesausflug Rom",
+    date: "Di 17.11.", title: "Freier Tag, Shopping & Abschied", tip: "Leder: Scuola del Cuoio & Märkte um San Lorenzo",
     stops: [
-      { time: "08:00", icon: "bus", text: "Tagestour ab Florenz (oder Bus nach Siena, 1 Std. 15 Min.)", place: "smn" },
-      { time: "09:30", icon: "building-2", text: "Siena: Piazza del Campo & Dom" },
-      { time: "13:00", icon: "wine", text: "Weingut im Chianti mit Lunch & Verkostung" },
-      { time: "15:30", icon: "castle", text: "San Gimignano: Geschlechtertürme & Gelato" },
-      { time: "19:00", icon: "flag", text: "Rückkehr nach Florenz" }
-    ]
-  },
-  {
-    date: "Di 17.11.", title: "David, San Marco & Abschied", tip: "Accademia vorab buchen",
-    stops: [
-      { time: "08:15", icon: "person-standing", text: "Galleria dell’Accademia: Michelangelos David", place: "accademia",
-        links: [{ label: "Tickets", url: "https://www.galleriaaccademiafirenze.it/en/" }] },
-      { time: "10:30", icon: "palette", text: "Museo di San Marco (Fra-Angelico-Fresken)", place: "sanmarco" },
+      { time: "10:00", icon: "shopping-bag", text: "Leder-Shopping: Scuola del Cuoio hinter Santa Croce", place: "cuoio" },
       { time: "12:30", icon: "shopping-basket", text: "Mercato di Sant’Ambrogio & Lunch bei Da Rocco", place: "santambrogio" },
-      { time: "14:30", icon: "church", text: "Santa Croce (Gräber von Michelangelo & Galileo)", place: "santacroce" },
-      { time: "17:00", icon: "spray-can", text: "Officina Profumo-Farmaceutica di Santa Maria Novella", place: "farmaceutica" },
-      { time: "20:00", icon: "beef", text: "Abschiedsessen: Bistecca alla fiorentina" }
+      { time: "14:30", icon: "store", text: "Lederstände um San Lorenzo & Werkstätten im Oltrarno", place: "sanlorenzomarkt" },
+      { time: "16:00", icon: "spray-can", text: "Officina Profumo-Farmaceutica di Santa Maria Novella", place: "farmaceutica" },
+      { time: "16:45", icon: "camera", text: "Noch einmal Ponte Vecchio zum Sonnenuntergang", place: "pontevecchio" },
+      { time: "20:00", icon: "beef", text: "Abschiedsessen: Bistecca alla fiorentina (Buca Mario)", place: "bucamario" }
     ]
   },
   {
     date: "Mi 18.11.", title: "Abreise", tip: "Flugzeit noch eintragen",
     stops: [
+      { time: "07:30", icon: "camera", text: "Optional: Ponte Vecchio früh morgens – fast menschenleer", place: "pontevecchio" },
       { time: "09:00", icon: "coffee", text: "Letzter Cappuccino (Ditta Artigianale)", place: "ditta" },
       { time: "11:00", icon: "luggage", text: "Check-out & Transfer zum Flughafen" }
     ]
@@ -123,7 +136,8 @@ const CATS = {
   gelato:   { label: "Gelato & Café",  icon: "ice-cream-cone", color: "#c2701e" },
   markt:    { label: "Märkte & Shopping", icon: "shopping-basket", color: "#5e6b3a" },
   info:     { label: "Praktisch",      icon: "train-front", color: "#34566f" },
-  trip:     { label: "Tagesausflüge",  icon: "bus", color: "#6b5a3a" }
+  trip:     { label: "Tagesausflüge",  icon: "bus", color: "#6b5a3a" },
+  rom:      { label: "Rom-Tag",        icon: "landmark", color: "#a8323e" }
 };
 
 /* Orte. Koordinaten gerundet; ohne lat/lng nur in der Liste. */
@@ -189,6 +203,8 @@ const PLACES = [
   { id: "mercato", cats: ["markt", "food"], name: "Mercato Centrale", rating: 4.4, note: "Unten Markt, oben Food-Hall", lat: 43.77650, lng: 11.25340 },
   { id: "santambrogio", cats: ["markt"], name: "Mercato di Sant’Ambrogio", rating: 4.5, note: "Markt der Einheimischen, vormittags", lat: 43.77000, lng: 11.26720 },
   { id: "farmaceutica", cats: ["markt"], name: "Officina Profumo-Farmaceutica di S. M. Novella", rating: 4.6, note: "Klosterapotheke seit 1612", lat: 43.77370, lng: 11.24790 },
+  { id: "cuoio", cats: ["markt"], name: "Scuola del Cuoio", rating: 4.6, note: "Lederschule hinter Santa Croce, Werkstatt zum Zuschauen", lat: 43.76820, lng: 11.26290 },
+  { id: "sanlorenzomarkt", cats: ["markt"], name: "Lederstände San Lorenzo", note: "Märkte rund um San Lorenzo und den Mercato Centrale – Qualität prüfen, handeln erlaubt", lat: 43.77560, lng: 11.25390 },
   { id: "scarpelli", cats: ["markt"], name: "Werkstätten im Oltrarno", note: "Via Maggio, Via Santo Spirito: Buchbinder, Leder, Restauratoren", lat: 43.76700, lng: 11.24900 },
 
   // Praktisch
@@ -201,8 +217,18 @@ const PLACES = [
   { id: "siena", cats: ["trip"], name: "Siena", note: "Piazza del Campo & Dom · Bus ca. 1 Std. 15 Min." },
   { id: "sangimignano", cats: ["trip"], name: "San Gimignano", note: "Mittelalterliche Türme, am besten per Tour" },
   { id: "chianti", cats: ["trip", "wein"], name: "Chianti", note: "Weingüter, Greve & Castellina – per Tour oder Mietwagen" },
-  { id: "rom", cats: ["trip"], name: "Rom", note: "Schnellzug ab Santa Maria Novella ca. 1½ Std. · montags ideal: Vatikanische Museen und Kolosseum offen", url: "https://www.trenitalia.com/" },
-  { id: "bologna", cats: ["trip", "food"], name: "Bologna", note: "Essen & Arkaden · Schnellzug nur ca. 40 Min." }
+  { id: "rom", cats: ["trip", "rom"], name: "Rom", note: "Frecciarossa ab S.M.N. ca. 1:30 Std. bis Roma Termini · hin gegen 7 Uhr, zurück gegen 20–21 Uhr", url: "https://www.trenitalia.com/" },
+  { id: "pisalucca", cats: ["trip"], name: "Pisa & Lucca", note: "Gut an einem Tag kombinierbar, in Lucca Rad fahren auf der Stadtmauer" },
+  { id: "bologna", cats: ["trip", "food"], name: "Bologna", note: "Essen & Arkaden · Schnellzug nur ca. 40 Min." },
+
+  // Rom-Tag (ohne Koordinaten: nur in der Liste, nicht auf der Florenz-Karte)
+  { id: "kolosseum", cats: ["rom"], name: "Kolosseum, Forum Romanum & Palatin", note: "Kombiticket mit Zeitfenster, ca. 3 Std. – früh buchen", url: "https://parcocolosseo.it/" },
+  { id: "pantheon", cats: ["rom"], name: "Pantheon", note: "Über die Piazza Venezia zu Fuß erreichbar" },
+  { id: "trevi", cats: ["rom"], name: "Trevi-Brunnen", note: "Besucherlimit bzw. kleine Gebühr für den Zugang" },
+  { id: "spanischetreppe", cats: ["rom"], name: "Spanische Treppe", note: "Danach eventuell noch zur Piazza Navona" },
+  { id: "navona", cats: ["rom"], name: "Piazza Navona", note: "Barockplatz mit Berninis Vierströmebrunnen" },
+  { id: "vatikan", cats: ["rom"], name: "Vatikan (Alternative)", note: "Petersdom & Vatikanische Museen – statt Kolosseum, beides an einem Tag ist zu viel", url: "https://www.museivaticani.va/" },
+  { id: "termini", cats: ["rom", "info"], name: "Roma Termini", note: "Hauptbahnhof, Ankunft & Abfahrt der Schnellzüge" }
 ];
 
 const CHECKLISTS = [
@@ -211,12 +237,15 @@ const CHECKLISTS = [
     items: [
       { id: "hotel", text: "Hotel eintragen (Seite rechnet dann ab Hotel)" },
       { id: "flights", text: "Flugzeiten eintragen" },
-      { id: "duomo", text: "Dom-Pass mit Kuppel-Zeitfenster – Do" },
-      { id: "uffizi", text: "Uffizien 08:15 – Fr" },
-      { id: "pitti", text: "Palazzo Pitti & Boboli – Sa" },
-      { id: "sostanza", text: "Tisch bei Sostanza – Mi" },
-      { id: "tour", text: "Tour Siena/San Gimignano/Chianti – Mo" },
-      { id: "accademia", text: "Accademia 08:15 – Di" }
+      { id: "duomo", text: "Dom-Kombiticket mit Kuppel-Zeitfenster – Do 08:30" },
+      { id: "accademia", text: "Accademia (David) – Do 14:30" },
+      { id: "sostanza", text: "Tisch bei Sostanza – Do" },
+      { id: "uffizi", text: "Uffizien – Fr 08:15" },
+      { id: "romzug", text: "Frecciarossa Florenz ⇄ Rom (hin ~7 Uhr, zurück ~20:30) – Sa" },
+      { id: "kolosseum", text: "Kolosseum, Forum & Palatin mit Zeitfenster – Sa" },
+      { id: "pitti", text: "Palazzo Pitti & Boboli – So" },
+      { id: "brancacci", text: "Cappella Brancacci (Reservierung prüfen) – So" },
+      { id: "ausflug", text: "Mo: Zug Pisa/Lucca – oder Tour Siena/San Gimignano/Chianti" }
     ]
   },
   {
@@ -233,14 +262,15 @@ const CHECKLISTS = [
 ];
 
 const INFOS = [
-  { icon: "ticket", title: "Tickets vorab", text: "Uffizien, Accademia und die Dom-Kuppel haben Zeitfenster und sind oft ausgebucht – vor der Reise buchen." },
+  { icon: "ticket", title: "Tickets vorab", text: "Dom-Kuppel (Kombiticket mit Campanile, Baptisterium & Dommuseum), Uffizien, Accademia und Kolosseum haben Zeitfenster und sind oft ausgebucht – vor der Reise online buchen." },
+  { icon: "camera", title: "Beste Zeit für Fotos", text: "Ponte Vecchio früh morgens oder zum Sonnenuntergang. Piazzale Michelangelo zum Sonnenuntergang (im November ca. 16:50)." },
   { icon: "calendar-x", title: "Montags geschlossen", text: "Uffizien, Accademia und Palazzo Pitti haben montags Ruhetag. Deshalb ist Montag der Ausflugstag." },
   { icon: "plane", title: "Flughafen → Stadt", text: "Von Florenz (FLR) mit der Tram T2 bis Unità in ca. 20 Min. Von Pisa (PSA) mit dem PisaMover und Zug in ca. 1 Std. 15 Min." },
   { icon: "train-front", title: "Zug", text: "Regionalzüge (Pisa, Lucca) am Bahnsteig oder in der Trenitalia-App kaufen; Papiertickets vor der Fahrt entwerten." },
   { icon: "church", title: "Kirchen", text: "Schultern und Knie bedeckt, sonst kein Einlass. Während Messen keine Besichtigung." },
   { icon: "euro", title: "Bezahlen & Trinkgeld", text: "„Coperto“ (Gedeck) steht auf der Rechnung und ist normal. Trinkgeld freiwillig, Aufrunden reicht. Kurtaxe zahlt man im Hotel." },
   { icon: "coffee", title: "Café wie die Italiener", text: "Espresso am Tresen ist deutlich günstiger als am Tisch. Cappuccino nur bis mittags." },
-  { icon: "train-front", title: "Tagesausflug Rom", text: "Schnellzug (Frecciarossa/Italo) in ca. 1½ Std. bis Roma Termini – früh buchen spart viel. Montag passt am besten. Antike (Kolosseum, Forum) oder Vatikan wählen, beides an einem Tag wird hektisch." },
+  { icon: "train-front", title: "Tagesausflug Rom (Sa)", text: "Frecciarossa ab Firenze S.M.N. in ca. 1:30 Std. bis Roma Termini, früh gebucht deutlich günstiger. Hin gegen 7 Uhr, zurück gegen 20–21 Uhr. Für den Vatikan bleibt neben dem Kolosseum keine Zeit – wenn er dir wichtiger ist, tausch ihn gegen das Kolosseum." },
   { icon: "siren", title: "Notruf", text: "112 – europaweite Notrufnummer." }
 ];
 
