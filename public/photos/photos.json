@@ -484,7 +484,8 @@
  },
  "San Gimignano": {
   "page": "https://en.wikipedia.org/wiki/San_Gimignano",
-  "s": "san-gimignano-s.jpg"
+  "s": "san-gimignano-s.jpg",
+  "l": "san-gimignano-l.jpg"
  },
  "San Luigi dei Francesi": {
   "page": "https://en.wikipedia.org/wiki/San_Luigi_dei_Francesi",
