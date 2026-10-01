@@ -251,14 +251,17 @@
         d.ni ? `<span class="tag warn">${ic("id-card")}Nordirland: Pass & Pfund</span>` : "",
         d.alt ? `<span class="tag alt">${ic("shuffle")}${esc(d.alt)}</span>` : ""
       ].join("");
-      const stops = d.stops.map((s, j) => {
+      const stopActs = (s) => {
         const place = s.place && byId[s.place];
-        const acts = [
+        return [
           ...(s.links || []).map((l) => ext(l.url, l.label, linkIcon(l.label))),
           !place ? "" : hasPos(place) ? `<a class="btn" href="#entdecken/${esc(place.id)}">${ic("map-pin")}Karte</a>`
             : place.url && !(s.links || []).some((l) => l.url === place.url) ? ext(place.url, "Infos")
             : !place.url ? ext(mapsSearch(place), "Karte", "map-pin") : ""
         ].join("");
+      };
+      const stops = d.stops.map((s, j) => {
+        const acts = stopActs(s);
         const cls = isToday ? (j === nowIdx ? "is-now" : j < nowIdx ? "is-past" : "") : "";
         return `<li class="stop ${cls}">
           <div class="time">${esc(s.time)}</div>
@@ -275,6 +278,11 @@
           ${tags ? `<div class="day-meta">${tags}</div>` : ""}
         </div>
         <ol class="timeline">${stops}</ol>
+        ${d.extras && d.extras.length ? `<div class="extras">
+          <div class="extras-head">${ic("sparkles")}Falls noch Zeit ist</div>
+          <ul>${d.extras.map((x) => `<li class="extra"><div class="tile">${ic(x.icon || "sparkles")}</div>
+            <div><div class="txt">${esc(x.text)}</div><div class="acts">${stopActs(x)}</div></div></li>`).join("")}</ul>
+        </div>` : ""}
       </article>`;
     }).join("");
 
