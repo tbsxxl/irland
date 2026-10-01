@@ -12,13 +12,19 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/app.css?v=10">
+  <link rel="stylesheet" href="/assets/app.css?v=11">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=10" defer></script>
-  <script src="/assets/trips/irland.js?v=10" defer></script>
-  <script src="/assets/app.js?v=10" defer></script>
+  <script src="/assets/trips/florenz.js?v=11" defer></script>
+  <script src="/assets/trips/irland.js?v=11" defer></script>
+  <script src="/assets/app.js?v=11" defer></script>
 </head>
 <body>
+  <!-- Kompakte Titelleiste (Handy), erscheint beim Scrollen -->
+  <div class="navbar" id="navbar" aria-hidden="true">
+    <a class="nav-back" id="navBack" href="/" hidden><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#chevron-left"/></svg>Reisen</a>
+    <div class="nav-title" id="navTitle">Reisen</div>
+  </div>
+
   <header class="top">
     <div class="wrap">
       <a class="back" id="back" href="/" hidden><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#chevron-left"/></svg>Reisen</a>
@@ -90,6 +96,7 @@
             <label class="visually-hidden" for="q">Suche</label>
             <input id="q" type="search" placeholder="Suchen" autocomplete="off" enterkeyhint="search">
           </div>
+          <div class="segmented city" id="city" role="group" aria-label="Stadt" hidden></div>
           <div class="segmented" id="sort" role="group" aria-label="Sortierung">
             <button type="button" data-sort="cat" aria-pressed="true">Thema</button>
             <button type="button" data-sort="dist" aria-pressed="false">Entfernung</button>
@@ -110,6 +117,16 @@
         <div class="section"><div class="group-label">Teilen & Kalender</div><div class="list" id="tools"></div></div>
       </section>
     </main>
+  </div>
+
+  <!-- Detailblatt für Orte -->
+  <div class="sheet" id="sheet" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" tabindex="-1">
+      <div class="sheet-grab" aria-hidden="true"></div>
+      <button class="sheet-close" type="button" data-close aria-label="Schließen"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#x"/></svg></button>
+      <div class="sheet-body" id="sheetBody"></div>
+    </div>
   </div>
 
   <footer class="wrap">

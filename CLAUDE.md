@@ -21,7 +21,11 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Selbst gehostet: Schrift Inter, Leaflet 1.9.4 unter `assets/vendor/`. Extern nur Karten-Kacheln (CARTO),
   Wetter (Open-Meteo) und Fotos (Wikimedia) – bei neuen Quellen die CSP in `public/_headers` erweitern.
 - Browser-Speicher pro Reise mit Präfix `<id>.`: `checks` (Checklisten), `favs` (gemerkte Orte), `wx` (letzte Wettervorhersage), `tab`.
-- Während der Reise: Karte „Jetzt / Als Nächstes“ oben im Plan (`renderNow`, aktualisiert jede Minute).
+- Entdecken: Stadt-Umschalter, sobald Orte ein `city` haben (Suche läuft über alle Städte); lange Gruppen zeigen erst die
+  6 besten (Bewertung gewichtet mit Anzahl), Rest per „Alle anzeigen“. Ort antippen (Liste, Karte, Plan-Text) öffnet das
+  Detailblatt (`openSheet`) mit Foto, Route, Karte, Website, Merken; schließt per ×, Hintergrund, Wischen, Escape, Zurück.
+- Handy: kompakte Titelleiste (`#navbar`) erscheint, wenn die große Überschrift aus dem Bild scrollt.
+- Während der Reise: Plan springt beim Öffnen zum heutigen Tag; Karte „Jetzt / Als Nächstes“ oben im Plan (`renderNow`, aktualisiert jede Minute).
 - Leaflet wird erst beim Öffnen von „Entdecken“ nachgeladen (`ensureMap`).
 - Kalender-Export (.ics) unter Infos: Uhrzeiten gelten als Ortszeit `tz` der Reise und werden in UTC umgerechnet.
 - Routen/Suche öffnen auf Apple-Geräten Apple Karten, sonst Google Maps.

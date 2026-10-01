@@ -51,7 +51,12 @@ const SHOTS = process.argv[3];
       const filtered = await page.locator(".place").count();
       if (!(all > 20 && filtered > 0 && filtered < all && markers > 10)) errors.push(`${trip.id}: Filter/Karte alle=${all} gefiltert=${filtered} marker=${markers}`);
       await page.goto(url + "#entdecken/" + trip.place, { waitUntil: "load" }); await page.waitForTimeout(600);
-      if (!(await page.locator(".leaflet-popup").isVisible())) errors.push(`${trip.id}: Popup für ${trip.place} fehlt`);
+      if (!(await page.locator(".leaflet-tooltip").first().isVisible())) errors.push(`${trip.id}: Marker für ${trip.place} nicht hervorgehoben`);
+      // Detailblatt: Ort antippen öffnet es, Escape schließt es
+      await page.locator(".place").first().click(); await page.waitForTimeout(400);
+      if (!(await page.locator("#sheet .sheet-content h2").isVisible())) errors.push(`${trip.id}: Detailblatt öffnet nicht`);
+      await page.keyboard.press("Escape"); await page.waitForTimeout(400);
+      if (await page.locator("#sheet").isVisible()) errors.push(`${trip.id}: Detailblatt schließt nicht`);
       // Merken + Filter „Gemerkt“
       await page.goto(url + "#entdecken", { waitUntil: "load" });
       await page.locator(".fav").first().click();
