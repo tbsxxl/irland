@@ -78,7 +78,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Sa 18.10.", wiki: "Game of Thrones Studio Tour", title: "Game of Thrones Studio Tour", tip: "Treffpunkt Molly Malone · ca. €80 inkl. Bus", ni: true,
+    date: "Sa 18.10.", wiki: "Banbridge", title: "Game of Thrones Studio Tour", tip: "Treffpunkt Molly Malone · ca. €80 inkl. Bus", ni: true,
     stops: [
       { time: "09:45", icon: "bus", text: "Abfahrt Dublin → Banbridge (90 Min.)", place: "molly",
         links: [{ label: "Tickets", url: "https://gameofthronesstudiotour.com/" }] },
@@ -202,7 +202,7 @@ const PLACES = [
   // Film
   { id: "grafton", wiki: "Grafton Street", cats: ["film"], name: "Grafton Street", rating: 4.6, note: "Straßenmusik & Shopping · Drehort „Once“", free: true, lat: 53.34150, lng: -6.25990 },
   { id: "trinity", wiki: "Trinity College Dublin", cats: ["film"], name: "Trinity College", rating: 4.6, note: "Drehort „Normal People“", free: true, lat: 53.34380, lng: -6.25460, url: "https://www.tcd.ie/" },
-  { id: "got", wiki: "Game of Thrones Studio Tour", cats: ["film", "trip"], name: "Game of Thrones Studio Tour", rating: 4.9, note: "Banbridge, Nordirland – Tagesausflug", url: "https://gameofthronesstudiotour.com/" },
+  { id: "got", wiki: "Banbridge", cats: ["film", "trip"], name: "Game of Thrones Studio Tour", rating: 4.9, note: "Banbridge, Nordirland – Tagesausflug", url: "https://gameofthronesstudiotour.com/" },
 
   // Abends & Touren
   { id: "cobblestone", wiki: "Smithfield, Dublin", cats: ["night", "film"], name: "The Cobblestone", rating: 4.7, note: "Traditionelle Live-Musik jeden Abend", lat: 53.34960, lng: -6.27820, url: "https://www.thecobblestonepub.ie/" },
