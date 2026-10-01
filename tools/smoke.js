@@ -42,13 +42,37 @@ const SHOTS = process.argv[3];
       await page.goto(url + "#entdecken", { waitUntil: "load" });
       const all = await page.locator(".place").count();
       const markers = await page.locator(".leaflet-interactive").count();
-      await page.locator("#chips .chip").nth(1).click(); await page.waitForTimeout(200);
+      await page.locator("#chips .chip[data-cat]").nth(1).click(); await page.waitForTimeout(200);
       const filtered = await page.locator(".place").count();
       if (!(all > 20 && filtered > 0 && filtered < all && markers > 10)) errors.push(`${trip.id}: Filter/Karte alle=${all} gefiltert=${filtered} marker=${markers}`);
       await page.goto(url + "#entdecken/" + trip.place, { waitUntil: "load" }); await page.waitForTimeout(600);
       if (!(await page.locator(".leaflet-popup").isVisible())) errors.push(`${trip.id}: Popup für ${trip.place} fehlt`);
+      // Merken + Filter „Gemerkt“
+      await page.goto(url + "#entdecken", { waitUntil: "load" });
+      await page.locator(".fav").first().click();
+      await page.locator(".chip-fav").click(); await page.waitForTimeout(150);
+      if ((await page.locator(".place").count()) !== 1) errors.push(`${trip.id}: Filter „Gemerkt“ zeigt nicht genau 1 Ort`);
+      // Kalender-Export
+      await page.goto(url + "#infos", { waitUntil: "load" });
+      const [dl] = await Promise.all([page.waitForEvent("download", { timeout: 5000 }).catch(() => null), page.click('[data-act="ics"]')]);
+      if (!dl) errors.push(`${trip.id}: kein Kalender-Download`);
+      else {
+        const ics = require("fs").readFileSync(await dl.path(), "utf8");
+        if (!/BEGIN:VEVENT/.test(ics) || !/END:VCALENDAR/.test(ics)) errors.push(`${trip.id}: Kalenderdatei unvollständig`);
+      }
       stats.push(`${trip.id} ${all} Orte`);
     }
+    // Während der Reise: „Jetzt / Als Nächstes“ (Uhr auf Florenz, Do 12.11. 10:00 gestellt)
+    const ctx2 = await browser.newContext({ ...opts, serviceWorkers: "block" });
+    await ctx2.clock.setFixedTime(new Date(2026, 10, 12, 10, 0));
+    const p2 = await ctx2.newPage();
+    await p2.route(/^https?:\/\/(?!localhost|127\.0\.0\.1)/, (r) => r.abort());
+    await p2.goto(BASE + "florenz/#plan", { waitUntil: "load" });
+    const nowText = await p2.locator("#nowBox").innerText().catch(() => "");
+    if (!/Jetzt/.test(nowText) || !/Als Nächstes/.test(nowText)) errors.push("Jetzt-Karte fehlt: " + nowText.slice(0, 80));
+    if (SHOTS) await p2.screenshot({ path: `${SHOTS}/${name}-florenz-unterwegs.png` });
+    await ctx2.close();
+
     console.log(`${name}: ${errors.length ? "FEHLER\n  " + errors.join("\n  ") : "ok"} (${stats.join(", ")})`);
     if (errors.length) failed = true;
     await ctx.close();

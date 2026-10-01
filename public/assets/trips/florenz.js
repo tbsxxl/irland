@@ -11,6 +11,7 @@ const TRIP = {
   end: "2026-11-18",
   center: { lat: 43.7700, lng: 11.2545, zoom: 15, name: "Florenz" },
   near: 1,
+  tz: "Europe/Rome",
   notice: "Entwurf: Hotel und Flugzeiten fehlen noch. Bis dahin gelten Entfernungen ab dem Dom.",
   cost: "",
   hotel: null,
@@ -83,6 +84,7 @@ const DAYS = [
   },
   {
     date: "Mo 16.11.", title: "Siena, San Gimignano & Chianti", tip: "Montag sind viele Museen in Florenz zu",
+    alt: "Alternative: Tagesausflug Rom",
     stops: [
       { time: "08:00", icon: "bus", text: "Tagestour ab Florenz (oder Bus nach Siena, 1 Std. 15 Min.)", place: "smn" },
       { time: "09:30", icon: "building-2", text: "Siena: Piazza del Campo & Dom" },
@@ -199,6 +201,7 @@ const PLACES = [
   { id: "siena", cats: ["trip"], name: "Siena", note: "Piazza del Campo & Dom · Bus ca. 1 Std. 15 Min." },
   { id: "sangimignano", cats: ["trip"], name: "San Gimignano", note: "Mittelalterliche Türme, am besten per Tour" },
   { id: "chianti", cats: ["trip", "wein"], name: "Chianti", note: "Weingüter, Greve & Castellina – per Tour oder Mietwagen" },
+  { id: "rom", cats: ["trip"], name: "Rom", note: "Schnellzug ab Santa Maria Novella ca. 1½ Std. · montags ideal: Vatikanische Museen und Kolosseum offen", url: "https://www.trenitalia.com/" },
   { id: "bologna", cats: ["trip", "food"], name: "Bologna", note: "Essen & Arkaden · Schnellzug nur ca. 40 Min." }
 ];
 
@@ -237,6 +240,7 @@ const INFOS = [
   { icon: "church", title: "Kirchen", text: "Schultern und Knie bedeckt, sonst kein Einlass. Während Messen keine Besichtigung." },
   { icon: "euro", title: "Bezahlen & Trinkgeld", text: "„Coperto“ (Gedeck) steht auf der Rechnung und ist normal. Trinkgeld freiwillig, Aufrunden reicht. Kurtaxe zahlt man im Hotel." },
   { icon: "coffee", title: "Café wie die Italiener", text: "Espresso am Tresen ist deutlich günstiger als am Tisch. Cappuccino nur bis mittags." },
+  { icon: "train-front", title: "Tagesausflug Rom", text: "Schnellzug (Frecciarossa/Italo) in ca. 1½ Std. bis Roma Termini – früh buchen spart viel. Montag passt am besten. Antike (Kolosseum, Forum) oder Vatikan wählen, beides an einem Tag wird hektisch." },
   { icon: "siren", title: "Notruf", text: "112 – europaweite Notrufnummer." }
 ];
 

@@ -12,13 +12,11 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">
-  <link rel="stylesheet" href="/assets/app.css?v=3">
+  <link rel="stylesheet" href="/assets/app.css?v=4">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=3" defer></script>
-  <script src="/assets/trips/irland.js?v=3" defer></script>
-  <script src="/assets/vendor/leaflet/leaflet.js" defer></script>
-  <script src="/assets/app.js?v=3" defer></script>
+  <script src="/assets/trips/florenz.js?v=4" defer></script>
+  <script src="/assets/trips/irland.js?v=4" defer></script>
+  <script src="/assets/app.js?v=4" defer></script>
 </head>
 <body>
   <header class="top">
@@ -61,6 +59,7 @@
         <div class="section" id="noticeBox" hidden>
           <div class="notice"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#pencil-line"/></svg><span id="notice"></span></div>
         </div>
+        <div class="section" id="nowBox" hidden></div>
         <div class="section"><div class="list facts" id="facts"></div></div>
 
         <div class="section">
@@ -108,6 +107,7 @@
         <div class="section"><div class="group-label">Unterkunft</div><div class="list" id="hotel"></div></div>
         <div class="section infos-2" id="checklists"></div>
         <div class="section"><div class="group-label">Gut zu wissen</div><div class="list" id="infolist"></div></div>
+        <div class="section"><div class="group-label">Teilen & Kalender</div><div class="list" id="tools"></div></div>
       </section>
     </main>
   </div>

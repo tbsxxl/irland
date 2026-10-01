@@ -247,3 +247,20 @@ footer{padding:24px 0 32px;font-size:12px;color:var(--label-2);text-align:center
 footer a{color:inherit;text-decoration:underline;text-decoration-color:var(--label-3)}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+/* ---------- Merken, Teilen, Hinweise ---------- */
+.place .head{display:flex;gap:8px;align-items:flex-start}
+.fav{margin:-4px -6px 0 auto;padding:4px 6px;border:0;background:none;color:var(--label-3);font-size:20px;line-height:0;transition:transform .15s var(--ease)}
+.fav:active{transform:scale(.85)}
+.fav[aria-pressed="true"]{color:#FF2D55}
+.fav[aria-pressed="true"] .i{fill:currentColor}
+.chip-fav .i{color:#FF2D55}
+.chip-fav[aria-pressed="true"]{background:#FF2D55}
+.tag.alt{background:var(--soft);color:var(--brand)}
+button.row{width:100%;border:0;background:none;text-align:left;font:inherit;color:inherit;cursor:pointer}
+button.row:active,a.row:active{background:var(--fill-2)}
+a.row{color:inherit}
+a.row .trail{color:var(--label-3);font-size:18px}
+.toast{position:fixed;left:50%;bottom:calc(var(--tabbar-h) + env(safe-area-inset-bottom) + 20px);z-index:2000;transform:translateX(-50%);padding:10px 18px;border-radius:999px;background:rgba(28,28,30,.92);color:#fff;font-size:15px;font-weight:500;box-shadow:var(--shadow-float);animation:toastIn .25s var(--ease)}
+.toast.out{opacity:0;transition:opacity .3s}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,8px)}to{opacity:1;transform:translate(-50%,0)}}
