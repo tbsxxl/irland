@@ -640,5 +640,47 @@
  },
  "it:Domus romane di Palazzo Valentini": {
   "none": true
+ },
+ "Banbridge": {
+  "page": "https://en.wikipedia.org/wiki/Banbridge",
+  "s": "banbridge-s.jpg",
+  "l": "banbridge-l.jpg"
+ },
+ "Medici Chapels": {
+  "page": "https://en.wikipedia.org/wiki/Medici_Chapels",
+  "s": "medici-chapels-s.jpg"
+ },
+ "Opificio delle Pietre Dure": {
+  "none": true
+ },
+ "it:Basilica della Santissima Annunziata": {
+  "page": "https://it.wikipedia.org/wiki/Basilica_della_Santissima_Annunziata",
+  "s": "it-basilica-della-santissima-annunziata-s.jpg"
+ },
+ "it:Centro storico di Roma": {
+  "page": "https://it.wikipedia.org/wiki/Centro_storico_di_Roma",
+  "s": "it-centro-storico-di-roma-s.jpg"
+ },
+ "it:Chiesa di Ognissanti": {
+  "none": true
+ },
+ "it:Palazzo Valentini": {
+  "page": "https://it.wikipedia.org/wiki/Palazzo_Valentini",
+  "s": "it-palazzo-valentini-s.jpg"
+ },
+ "it:Piazzale Michelangelo": {
+  "page": "https://it.wikipedia.org/wiki/Piazzale_Michelangelo",
+  "s": "it-piazzale-michelangelo-s.jpg",
+  "l": "it-piazzale-michelangelo-l.jpg"
+ },
+ "it:Quartiere Coppedè": {
+  "page": "https://it.wikipedia.org/wiki/Quartiere_Copped%C3%A8",
+  "s": "it-quartiere-coppede-s.jpg"
+ },
+ "it:Santa Maria della Vittoria": {
+  "none": true
+ },
+ "it:Scuola del Cuoio": {
+  "none": true
  }
 }
