@@ -26,6 +26,10 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Kalender-Export (.ics) unter Infos: Uhrzeiten gelten als Ortszeit `tz` der Reise und werden in UTC umgerechnet.
 - Routen/Suche öffnen auf Apple-Geräten Apple Karten, sonst Google Maps.
 - Orte: optional `rating`/`reviews` (Tripadvisor, Stand angeben), `city` (andere Stadt als `center.name`, z. B. Rom-Tag – nur Liste, Kartensuche in dieser Stadt), `price`, `kind`, `free`.
-- Optionale Tagesfelder: `tip`, `alt` (Alternative), `ni` (Nordirland-Hinweis), `image`.
+- Fotos: Feld `wiki` (Titel der englischen Wikipedia, oder `de:`/`it:` + Titel) an Reise, Tag und Ort. `app.js` holt das
+  Titelbild über die Wikipedia-REST-API (`/page/summary/`), lädt erst kurz vor Sichtbarkeit (IntersectionObserver),
+  höchstens 4 gleichzeitig, merkt sich Ergebnisse 14 Tage in `localStorage` (`wiki:<titel>`). Kein Treffer → Platzhalter verschwindet.
+  Tests bilden Wikipedia nach (Service Worker blockiert, sonst umgeht er die Mocks).
+- Optionale Tagesfelder: `tip`, `alt` (Alternative), `ni` (Nordirland-Hinweis), `image` (feste Bilder in `IMAGES`), `wiki`.
 - Bei Änderungen an Dateien unter `public/assets/`: `?v=` in `index.html` und `sw.js` sowie `VERSION` in `sw.js` hochzählen.
 - Prüfen: `npx wrangler dev`, dann `node tools/smoke.js` (Playwright; externe Anfragen werden blockiert).

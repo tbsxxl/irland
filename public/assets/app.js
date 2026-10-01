@@ -38,6 +38,73 @@
     }
   }
 
+  // ---------- Bilder aus Wikipedia ----------
+  // Orte/Tage/Reisen mit `wiki: "Artikel"` (englische Wikipedia, oder "de:Artikel") bekommen das Titelbild des Artikels.
+  // Geladen wird erst kurz bevor das Element sichtbar wird; Ergebnisse (auch „kein Bild“) bleiben 14 Tage im Browser.
+  const WIKI_TTL = 14 * 864e5, wikiMem = new Map(), wikiQueue = [];
+  let wikiActive = 0;
+  function wikiFetch(title) {
+    const [lang, name] = /^[a-z]{2}:/.test(title) ? [title.slice(0, 2), title.slice(3)] : ["en", title];
+    return fetch(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(name.replace(/ /g, "_"))}`)
+      .then((r) => r.status === 404 ? null : r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status)))
+      .then((j) => {
+        const th = j && j.thumbnail, orig = j && j.originalimage;
+        const v = th ? {
+          thumb: th.source,
+          large: orig && orig.width <= 1280 ? orig.source : th.source.replace(/\/\d+px-/, "/960px-"),
+          page: (j.content_urls && j.content_urls.desktop && j.content_urls.desktop.page) || ""
+        } : null;
+        try { localStorage.setItem("wiki:" + title, JSON.stringify({ at: Date.now(), v })); } catch { /* voll */ }
+        return v;
+      });
+  }
+  function wikiImage(title) {
+    if (wikiMem.has(title)) return wikiMem.get(title);
+    try {
+      const c = JSON.parse(localStorage.getItem("wiki:" + title));
+      if (c && Date.now() - c.at < WIKI_TTL) { const p = Promise.resolve(c.v); wikiMem.set(title, p); return p; }
+    } catch { /* kaputt */ }
+    const p = new Promise((res) => {
+      const run = () => {
+        wikiActive++;
+        wikiFetch(title).then(res, () => { wikiMem.delete(title); res(null); })  // offline: später erneut versuchen
+          .finally(() => { wikiActive--; const n = wikiQueue.shift(); if (n) n(); });
+      };
+      wikiActive < 4 ? run() : wikiQueue.push(run);
+    });
+    wikiMem.set(title, p);
+    return p;
+  }
+  // Füllt Platzhalter [data-wiki]: data-size="thumb|large", ohne Treffer wird das Element entfernt.
+  function fillWiki(el) {
+    wikiImage(el.dataset.wiki).then((v) => {
+      if (!v) { el.remove(); return; }
+      const img = new Image();
+      img.alt = ""; img.decoding = "async";
+      img.onload = () => el.classList.add("is-loaded");
+      img.onerror = () => el.remove();
+      img.src = el.dataset.size === "large" ? v.large : v.thumb;
+      el.prepend(img);
+      const credit = el.querySelector("[data-credit]");
+      if (credit && v.page) credit.href = v.page;
+    });
+  }
+  const wikiObserver = "IntersectionObserver" in window
+    ? new IntersectionObserver((entries) => entries.forEach((e) => {
+        if (e.isIntersecting) { wikiObserver.unobserve(e.target); fillWiki(e.target); }
+      }), { rootMargin: "600px 0px" })
+    : null;
+  function observeWiki(root = document) {
+    root.querySelectorAll("[data-wiki]:not([data-wiki-seen])").forEach((el) => {
+      el.dataset.wikiSeen = "1";
+      wikiObserver ? wikiObserver.observe(el) : fillWiki(el);
+    });
+  }
+  const wikiSlot = (title, cls, size = "thumb", credit = false) => title
+    ? `<div class="${cls}" data-wiki="${esc(title)}" data-size="${size}">${credit ? `<a data-credit href="https://wikipedia.org" target="_blank" rel="noopener">Foto: Wikipedia</a>` : ""}</div>` : "";
+  // Suche ohne Akzente: „Mimi“ findet „Mimì“, „cafe“ findet „Caffè“
+  const fold = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+
   // ---------- Übersicht aller Reisen ----------
   function renderHub() {
     const order = { now: 0, soon: 1, past: 2 };
@@ -52,7 +119,8 @@
 
     const card = ({ t, st }) => `<a class="trip-card t-${esc(t.theme)} ${st.kind === "past" ? "is-past" : ""}" href="/${esc(t.id)}/">
       <div class="trip-cover">
-        <img src="${esc(t.icon)}" alt="" width="56" height="56">
+        ${wikiSlot(t.wiki, "cover-photo", "large")}
+        <img class="trip-icon" src="${esc(t.icon)}" alt="" width="56" height="56">
         <div><div class="t">${esc(t.title)}</div><div class="d">${esc(dateRange(t))}</div></div>
         <span class="badge">${esc(st.kind === "past" ? "Vorbei" : st.text)}</span>
       </div>
@@ -67,6 +135,7 @@
       upcoming.length ? `<div class="section"><div class="group-label">Anstehend</div><div class="hub-list">${upcoming.map(card).join("")}</div></div>` : "",
       past.length ? `<div class="section"><div class="group-label">Vergangen</div><div class="hub-list">${past.map(card).join("")}</div></div>` : ""
     ].join("");
+    observeWiki($("#hubList"));
     registerSW();
   }
 
@@ -185,7 +254,8 @@
         </li>`;
       }).join("");
       return `<article class="card day ${isToday ? "is-today" : ""}" id="tag-${i + 1}">
-        ${img ? `<div class="day-img"><img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" decoding="async" width="960" height="480"><a href="${esc(img.page)}" target="_blank" rel="noopener">Foto: Wikimedia</a></div>` : ""}
+        ${img ? `<div class="day-img is-loaded"><img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" decoding="async" width="960" height="480"><a href="${esc(img.page)}" target="_blank" rel="noopener">Foto: Wikimedia</a></div>`
+          : wikiSlot(d.wiki, "day-img", "large", true)}
         <div class="day-head">
           <div class="day-kicker">Tag ${i + 1} · ${esc(d.date)}</div>
           <h3 class="day-title">${esc(d.title)}</h3>
@@ -197,6 +267,7 @@
 
     // Wikimedia-Vorschau fehlt (z. B. offline) → Bildbereich ausblenden
     document.querySelectorAll(".day-img img").forEach((im) => im.addEventListener("error", () => im.parentElement.remove(), { once: true }));
+    observeWiki($("#days"));
   }
 
   function renderNow() {
@@ -263,11 +334,11 @@
   const refPoint = () => state.me || home();
   const refLabel = () => state.me ? "von dir" : homeLabel();
   const catsOf = (p) => p.cats.map((c) => CATS[c]).filter(Boolean);
-  const searchText = (p) => [p.name, p.note, p.kind, p.price, ...catsOf(p).map((c) => c.label), p.free ? "frei kostenlos gratis" : ""].join(" ").toLowerCase();
+  const searchText = (p) => fold([p.name, p.note, p.kind, p.price, p.city, ...catsOf(p).map((c) => c.label), p.free ? "frei kostenlos gratis" : ""].join(" "));
   PLACES.forEach((p) => { p._s = searchText(p); });
 
   function visiblePlaces() {
-    const terms = state.q.toLowerCase().split(/\s+/).filter(Boolean);
+    const terms = fold(state.q).split(/\s+/).filter(Boolean);
     return PLACES.filter((p) =>
       (state.cats.size === 0 || p.cats.some((c) => state.cats.has(c))) &&
       terms.every((t) => p._s.includes(t)) &&
@@ -323,6 +394,7 @@
         ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
         <div class="acts">${acts}</div>
       </div>
+      ${wikiSlot(p.wiki, "ph")}
     </div>`;
   }
 
@@ -346,11 +418,12 @@
         : (a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0));
       $("#list").innerHTML = `<div class="group"><div class="list">${sorted.map(placeRow).join("")}</div></div>`;
     }
+    observeWiki($("#list"));
   }
 
   function popupHtml(p) {
     const d = km(refPoint(), p);
-    return `<div class="pt">${esc(p.name)}</div>
+    return `${p.wiki ? `<div class="pimg" data-wiki="${esc(p.wiki)}" data-size="thumb"></div>` : ""}<div class="pt">${esc(p.name)}</div>
       <div class="pm">${esc(catsOf(p).map((c) => c.label).join(" · "))}${p.rating ? ` · ★ ${num(p.rating)}` : ""}</div>
       ${p.note ? `<div class="pn">${esc(p.note)}</div>` : ""}
       <div class="pm">${fmtKm(d)} ${esc(refLabel())} · ${walk(d)} zu Fuß</div>
@@ -401,7 +474,17 @@
       const cat = CATS[p.cats[0]];
       const m = L.marker([p.lat, p.lng], { icon: pinIcon(ic(cat.icon), "pin", 26, cat.color), title: p.name, riseOnHover: true })
         .bindPopup(popupHtml(p), { maxWidth: 270 });
-      m.on("popupopen", () => highlight(p.id));
+      m.on("popupopen", (e) => {
+        highlight(p.id);
+        const el = e.popup.getElement().querySelector(".pimg:not(.is-loaded)");
+        if (el) wikiImage(el.dataset.wiki).then((v) => {
+          if (!v) return el.remove();
+          const img = new Image();
+          img.onload = () => { el.classList.add("is-loaded"); e.popup.update(); };
+          img.src = v.thumb; img.alt = "";
+          el.append(img);
+        });
+      });
       markers[p.id] = m;
     });
 
@@ -505,7 +588,7 @@
   }
   const icsDate = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
   const icsText = (v) => String(v).replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/([,;])/g, "\\$1");
-  const fold = (line) => line.match(/.{1,60}/gu).join("\r\n ");
+  const icsFold = (line) => line.match(/.{1,60}/gu).join("\r\n ");
 
   function exportCalendar() {
     const tz = TRIP.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -529,7 +612,7 @@
       lines.push("END:VEVENT");
     }));
     lines.push("END:VCALENDAR");
-    const blob = new Blob([lines.map(fold).join("\r\n") + "\r\n"], { type: "text/calendar;charset=utf-8" });
+    const blob = new Blob([lines.map(icsFold).join("\r\n") + "\r\n"], { type: "text/calendar;charset=utf-8" });
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `${TRIP.id}.ics` });
     document.body.append(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(a.href), 10000);

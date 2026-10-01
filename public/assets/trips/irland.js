@@ -4,6 +4,7 @@ const TRIP = {
   id: "irland",
   title: "Dublin & Nordirland",
   icon: "/icons/irland.svg",
+  wiki: "Dublin",
   theme: "irland", themeColor: "#1E6A4E",
   center: { lat: 53.3455, lng: -6.2635, zoom: 14, name: "Dublin" },
   near: 2,
@@ -54,7 +55,7 @@ const IMAGES = {
 /* Tagesplan. stop.place verweist auf eine Ort-ID aus PLACES (für „Karte“). */
 const DAYS = [
   {
-    date: "Do 16.10.", title: "Ankunft & Temple Bar", tip: "Tipp: The Cobblestone (Live-Musik)",
+    date: "Do 16.10.", wiki: "Temple Bar, Dublin", title: "Ankunft & Temple Bar", tip: "Tipp: The Cobblestone (Live-Musik)",
     stops: [
       { time: "14:00", icon: "plane", text: "Ankunft & Transfer ins Hotel (Dublin Express / Aircoach)" },
       { time: "16:00", icon: "footprints", text: "Spaziergang Liffey → Ha’penny Bridge → Temple Bar" },
@@ -77,7 +78,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Sa 18.10.", title: "Game of Thrones Studio Tour", tip: "Treffpunkt Molly Malone · ca. €80 inkl. Bus", ni: true,
+    date: "Sa 18.10.", wiki: "Game of Thrones Studio Tour", title: "Game of Thrones Studio Tour", tip: "Treffpunkt Molly Malone · ca. €80 inkl. Bus", ni: true,
     stops: [
       { time: "09:45", icon: "bus", text: "Abfahrt Dublin → Banbridge (90 Min.)", place: "molly",
         links: [{ label: "Tickets", url: "https://gameofthronesstudiotour.com/" }] },
@@ -100,7 +101,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Mo 20.10.", title: "Whiskey-Tag & Bohemians vs St Pat’s", tip: "Anstoß 20:45 Uhr, Dalymount Park",
+    date: "Mo 20.10.", wiki: "Old Jameson Distillery", title: "Whiskey-Tag & Bohemians vs St Pat’s", tip: "Anstoß 20:45 Uhr, Dalymount Park",
     stops: [
       { time: "11:00", icon: "glass-water", text: "Teeling Whiskey Distillery – Trinity Tour mit Tasting", place: "teeling",
         links: [{ label: "Tickets", url: "https://teelingdistillery.com/" }] },
@@ -124,7 +125,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Mi 22.10.", title: "Parks, Kunst & Farewell", tip: "Entspannter Tag",
+    date: "Mi 22.10.", wiki: "Merrion Square", title: "Parks, Kunst & Farewell", tip: "Entspannter Tag",
     stops: [
       { time: "09:30", icon: "palette", text: "Merrion Square & National Gallery / MoLI", place: "gallery" },
       { time: "13:00", icon: "utensils", text: "Lunch: Avoca Café / Tang Café", place: "tang" },
@@ -133,7 +134,7 @@ const DAYS = [
     ]
   },
   {
-    date: "Do 23.10.", title: "Abreise", tip: "Flug 08:55 ab DUB",
+    date: "Do 23.10.", wiki: "River Liffey", title: "Abreise", tip: "Flug 08:55 ab DUB",
     stops: [
       { time: "06:00", icon: "luggage", text: "Check-out & Transfer (Aircoach / Dublin Express)" },
       { time: "08:55", icon: "plane", text: "Rückflug ab Dublin Airport" }
@@ -156,56 +157,56 @@ const CATS = {
 /* Orte. cats: erste Kategorie bestimmt die Farbe. Ohne lat/lng erscheint der Ort nur in der Liste. */
 const PLACES = [
   // Geschichte & Museen
-  { id: "kilmainham", cats: ["hist"], name: "Kilmainham Gaol", rating: 4.6, note: "Ehemaliges Gefängnis, Führung unbedingt vorab buchen", lat: 53.34190, lng: -6.30953, url: "https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/" },
-  { id: "guinness", cats: ["hist", "brau"], name: "Guinness Storehouse", rating: 4.3, note: "Mit Gravity Bar und Blick über die Stadt", lat: 53.34190, lng: -6.28670, url: "https://www.guinness-storehouse.com/" },
-  { id: "littlemuseum", cats: ["hist"], name: "The Little Museum of Dublin", rating: 4.8, note: "Stadtgeschichte & U2, am St. Stephen’s Green", lat: 53.33965, lng: -6.25973, url: "https://www.littlemuseum.ie/" },
-  { id: "kells", cats: ["hist", "bibl"], name: "Book of Kells & Old Library", rating: 4.3, note: "Trinity College, Zeitfenster buchen", lat: 53.34380, lng: -6.25640, url: "https://www.tcd.ie/library/old-library/" },
+  { id: "kilmainham", wiki: "Kilmainham Gaol", cats: ["hist"], name: "Kilmainham Gaol", rating: 4.6, note: "Ehemaliges Gefängnis, Führung unbedingt vorab buchen", lat: 53.34190, lng: -6.30953, url: "https://heritageireland.ie/visit/places-to-visit/kilmainham-gaol/" },
+  { id: "guinness", wiki: "Guinness Storehouse", cats: ["hist", "brau"], name: "Guinness Storehouse", rating: 4.3, note: "Mit Gravity Bar und Blick über die Stadt", lat: 53.34190, lng: -6.28670, url: "https://www.guinness-storehouse.com/" },
+  { id: "littlemuseum", wiki: "Little Museum of Dublin", cats: ["hist"], name: "The Little Museum of Dublin", rating: 4.8, note: "Stadtgeschichte & U2, am St. Stephen’s Green", lat: 53.33965, lng: -6.25973, url: "https://www.littlemuseum.ie/" },
+  { id: "kells", wiki: "Book of Kells", cats: ["hist", "bibl"], name: "Book of Kells & Old Library", rating: 4.3, note: "Trinity College, Zeitfenster buchen", lat: 53.34380, lng: -6.25640, url: "https://www.tcd.ie/library/old-library/" },
   { id: "rocknroll", cats: ["hist"], name: "Irish Rock ’N’ Roll Museum", rating: 4.9, note: "Temple Bar", lat: 53.34528, lng: -6.26529, url: "https://irishrocknrollmuseum.com/" },
-  { id: "epic", cats: ["hist"], name: "EPIC – Irish Emigration Museum", rating: 4.8, note: "Docklands, 5 Min. vom Hotel über die Liffey", lat: 53.34880, lng: -6.24750, url: "https://epicchq.com/" },
-  { id: "stpatricks", cats: ["hist"], name: "St Patrick’s Cathedral", rating: 4.4, lat: 53.33943, lng: -6.27125, url: "https://www.stpatrickscathedral.ie/" },
-  { id: "archaeology", cats: ["hist"], name: "National Museum – Archaeology", rating: 4.6, note: "Moorleichen & Keltengold, Eintritt frei", free: true, lat: 53.34050, lng: -6.25493, url: "https://www.museum.ie/en-ie/museums/archaeology" },
-  { id: "glasnevin", cats: ["hist"], name: "Glasnevin Cemetery", rating: 4.8, note: "Friedhof & Museum, neben den Botanic Gardens", lat: 53.37170, lng: -6.27860, url: "https://www.glasnevinmuseum.ie/" },
-  { id: "henrietta", cats: ["hist"], name: "14 Henrietta Street", rating: 4.9, note: "Georgianisches Haus & Tenement-Geschichte", lat: 53.35236, lng: -6.26996, url: "https://14henriettastreet.ie/" },
-  { id: "castle", cats: ["hist", "film"], name: "Dublin Castle", rating: 4.0, note: "Drehort von „The Tudors“", lat: 53.34290, lng: -6.26740, url: "https://www.dublincastle.ie/" },
-  { id: "dublinia", cats: ["hist"], name: "Dublinia", rating: 4.2, note: "Wikinger & Mittelalter", lat: 53.34330, lng: -6.27215, url: "https://dublinia.ie/" },
-  { id: "croke", cats: ["hist"], name: "Croke Park Tour & GAA Museum", rating: 4.8, lat: 53.36063, lng: -6.25120, url: "https://crokepark.ie/visit" },
-  { id: "jeanie", cats: ["hist"], name: "Jeanie Johnston Tall Ship", rating: 4.7, note: "Auswandererschiff, direkt gegenüber vom Hotel", lat: 53.34800, lng: -6.24560, url: "https://jeaniejohnston.ie/" },
-  { id: "christchurch", cats: ["hist"], name: "Christ Church Cathedral", rating: 4.4, lat: 53.34350, lng: -6.27106, url: "https://christchurchcathedral.ie/" },
-  { id: "gpo", cats: ["hist"], name: "GPO Museum", rating: 4.5, note: "Osteraufstand 1916", lat: 53.34940, lng: -6.26040, url: "https://www.gpowitnesshistory.ie/" },
+  { id: "epic", wiki: "EPIC The Irish Emigration Museum", cats: ["hist"], name: "EPIC – Irish Emigration Museum", rating: 4.8, note: "Docklands, 5 Min. vom Hotel über die Liffey", lat: 53.34880, lng: -6.24750, url: "https://epicchq.com/" },
+  { id: "stpatricks", wiki: "St Patrick's Cathedral, Dublin", cats: ["hist"], name: "St Patrick’s Cathedral", rating: 4.4, lat: 53.33943, lng: -6.27125, url: "https://www.stpatrickscathedral.ie/" },
+  { id: "archaeology", wiki: "National Museum of Ireland – Archaeology", cats: ["hist"], name: "National Museum – Archaeology", rating: 4.6, note: "Moorleichen & Keltengold, Eintritt frei", free: true, lat: 53.34050, lng: -6.25493, url: "https://www.museum.ie/en-ie/museums/archaeology" },
+  { id: "glasnevin", wiki: "Glasnevin Cemetery", cats: ["hist"], name: "Glasnevin Cemetery", rating: 4.8, note: "Friedhof & Museum, neben den Botanic Gardens", lat: 53.37170, lng: -6.27860, url: "https://www.glasnevinmuseum.ie/" },
+  { id: "henrietta", wiki: "14 Henrietta Street", cats: ["hist"], name: "14 Henrietta Street", rating: 4.9, note: "Georgianisches Haus & Tenement-Geschichte", lat: 53.35236, lng: -6.26996, url: "https://14henriettastreet.ie/" },
+  { id: "castle", wiki: "Dublin Castle", cats: ["hist", "film"], name: "Dublin Castle", rating: 4.0, note: "Drehort von „The Tudors“", lat: 53.34290, lng: -6.26740, url: "https://www.dublincastle.ie/" },
+  { id: "dublinia", wiki: "Dublinia", cats: ["hist"], name: "Dublinia", rating: 4.2, note: "Wikinger & Mittelalter", lat: 53.34330, lng: -6.27215, url: "https://dublinia.ie/" },
+  { id: "croke", wiki: "Croke Park", cats: ["hist"], name: "Croke Park Tour & GAA Museum", rating: 4.8, lat: 53.36063, lng: -6.25120, url: "https://crokepark.ie/visit" },
+  { id: "jeanie", wiki: "Jeanie Johnston", cats: ["hist"], name: "Jeanie Johnston Tall Ship", rating: 4.7, note: "Auswandererschiff, direkt gegenüber vom Hotel", lat: 53.34800, lng: -6.24560, url: "https://jeaniejohnston.ie/" },
+  { id: "christchurch", wiki: "Christ Church Cathedral, Dublin", cats: ["hist"], name: "Christ Church Cathedral", rating: 4.4, lat: 53.34350, lng: -6.27106, url: "https://christchurchcathedral.ie/" },
+  { id: "gpo", wiki: "General Post Office, Dublin", cats: ["hist"], name: "GPO Museum", rating: 4.5, note: "Osteraufstand 1916", lat: 53.34940, lng: -6.26040, url: "https://www.gpowitnesshistory.ie/" },
   { id: "famine", cats: ["hist"], name: "Famine Memorial", rating: 4.5, note: "Skulpturen am Custom House Quay, frei", free: true, lat: 53.34813, lng: -6.24555 },
 
   // Whiskey
-  { id: "jameson", cats: ["brau"], name: "Jameson Distillery Bow St.", rating: 4.5, note: "Tour & Verkostung, Smithfield", lat: 53.34830, lng: -6.27730, url: "https://www.jamesonwhiskey.com/visit-us/bow-st-dublin" },
-  { id: "teeling", cats: ["brau"], name: "Teeling Whiskey Distillery", rating: 4.8, note: "Produktion & Tasting, Newmarket", lat: 53.33790, lng: -6.27680, url: "https://teelingdistillery.com/" },
+  { id: "jameson", wiki: "Old Jameson Distillery", cats: ["brau"], name: "Jameson Distillery Bow St.", rating: 4.5, note: "Tour & Verkostung, Smithfield", lat: 53.34830, lng: -6.27730, url: "https://www.jamesonwhiskey.com/visit-us/bow-st-dublin" },
+  { id: "teeling", wiki: "Teeling Whiskey", cats: ["brau"], name: "Teeling Whiskey Distillery", rating: 4.8, note: "Produktion & Tasting, Newmarket", lat: 53.33790, lng: -6.27680, url: "https://teelingdistillery.com/" },
   { id: "roe", cats: ["brau"], name: "Roe & Co Distillery", rating: 4.7, note: "Cocktail-Workshops, nahe Guinness", lat: 53.34320, lng: -6.28800, url: "https://roeandcowhiskey.com/" },
   { id: "whiskeymuseum", cats: ["brau"], name: "Irish Whiskey Museum", rating: 4.8, note: "Guter Überblick mit Tasting, gegenüber Trinity", lat: 53.34410, lng: -6.25930, url: "https://irishwhiskeymuseum.ie/" },
 
   // Kunst
-  { id: "gallery", cats: ["kunst"], name: "National Gallery of Ireland", rating: 4.7, note: "Eintritt frei, am Merrion Square", free: true, lat: 53.34090, lng: -6.25240, url: "https://www.nationalgallery.ie/" },
-  { id: "beatty", cats: ["kunst", "hist"], name: "Chester Beatty", rating: 4.7, note: "Handschriften aus aller Welt, frei", free: true, lat: 53.34263, lng: -6.26885, url: "https://chesterbeatty.ie/" },
-  { id: "hughlane", cats: ["kunst", "film"], name: "Hugh Lane Gallery", rating: 4.6, note: "Francis-Bacon-Atelier, frei · Drehort „Normal People“", free: true, lat: 53.35410, lng: -6.26460, url: "https://www.hughlane.ie/" },
-  { id: "imma", cats: ["kunst", "film"], name: "IMMA", rating: 4.6, note: "Moderne Kunst im Royal Hospital, meist frei", free: true, lat: 53.34300, lng: -6.30020, url: "https://imma.ie/" },
-  { id: "smockalley", cats: ["kunst"], name: "Smock Alley Theatre", rating: 4.7, note: "Ältestes Theater Dublins – Spielplan prüfen", lat: 53.34500, lng: -6.27020, url: "https://smockalley.com/" },
+  { id: "gallery", wiki: "National Gallery of Ireland", cats: ["kunst"], name: "National Gallery of Ireland", rating: 4.7, note: "Eintritt frei, am Merrion Square", free: true, lat: 53.34090, lng: -6.25240, url: "https://www.nationalgallery.ie/" },
+  { id: "beatty", wiki: "Chester Beatty Library", cats: ["kunst", "hist"], name: "Chester Beatty", rating: 4.7, note: "Handschriften aus aller Welt, frei", free: true, lat: 53.34263, lng: -6.26885, url: "https://chesterbeatty.ie/" },
+  { id: "hughlane", wiki: "Hugh Lane Gallery", cats: ["kunst", "film"], name: "Hugh Lane Gallery", rating: 4.6, note: "Francis-Bacon-Atelier, frei · Drehort „Normal People“", free: true, lat: 53.35410, lng: -6.26460, url: "https://www.hughlane.ie/" },
+  { id: "imma", wiki: "Irish Museum of Modern Art", cats: ["kunst", "film"], name: "IMMA", rating: 4.6, note: "Moderne Kunst im Royal Hospital, meist frei", free: true, lat: 53.34300, lng: -6.30020, url: "https://imma.ie/" },
+  { id: "smockalley", wiki: "Smock Alley Theatre", cats: ["kunst"], name: "Smock Alley Theatre", rating: 4.7, note: "Ältestes Theater Dublins – Spielplan prüfen", lat: 53.34500, lng: -6.27020, url: "https://smockalley.com/" },
 
   // Bibliotheken
-  { id: "marsh", cats: ["bibl"], name: "Marsh’s Library", rating: 4.6, note: "Seit 1707 fast unverändert", lat: 53.33950, lng: -6.27160, url: "https://www.marshlibrary.ie/" },
-  { id: "nli", cats: ["bibl"], name: "National Library of Ireland", rating: 4.6, note: "Yeats-Ausstellung, frei", free: true, lat: 53.34120, lng: -6.25440, url: "https://www.nli.ie/" },
+  { id: "marsh", wiki: "Marsh's Library", cats: ["bibl"], name: "Marsh’s Library", rating: 4.6, note: "Seit 1707 fast unverändert", lat: 53.33950, lng: -6.27160, url: "https://www.marshlibrary.ie/" },
+  { id: "nli", wiki: "National Library of Ireland", cats: ["bibl"], name: "National Library of Ireland", rating: 4.6, note: "Yeats-Ausstellung, frei", free: true, lat: 53.34120, lng: -6.25440, url: "https://www.nli.ie/" },
 
   // Natur
-  { id: "stephens", cats: ["natur", "film"], name: "St Stephen’s Green", rating: 4.7, note: "Historischer Stadtpark · Drehort „Once“", free: true, lat: 53.33820, lng: -6.25910 },
-  { id: "phoenix", cats: ["natur"], name: "Phoenix Park", rating: 4.8, note: "Riesiger Park mit Hirschen – Fahrrad leihen lohnt sich", free: true, lat: 53.35590, lng: -6.32980 },
-  { id: "zoo", cats: ["natur"], name: "Dublin Zoo", rating: 4.6, note: "Im Phoenix Park", lat: 53.35620, lng: -6.30530, url: "https://www.dublinzoo.ie/" },
-  { id: "botanic", cats: ["natur", "hist"], name: "National Botanic Gardens", rating: 4.7, note: "Viktorianische Gewächshäuser, frei", free: true, lat: 53.37260, lng: -6.27160, url: "https://botanicgardens.ie/" },
-  { id: "howth", cats: ["natur", "trip"], name: "Howth Cliff Walk", rating: 4.8, note: "Klippenweg am Meer, 30 Min. mit der DART", lat: 53.37880, lng: -6.06560 },
+  { id: "stephens", wiki: "St Stephen's Green", cats: ["natur", "film"], name: "St Stephen’s Green", rating: 4.7, note: "Historischer Stadtpark · Drehort „Once“", free: true, lat: 53.33820, lng: -6.25910 },
+  { id: "phoenix", wiki: "Phoenix Park", cats: ["natur"], name: "Phoenix Park", rating: 4.8, note: "Riesiger Park mit Hirschen – Fahrrad leihen lohnt sich", free: true, lat: 53.35590, lng: -6.32980 },
+  { id: "zoo", wiki: "Dublin Zoo", cats: ["natur"], name: "Dublin Zoo", rating: 4.6, note: "Im Phoenix Park", lat: 53.35620, lng: -6.30530, url: "https://www.dublinzoo.ie/" },
+  { id: "botanic", wiki: "National Botanic Gardens (Ireland)", cats: ["natur", "hist"], name: "National Botanic Gardens", rating: 4.7, note: "Viktorianische Gewächshäuser, frei", free: true, lat: 53.37260, lng: -6.27160, url: "https://botanicgardens.ie/" },
+  { id: "howth", wiki: "Howth", cats: ["natur", "trip"], name: "Howth Cliff Walk", rating: 4.8, note: "Klippenweg am Meer, 30 Min. mit der DART", lat: 53.37880, lng: -6.06560 },
 
   // Film
-  { id: "grafton", cats: ["film"], name: "Grafton Street", rating: 4.6, note: "Straßenmusik & Shopping · Drehort „Once“", free: true, lat: 53.34150, lng: -6.25990 },
-  { id: "trinity", cats: ["film"], name: "Trinity College", rating: 4.6, note: "Drehort „Normal People“", free: true, lat: 53.34380, lng: -6.25460, url: "https://www.tcd.ie/" },
-  { id: "got", cats: ["film", "trip"], name: "Game of Thrones Studio Tour", rating: 4.9, note: "Banbridge, Nordirland – Tagesausflug", url: "https://gameofthronesstudiotour.com/" },
+  { id: "grafton", wiki: "Grafton Street", cats: ["film"], name: "Grafton Street", rating: 4.6, note: "Straßenmusik & Shopping · Drehort „Once“", free: true, lat: 53.34150, lng: -6.25990 },
+  { id: "trinity", wiki: "Trinity College Dublin", cats: ["film"], name: "Trinity College", rating: 4.6, note: "Drehort „Normal People“", free: true, lat: 53.34380, lng: -6.25460, url: "https://www.tcd.ie/" },
+  { id: "got", wiki: "Game of Thrones Studio Tour", cats: ["film", "trip"], name: "Game of Thrones Studio Tour", rating: 4.9, note: "Banbridge, Nordirland – Tagesausflug", url: "https://gameofthronesstudiotour.com/" },
 
   // Abends & Touren
-  { id: "cobblestone", cats: ["night", "film"], name: "The Cobblestone", rating: 4.7, note: "Traditionelle Live-Musik jeden Abend", lat: 53.34960, lng: -6.27820, url: "https://www.thecobblestonepub.ie/" },
-  { id: "cruise", cats: ["night"], name: "Liffey-Bootstour", rating: 4.6, note: "Ab Bachelors Walk", lat: 53.34690, lng: -6.26150, url: "https://dublindiscovered.ie/" },
+  { id: "cobblestone", wiki: "Smithfield, Dublin", cats: ["night", "film"], name: "The Cobblestone", rating: 4.7, note: "Traditionelle Live-Musik jeden Abend", lat: 53.34960, lng: -6.27820, url: "https://www.thecobblestonepub.ie/" },
+  { id: "cruise", wiki: "River Liffey", cats: ["night"], name: "Liffey-Bootstour", rating: 4.6, note: "Ab Bachelors Walk", lat: 53.34690, lng: -6.26150, url: "https://dublindiscovered.ie/" },
   { id: "ghostbus", cats: ["night"], name: "Dublin Ghost Bus Tour", rating: 4.5, note: "Gruseltour mit Schauspiel, ab O’Connell Street", lat: 53.35250, lng: -6.26060 },
   { id: "darkdublin", cats: ["night"], name: "Dark Dublin Tour", note: "Folter, Mord & Mysterium – Abendführung" },
   { id: "gravedigger", cats: ["night"], name: "Gravedigger Ghost Tour", note: "2-Std.-Geisterbus mit Pub-Stopp" },
@@ -213,7 +214,7 @@ const PLACES = [
   { id: "pubtour", cats: ["night"], name: "Pub-Tour abseits der Touristen", note: "Lokale Pubs & Tastings" },
   { id: "irishcoffee", cats: ["night"], name: "Irish Coffee Masterclass", note: "Workshop" },
   { id: "cooking", cats: ["night", "food"], name: "Irish Craic & Cuisine Kochkurs", note: "Kochen & gemeinsames Dinner" },
-  { id: "dalymount", cats: ["night"], name: "Dalymount Park", note: "Stadion der Bohemians", lat: 53.36150, lng: -6.27290 },
+  { id: "dalymount", wiki: "Dalymount Park", cats: ["night"], name: "Dalymount Park", note: "Stadion der Bohemians", lat: 53.36150, lng: -6.27290 },
   { id: "backpage", cats: ["night", "food"], name: "The Back Page", rating: 4.5, note: "Sport-Pub nahe Dalymount", lat: 53.35880, lng: -6.27330 },
 
   // Essen
@@ -247,12 +248,12 @@ const PLACES = [
   { id: "pickle", cats: ["food"], name: "Pickle", rating: 4.7, price: "€€–€€€", kind: "Nordindisch", lat: 53.33463, lng: -6.26561, url: "https://www.picklerestaurant.com/" },
 
   // Tagesausflüge (keine Marker: Ziele liegen außerhalb der Stadtkarte)
-  { id: "molly", cats: ["trip"], name: "Treffpunkt Molly Malone", note: "Abfahrt der meisten Tagestouren (Suffolk Street)", lat: 53.34370, lng: -6.26000 },
-  { id: "wicklow", cats: ["trip"], name: "Wicklow Mountains & Glendalough", note: "Seen & Klostersiedlung · ca. 1 Std.", url: "https://www.irishdaytours.ie/" },
-  { id: "moher", cats: ["trip"], name: "Cliffs of Moher & Galway", note: "Atlantikküste · ca. 3 Std.", url: "https://www.irishdaytours.ie/" },
-  { id: "causeway", cats: ["trip"], name: "Belfast & Giant’s Causeway", note: "UNESCO-Welterbe · ca. 2,5 Std.", url: "https://www.irishdaytours.ie/" },
-  { id: "newgrange", cats: ["trip"], name: "Boyne Valley / Newgrange", note: "Steinzeit-Grabhügel · ca. 1 Std." },
-  { id: "kilkenny", cats: ["trip"], name: "Kilkenny & Castle", note: "Mittelalterstadt · ca. 1,5 Std.", url: "https://kilkennycastle.ie/" }
+  { id: "molly", wiki: "Molly Malone", cats: ["trip"], name: "Treffpunkt Molly Malone", note: "Abfahrt der meisten Tagestouren (Suffolk Street)", lat: 53.34370, lng: -6.26000 },
+  { id: "wicklow", wiki: "Glendalough", cats: ["trip"], name: "Wicklow Mountains & Glendalough", note: "Seen & Klostersiedlung · ca. 1 Std.", url: "https://www.irishdaytours.ie/" },
+  { id: "moher", wiki: "Cliffs of Moher", cats: ["trip"], name: "Cliffs of Moher & Galway", note: "Atlantikküste · ca. 3 Std.", url: "https://www.irishdaytours.ie/" },
+  { id: "causeway", wiki: "Giant's Causeway", cats: ["trip"], name: "Belfast & Giant’s Causeway", note: "UNESCO-Welterbe · ca. 2,5 Std.", url: "https://www.irishdaytours.ie/" },
+  { id: "newgrange", wiki: "Newgrange", cats: ["trip"], name: "Boyne Valley / Newgrange", note: "Steinzeit-Grabhügel · ca. 1 Std." },
+  { id: "kilkenny", wiki: "Kilkenny Castle", cats: ["trip"], name: "Kilkenny & Castle", note: "Mittelalterstadt · ca. 1,5 Std.", url: "https://kilkennycastle.ie/" }
 ];
 
 /* Checklisten (Häkchen werden nur im Browser gespeichert). */
