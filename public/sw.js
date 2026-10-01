@@ -1,6 +1,6 @@
 /* Offline: App-Dateien vorab (alle Reisen laufen über dieselbe Seite), Seite netzwerk-zuerst, Karten-Kacheln/Fotos/Wetter aus dem Cache als Rückfall.
    Bei Änderungen an App-Dateien VERSION hochzählen. */
-const VERSION = "v8";
+const VERSION = "v9";
 const APP = "irland-app-" + VERSION;
 const RUNTIME = "irland-runtime";
 const MAX_RUNTIME = 300;          // Kartenkacheln
@@ -8,8 +8,8 @@ const IMAGES = "irland-img";      // Fotos (Wikipedia/Wikimedia), eigener kleine
 const MAX_IMAGES = 150;
 const PRECACHE = [
   "/", "/manifest.webmanifest",
-  "/assets/app.css?v=8", "/assets/app.js?v=8", "/assets/icons.svg",
-  "/assets/trips/florenz.js?v=8", "/assets/trips/irland.js?v=8",
+  "/assets/app.css?v=9", "/assets/app.js?v=9", "/assets/icons.svg",
+  "/assets/trips/florenz.js?v=9", "/assets/trips/irland.js?v=9",
   "/assets/vendor/leaflet/leaflet.css", "/assets/vendor/leaflet/leaflet.js",
   "/assets/fonts/inter.woff2",
   "/icons/favicon-32.png", "/icons/reisen.svg", "/icons/irland.svg", "/icons/florenz.svg"
@@ -62,6 +62,10 @@ self.addEventListener("fetch", (e) => {
 
   if (req.mode === "navigate") {
     e.respondWith(networkFirst(req, APP, 3000).catch(() => caches.match("/", { cacheName: APP })));
+  } else if (url.pathname === "/photos/photos.json") {
+    e.respondWith(networkFirst(req, APP, 3000));
+  } else if (url.origin === location.origin && url.pathname.startsWith("/photos/")) {
+    e.respondWith(cacheFirst(req, IMAGES));
   } else if (url.origin === location.origin) {
     e.respondWith(cacheFirst(req, APP));
   } else if (url.hostname.endsWith("basemaps.cartocdn.com")) {

@@ -1,0 +1,38 @@
+name: Fotos laden
+
+# Lädt Titelbilder aus Wikipedia für alle `wiki:`-Einträge nach public/photos/ und committet sie.
+on:
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Alle Fotos neu laden"
+        type: boolean
+        default: false
+  push:
+    branches: [main]
+    paths: ["public/assets/trips/**", "tools/fetch-photos.js"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: photos
+  cancel-in-progress: false
+
+jobs:
+  photos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node tools/fetch-photos.js ${{ inputs.force && '--force' || '' }}
+      - name: Commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/photos
+          if git diff --cached --quiet; then echo "Keine neuen Fotos."; exit 0; fi
+          git commit -m "Fotos aus Wikipedia aktualisiert"
+          git push

@@ -29,6 +29,9 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Fotos: Feld `wiki` (Titel der englischen Wikipedia, oder `de:`/`it:` + Titel) an Reise, Tag und Ort. `app.js` holt das
   Titelbild über die Wikipedia-REST-API (`/page/summary/`), lädt erst kurz vor Sichtbarkeit (IntersectionObserver),
   höchstens 4 gleichzeitig, merkt sich Ergebnisse 14 Tage in `localStorage` (`wiki:<titel>`). Kein Treffer → Platzhalter verschwindet.
+  Fotos kommen bevorzugt aus `public/photos/` (`photos.json`: Titel → Datei klein `s`/groß `l`, Wikipedia-Seite `page`).
+  Die GitHub Action „Fotos laden“ (`.github/workflows/photos.yml`, `tools/fetch-photos.js`) lädt sie bei Änderungen an
+  `public/assets/trips/**` auf `main` herunter und committet sie – danach Branch neu holen. Live-API nur als Rückfall.
   Tests bilden Wikipedia nach (Service Worker blockiert, sonst umgeht er die Mocks).
 - Optionale Tagesfelder: `tip`, `alt` (Alternative), `ni` (Nordirland-Hinweis), `image` (feste Bilder in `IMAGES`), `wiki`.
 - Bei Änderungen an Dateien unter `public/assets/`: `?v=` in `index.html` und `sw.js` sowie `VERSION` in `sw.js` hochzählen.

@@ -40,7 +40,9 @@
 
   // ---------- Bilder aus Wikipedia ----------
   // Orte/Tage/Reisen mit `wiki: "Artikel"` (englische Wikipedia, oder "de:Artikel") bekommen das Titelbild des Artikels.
-  // Geladen wird erst kurz bevor das Element sichtbar wird; Ergebnisse (auch „kein Bild“) bleiben 14 Tage im Browser.
+  // Zuerst aus /photos/ (von der GitHub Action „Fotos laden“ heruntergeladen, siehe tools/fetch-photos.js),
+  // sonst live über die Wikipedia-API. Geladen wird erst kurz bevor das Element sichtbar wird.
+  const photosReady = fetch("/photos/photos.json").then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
   const WIKI_TTL = 14 * 864e5, wikiMem = new Map(), wikiQueue = [];
   let wikiActive = 0;
   function wikiFetch(title) {
@@ -50,18 +52,29 @@
       .then((j) => {
         const th = j && j.thumbnail, orig = j && j.originalimage;
         const v = th ? {
-          thumb: th.source,
+          // Wikimedia liefert nur Standardbreiten (330, 500, 960 …)
+          thumb: orig && orig.width <= 330 ? orig.source : th.source.replace(/\/\d+px-/, "/330px-"),
           large: orig && orig.width <= 1280 ? orig.source : th.source.replace(/\/\d+px-/, "/960px-"),
           page: (j.content_urls && j.content_urls.desktop && j.content_urls.desktop.page) || ""
         } : null;
-        try { localStorage.setItem("wiki:" + title, JSON.stringify({ at: Date.now(), v })); } catch { /* voll */ }
+        try { localStorage.setItem("wiki2:" + title, JSON.stringify({ at: Date.now(), v })); } catch { /* voll */ }
         return v;
       });
   }
   function wikiImage(title) {
     if (wikiMem.has(title)) return wikiMem.get(title);
+    const p = photosReady.then((m) => {
+      const e = m[title];
+      if (e && e.s) return { thumb: "/photos/" + e.s, large: "/photos/" + (e.l || e.s), page: e.page || "" };
+      if (e && e.none) return null;
+      return remoteWikiImage(title);
+    });
+    wikiMem.set(title, p);
+    return p;
+  }
+  function remoteWikiImage(title) {
     try {
-      const c = JSON.parse(localStorage.getItem("wiki:" + title));
+      const c = JSON.parse(localStorage.getItem("wiki2:" + title));
       if (c && Date.now() - c.at < WIKI_TTL) { const p = Promise.resolve(c.v); wikiMem.set(title, p); return p; }
     } catch { /* kaputt */ }
     const p = new Promise((res) => {
