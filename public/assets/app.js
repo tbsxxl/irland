@@ -105,8 +105,23 @@
   }
   const fmtKm = (d) => d < 1 ? `${Math.round(d * 100) * 10} m` : `${num(d.toFixed(1))} km`;
   const walk = (d) => { const m = Math.round(d * 13); return m < 60 ? `${Math.max(m, 1)} Min.` : `${Math.floor(m / 60)} Std. ${m % 60} Min.`; };
-  const mapsSearch = (p) => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " " + TRIP.center.name);
-  const mapsRoute = (p) => `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
+  // Auf iPhone/iPad/Mac öffnen Routen in Apple Karten, sonst in Google Maps
+  const APPLE = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+  const mapsSearch = (p) => APPLE
+    ? `https://maps.apple.com/?q=${encodeURIComponent(p.name + ", " + TRIP.center.name)}`
+    : "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " " + TRIP.center.name);
+  const mapsRoute = (p) => APPLE
+    ? `https://maps.apple.com/?daddr=${p.lat},${p.lng}&dirflg=w`
+    : `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
+  const pad = (n) => String(n).padStart(2, "0");
+  const nowHM = () => { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
+  function toast(text) {
+    const t = document.createElement("div");
+    t.className = "toast"; t.setAttribute("role", "status"); t.textContent = text;
+    document.body.append(t);
+    setTimeout(() => t.classList.add("out"), 1800);
+    setTimeout(() => t.remove(), 2200);
+  }
   const ext = (url, label, icon = "arrow-up-right", cls = "btn") =>
     `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${ic(icon)}${esc(label)}</a>`;
   const linkIcon = (label) => /ticket/i.test(label) ? "ticket" : /reserv/i.test(label) ? "utensils" : /karte/i.test(label) ? "map" : "arrow-up-right";
@@ -139,8 +154,7 @@
 
   function renderDays() {
     const today = dayIndex(TRIP);
-    const now = new Date();
-    const hhmm = String(now.getHours()).padStart(2, "0") + ":" + String(now.getMinutes()).padStart(2, "0");
+    const hhmm = nowHM();
 
     $("#daynav").innerHTML = DAYS.map((d, i) =>
       `<a href="#tag-${i + 1}" class="${i === today ? "is-today" : ""}"><small>${esc(d.date.split(" ")[0])}</small><b>${esc(parseInt(d.date.split(" ")[1], 10) || i + 1)}</b></a>`).join("");
@@ -152,7 +166,8 @@
       const tags = [
         isToday ? `<span class="tag today">Heute</span>` : "",
         d.tip ? `<span class="tag">${ic("info")}${esc(d.tip)}</span>` : "",
-        d.ni ? `<span class="tag warn">${ic("id-card")}Nordirland: Pass & Pfund</span>` : ""
+        d.ni ? `<span class="tag warn">${ic("id-card")}Nordirland: Pass & Pfund</span>` : "",
+        d.alt ? `<span class="tag alt">${ic("shuffle")}${esc(d.alt)}</span>` : ""
       ].join("");
       const stops = d.stops.map((s, j) => {
         const place = s.place && byId[s.place];
@@ -180,6 +195,23 @@
 
     // Wikimedia-Vorschau fehlt (z. B. offline) → Bildbereich ausblenden
     document.querySelectorAll(".day-img img").forEach((im) => im.addEventListener("error", () => im.parentElement.remove(), { once: true }));
+  }
+
+  function renderNow() {
+    const i = dayIndex(TRIP), box = $("#nowBox");
+    if (i < 0 || i >= DAYS.length) { box.hidden = true; return; }
+    const d = DAYS[i], hhmm = nowHM();
+    const cur = d.stops.reduce((acc, s, j) => (s.time <= hhmm ? j : acc), -1);
+    const row = (label, s, day) => `<a class="row has-tile" href="#tag-${day + 1}">
+      <div class="tile">${ic(s.icon)}</div>
+      <div class="main"><div class="text">${esc(label)} · ${esc(s.time)}</div><div class="title">${esc(s.text)}</div></div>
+      <span class="trail">${ic("chevron-right")}</span></a>`;
+    const rows = [];
+    if (cur >= 0) rows.push(row("Jetzt", d.stops[cur], i));
+    if (d.stops[cur + 1]) rows.push(row("Als Nächstes", d.stops[cur + 1], i));
+    else if (DAYS[i + 1]) rows.push(row("Morgen", DAYS[i + 1].stops[0], i + 1));
+    box.innerHTML = `<div class="group-label">Heute · Tag ${i + 1}: ${esc(d.title)}</div><div class="list">${rows.join("")}</div>`;
+    box.hidden = !rows.length;
   }
 
   // ---------- Wetter (Open-Meteo) ----------
@@ -223,7 +255,7 @@
   }
 
   // ---------- Entdecken ----------
-  const state = { cats: new Set(), q: "", near: false, sort: "cat", me: null, focus: null };
+  const state = { cats: new Set(), q: "", near: false, sort: "cat", me: null, focus: null, favOnly: false, favs: new Set(store.get("favs", [])) };
   let map = null, layer = null, markers = {}, meMarker = null;
 
   const refPoint = () => state.me || home();
@@ -237,22 +269,28 @@
     return PLACES.filter((p) =>
       (state.cats.size === 0 || p.cats.some((c) => state.cats.has(c))) &&
       terms.every((t) => p._s.includes(t)) &&
-      (!state.near || (hasPos(p) && km(home(), p) <= TRIP.near)));
+      (!state.near || (hasPos(p) && km(home(), p) <= TRIP.near)) &&
+      (!state.favOnly || state.favs.has(p.id)));
   }
 
   function syncChips() {
-    $("#chips").querySelectorAll(".chip").forEach((c) =>
-      c.setAttribute("aria-pressed", String(c.dataset.cat ? state.cats.has(c.dataset.cat) : state.cats.size === 0)));
+    $("#chips").querySelectorAll(".chip[data-cat]").forEach((c) =>
+      c.setAttribute("aria-pressed", String(c.dataset.cat ? state.cats.has(c.dataset.cat) : state.cats.size === 0 && !state.favOnly)));
+    const fav = $("#chips .chip-fav");
+    fav.setAttribute("aria-pressed", String(state.favOnly));
+    fav.querySelector("[data-favcount]").textContent = state.favs.size ? ` ${state.favs.size}` : "";
   }
   function renderChips() {
-    $("#chips").innerHTML = [`<button class="chip" type="button" data-cat="" aria-pressed="true">Alle</button>`]
+    $("#chips").innerHTML = [`<button class="chip" type="button" data-cat="" aria-pressed="true">Alle</button>`,
+      `<button class="chip chip-fav" type="button" aria-pressed="false">${ic("heart")}Gemerkt<span data-favcount></span></button>`]
       .concat(Object.entries(CATS).map(([k, c]) =>
         `<button class="chip" type="button" data-cat="${esc(k)}" aria-pressed="false" style="--c:${esc(c.color)}">${ic(c.icon)}${esc(c.label)}</button>`))
       .join("");
     $("#chips").addEventListener("click", (e) => {
       const b = e.target.closest(".chip"); if (!b) return;
       const cat = b.dataset.cat;
-      if (!cat) state.cats.clear();
+      if (b.classList.contains("chip-fav")) state.favOnly = !state.favOnly;
+      else if (!cat) { state.cats.clear(); state.favOnly = false; }
       else state.cats.has(cat) ? state.cats.delete(cat) : state.cats.add(cat);
       syncChips();
       refresh();
@@ -276,7 +314,8 @@
     return `<div class="row has-tile place ${state.focus === p.id ? "is-focus" : ""}" id="p-${esc(p.id)}">
       <div class="tile" style="--c:${esc(cat.color)}">${ic(cat.icon)}</div>
       <div class="main">
-        <div class="title">${esc(p.name)}${p.free ? `<span class="free">FREI</span>` : ""}</div>
+        <div class="head"><div class="title">${esc(p.name)}${p.free ? `<span class="free">FREI</span>` : ""}</div>
+          <button class="fav" type="button" data-fav="${esc(p.id)}" aria-pressed="${state.favs.has(p.id)}" aria-label="${esc(p.name)} merken">${ic("heart")}</button></div>
         ${meta ? `<div class="meta">${meta}</div>` : ""}
         ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
         <div class="acts">${acts}</div>
@@ -286,7 +325,12 @@
 
   function renderList(list) {
     $("#count").textContent = `${list.length} ${list.length === 1 ? "Ort" : "Orte"}${state.near ? ` im Umkreis von ${num(TRIP.near)} km ${TRIP.hotel ? "um das Hotel" : TRIP.base.around}` : ""}`;
-    if (!list.length) { $("#list").innerHTML = `<div class="list empty">Nichts gefunden. Filter zurücksetzen?</div>`; return; }
+    if (!list.length) {
+      $("#list").innerHTML = `<div class="list empty">${state.favOnly && !state.favs.size
+        ? "Noch nichts gemerkt – tippe bei einem Ort auf das Herz."
+        : "Nichts gefunden. Filter zurücksetzen?"}</div>`;
+      return;
+    }
     if (state.sort === "cat") {
       const groups = {};
       list.forEach((p) => { (groups[p.cats.find((c) => state.cats.has(c)) || p.cats[0]] ||= []).push(p); });
@@ -326,6 +370,19 @@
     iconSize: [size, size], iconAnchor: [size / 2, size / 2], popupAnchor: [0, -size / 2]
   });
 
+  let leafletLoading = null;
+  function loadLeaflet() {
+    if (window.L) return Promise.resolve();
+    const load = (el) => new Promise((res, rej) => { el.onload = res; el.onerror = rej; });
+    const css = Object.assign(document.createElement("link"), { rel: "stylesheet", href: "/assets/vendor/leaflet/leaflet.css" });
+    const js = Object.assign(document.createElement("script"), { src: "/assets/vendor/leaflet/leaflet.js" });
+    const done = Promise.all([load(css), load(js)]);
+    document.head.insertBefore(css, document.querySelector('link[href^="/assets/app.css"]'));  // app.css überschreibt Leaflet
+    document.head.append(js);
+    return (leafletLoading ||= done);
+  }
+  const ensureMap = () => (leafletLoading || loadLeaflet()).then(() => { initMap(); map.invalidateSize(); });
+
   function initMap() {
     if (map || !window.L) return;
     map = L.map("map", { scrollWheelZoom: false, zoomControl: false }).setView([TRIP.center.lat, TRIP.center.lng], TRIP.center.zoom || 14);
@@ -363,7 +420,7 @@
     const p = byId[id]; if (!p || !hasPos(p) || !map) return;
     // Ort sichtbar machen, falls er gerade herausgefiltert ist
     if (!visiblePlaces().some((x) => x.id === id)) {
-      state.cats.clear(); state.q = ""; state.near = false;
+      state.cats.clear(); state.q = ""; state.near = false; state.favOnly = false;
       $("#q").value = ""; $("#nearBtn").setAttribute("aria-pressed", "false");
       syncChips();
       refresh();
@@ -397,6 +454,7 @@
     $("#nearBtn").innerHTML = `${ic(TRIP.hotel ? "bed-double" : "map-pin")}≤ ${num(TRIP.near)} km ${esc(homeLabel())}`;
     $("#q").placeholder = `Suchen in ${PLACES.length} Orten`;
     renderChips();
+    syncChips();
     let t;
     $("#q").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { state.q = e.target.value.trim(); refresh(); }, 120); });
     $("#sort").addEventListener("click", (e) => {
@@ -415,12 +473,86 @@
     $("#list").addEventListener("click", (e) => {
       const b = e.target.closest("[data-show]");
       if (b) showOnMap(b.dataset.show);
+      const f = e.target.closest("[data-fav]");
+      if (f) {
+        const id = f.dataset.fav, on = !state.favs.has(id);
+        on ? state.favs.add(id) : state.favs.delete(id);
+        store.set("favs", [...state.favs]);
+        f.setAttribute("aria-pressed", String(on));
+        syncChips();
+        if (state.favOnly) refresh();
+      }
     });
     refresh();
   }
 
+  // ---------- Kalender-Export (.ics) & Teilen ----------
+  // Uhrzeiten im Plan sind Ortszeit am Reiseziel (TRIP.tz) → für den Kalender in UTC umrechnen.
+  function tzOffset(t, tz) {
+    const p = Object.fromEntries(new Intl.DateTimeFormat("en-US", { timeZone: tz, hourCycle: "h23", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit" })
+      .formatToParts(t).map((x) => [x.type, x.value]));
+    return Date.UTC(+p.year, p.month - 1, +p.day, +p.hour, +p.minute, +p.second) - t;
+  }
+  function zonedToUtc(y, m, d, hm, tz) {
+    const [H, M] = hm.split(":").map(Number);
+    const wall = Date.UTC(y, m, d, H, M);
+    let t = wall - tzOffset(wall, tz);
+    t = wall - tzOffset(t, tz);  // Sommer-/Winterzeitwechsel
+    return new Date(t);
+  }
+  const icsDate = (d) => d.toISOString().replace(/[-:]/g, "").replace(/\.\d{3}/, "");
+  const icsText = (v) => String(v).replace(/\\/g, "\\\\").replace(/\n/g, "\\n").replace(/([,;])/g, "\\$1");
+  const fold = (line) => line.match(/.{1,60}/gu).join("\r\n ");
+
+  function exportCalendar() {
+    const tz = TRIP.tz || Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const [y, m, d0] = TRIP.start.split("-").map(Number);
+    const stamp = icsDate(new Date());
+    const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Reisen//Reiseplan//DE", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:" + icsText(TRIP.title)];
+    DAYS.forEach((day, i) => day.stops.forEach((s, j) => {
+      if (!/^\d\d:\d\d$/.test(s.time)) return;
+      const start = zonedToUtc(y, m - 1, d0 + i, s.time, tz);
+      const next = day.stops[j + 1];
+      const until = next && /^\d\d:\d\d$/.test(next.time) ? zonedToUtc(y, m - 1, d0 + i, next.time, tz) - start : 3600e3;
+      const end = new Date(start.getTime() + Math.min(Math.max(until, 1800e3), 3 * 3600e3));
+      const place = s.place && byId[s.place];
+      const url = (s.links && s.links[0] && s.links[0].url) || (place && place.url);
+      lines.push("BEGIN:VEVENT", `UID:${TRIP.id}-${i + 1}-${j + 1}@reisen`, "DTSTAMP:" + stamp,
+        "DTSTART:" + icsDate(start), "DTEND:" + icsDate(end), "SUMMARY:" + icsText(s.text),
+        "DESCRIPTION:" + icsText(`${TRIP.title} – Tag ${i + 1}: ${day.title}`));
+      if (place) lines.push("LOCATION:" + icsText(place.name + ", " + TRIP.center.name));
+      if (place && hasPos(place)) lines.push(`GEO:${place.lat};${place.lng}`);
+      if (url) lines.push("URL:" + url);
+      lines.push("END:VEVENT");
+    }));
+    lines.push("END:VCALENDAR");
+    const blob = new Blob([lines.map(fold).join("\r\n") + "\r\n"], { type: "text/calendar;charset=utf-8" });
+    const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `${TRIP.id}.ics` });
+    document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 10000);
+    return lines.length;
+  }
+
+  async function shareTrip() {
+    const data = { title: `${TRIP.title} – Reiseplan`, url: `${location.origin}/${TRIP.id}/` };
+    try {
+      if (navigator.share) await navigator.share(data);
+      else { await navigator.clipboard.writeText(data.url); toast("Link kopiert"); }
+    } catch { /* abgebrochen */ }
+  }
+
   // ---------- Infos ----------
   function renderInfos() {
+    $("#tools").innerHTML = `
+      <button class="row has-tile" type="button" data-act="ics"><div class="tile">${ic("calendar-plus")}</div>
+        <div class="main"><div class="title">Zum Kalender hinzufügen</div><div class="text">Alle Programmpunkte als Termine (.ics)</div></div></button>
+      <button class="row has-tile" type="button" data-act="share"><div class="tile">${ic("share")}</div>
+        <div class="main"><div class="title">Reise teilen</div><div class="text">Link zu dieser Seite senden</div></div></button>`;
+    $("#tools").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-act]"); if (!b) return;
+      if (b.dataset.act === "ics") { exportCalendar(); toast("Kalenderdatei erstellt"); }
+      else shareTrip();
+    });
     const H = TRIP.hotel;
     $("#hotel").innerHTML = H
       ? `<div class="row has-tile"><div class="tile">${ic("bed-double")}</div>
@@ -464,9 +596,8 @@
       $("#tab-" + t).setAttribute("aria-selected", String(t === tab));
     });
     if (tab === "entdecken") {
-      initMap();
-      requestAnimationFrame(() => map && map.invalidateSize());
-      if (arg) setTimeout(() => showOnMap(arg), 50);
+      ensureMap().then(() => { if (arg) showOnMap(arg); })
+        .catch(() => { $("#map").innerHTML = `<div class="empty">Karte konnte nicht geladen werden.</div>`; });
     }
     if (first.startsWith("tag-")) $("#" + first)?.scrollIntoView({ block: "start" });
     else if (!arg) window.scrollTo({ top: 0 });
@@ -490,7 +621,9 @@
   // ---------- Start ----------
   renderHeader();
   renderFacts();
+  renderNow();
   renderDays();
+  if (dayIndex(TRIP) >= 0 && dayIndex(TRIP) < DAYS.length) setInterval(() => { renderNow(); renderDays(); }, 60e3);
   initDiscover();
   renderInfos();
   initTabs();

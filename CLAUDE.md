@@ -20,6 +20,11 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Karte: CARTO Voyager mit API-Schlüssel (`CARTO_KEY` oben in `app.js`), Attribution OSM + CARTO muss sichtbar bleiben.
 - Selbst gehostet: Schrift Inter, Leaflet 1.9.4 unter `assets/vendor/`. Extern nur Karten-Kacheln (CARTO),
   Wetter (Open-Meteo) und Fotos (Wikimedia) – bei neuen Quellen die CSP in `public/_headers` erweitern.
-- Browser-Speicher pro Reise mit Präfix `<id>.`: `checks` (Checklisten), `wx` (letzte Wettervorhersage), `tab`.
+- Browser-Speicher pro Reise mit Präfix `<id>.`: `checks` (Checklisten), `favs` (gemerkte Orte), `wx` (letzte Wettervorhersage), `tab`.
+- Während der Reise: Karte „Jetzt / Als Nächstes“ oben im Plan (`renderNow`, aktualisiert jede Minute).
+- Leaflet wird erst beim Öffnen von „Entdecken“ nachgeladen (`ensureMap`).
+- Kalender-Export (.ics) unter Infos: Uhrzeiten gelten als Ortszeit `tz` der Reise und werden in UTC umgerechnet.
+- Routen/Suche öffnen auf Apple-Geräten Apple Karten, sonst Google Maps.
+- Optionale Tagesfelder: `tip`, `alt` (Alternative), `ni` (Nordirland-Hinweis), `image`.
 - Bei Änderungen an Dateien unter `public/assets/`: `?v=` in `index.html` und `sw.js` sowie `VERSION` in `sw.js` hochzählen.
 - Prüfen: `npx wrangler dev`, dann `node tools/smoke.js` (Playwright; externe Anfragen werden blockiert).
