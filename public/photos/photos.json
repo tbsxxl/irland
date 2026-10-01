@@ -1,1 +1,644 @@
-{}
+{
+ "14 Henrietta Street": {
+  "page": "https://en.wikipedia.org/wiki/14_Henrietta_Street",
+  "s": "14-henrietta-street-s.jpg"
+ },
+ "Archbasilica of Saint John Lateran": {
+  "page": "https://en.wikipedia.org/wiki/Archbasilica_of_Saint_John_Lateran",
+  "s": "archbasilica-of-saint-john-lateran-s.jpg"
+ },
+ "Bargello": {
+  "page": "https://en.wikipedia.org/wiki/Bargello",
+  "s": "bargello-s.jpg"
+ },
+ "Basilica della Santissima Annunziata": {
+  "none": true
+ },
+ "Basilica of Saint Paul Outside the Walls": {
+  "page": "https://en.wikipedia.org/wiki/Basilica_of_Saint_Paul_Outside_the_Walls",
+  "s": "basilica-of-saint-paul-outside-the-walls-s.jpg"
+ },
+ "Basilica of San Clemente": {
+  "page": "https://en.wikipedia.org/wiki/San_Clemente%2C_Rome",
+  "s": "basilica-of-san-clemente-s.jpg"
+ },
+ "Basilica of San Lorenzo, Florence": {
+  "page": "https://en.wikipedia.org/wiki/Basilica_of_San_Lorenzo%2C_Florence",
+  "s": "basilica-of-san-lorenzo-florence-s.jpg"
+ },
+ "Basilica of Santa Croce, Florence": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Croce%2C_Florence",
+  "s": "basilica-of-santa-croce-florence-s.jpg"
+ },
+ "Baths of Caracalla": {
+  "page": "https://en.wikipedia.org/wiki/Baths_of_Caracalla",
+  "s": "baths-of-caracalla-s.jpg"
+ },
+ "Boboli Gardens": {
+  "page": "https://en.wikipedia.org/wiki/Boboli_Gardens",
+  "s": "boboli-gardens-s.jpg"
+ },
+ "Bologna": {
+  "page": "https://en.wikipedia.org/wiki/Bologna",
+  "s": "bologna-s.jpg"
+ },
+ "Book of Kells": {
+  "page": "https://en.wikipedia.org/wiki/Book_of_Kells",
+  "s": "book-of-kells-s.jpg"
+ },
+ "Brancacci Chapel": {
+  "page": "https://en.wikipedia.org/wiki/Brancacci_Chapel",
+  "s": "brancacci-chapel-s.jpg"
+ },
+ "Campo de' Fiori": {
+  "page": "https://en.wikipedia.org/wiki/Campo_de'_Fiori",
+  "s": "campo-de-fiori-s.jpg"
+ },
+ "Capitoline Museums": {
+  "page": "https://en.wikipedia.org/wiki/Capitoline_Museums",
+  "s": "capitoline-museums-s.jpg"
+ },
+ "Capuchin Crypt": {
+  "page": "https://en.wikipedia.org/wiki/Capuchin_Crypt",
+  "s": "capuchin-crypt-s.jpg"
+ },
+ "Castel Sant'Angelo": {
+  "page": "https://en.wikipedia.org/wiki/Castel_Sant'Angelo",
+  "s": "castel-sant-angelo-s.jpg"
+ },
+ "Catacombs of Callixtus": {
+  "page": "https://en.wikipedia.org/wiki/Catacomb_of_Callixtus",
+  "s": "catacombs-of-callixtus-s.jpg"
+ },
+ "Chester Beatty Library": {
+  "page": "https://en.wikipedia.org/wiki/Chester_Beatty_Library",
+  "s": "chester-beatty-library-s.jpg"
+ },
+ "Chianti": {
+  "page": "https://en.wikipedia.org/wiki/Chianti",
+  "s": "chianti-s.jpg"
+ },
+ "Christ Church Cathedral, Dublin": {
+  "page": "https://en.wikipedia.org/wiki/Christ_Church_Cathedral%2C_Dublin",
+  "s": "christ-church-cathedral-dublin-s.jpg"
+ },
+ "Church of the Gesù": {
+  "page": "https://en.wikipedia.org/wiki/Church_of_the_Ges%C3%B9",
+  "s": "church-of-the-gesu-s.jpg"
+ },
+ "Cinque Terre": {
+  "page": "https://en.wikipedia.org/wiki/Cinque_Terre",
+  "s": "cinque-terre-s.jpg"
+ },
+ "Cliffs of Moher": {
+  "page": "https://en.wikipedia.org/wiki/Cliffs_of_Moher",
+  "s": "cliffs-of-moher-s.jpg"
+ },
+ "Colosseum": {
+  "page": "https://en.wikipedia.org/wiki/Colosseum",
+  "s": "colosseum-s.jpg",
+  "l": "colosseum-l.jpg"
+ },
+ "Croke Park": {
+  "page": "https://en.wikipedia.org/wiki/Croke_Park",
+  "s": "croke-park-s.jpg"
+ },
+ "Dalymount Park": {
+  "page": "https://en.wikipedia.org/wiki/Dalymount_Park",
+  "s": "dalymount-park-s.jpg"
+ },
+ "David (Michelangelo)": {
+  "page": "https://en.wikipedia.org/wiki/David_(Michelangelo)",
+  "s": "david-michelangelo-s.jpg",
+  "l": "david-michelangelo-l.jpg"
+ },
+ "Domus Aurea": {
+  "page": "https://en.wikipedia.org/wiki/Domus_Aurea",
+  "s": "domus-aurea-s.png"
+ },
+ "Dublin": {
+  "page": "https://en.wikipedia.org/wiki/Dublin",
+  "s": "dublin-s.jpg",
+  "l": "dublin-l.jpg"
+ },
+ "Dublin Castle": {
+  "page": "https://en.wikipedia.org/wiki/Dublin_Castle",
+  "s": "dublin-castle-s.jpg"
+ },
+ "Dublin Zoo": {
+  "page": "https://en.wikipedia.org/wiki/Dublin_Zoo",
+  "s": "dublin-zoo-s.jpg"
+ },
+ "Dublinia": {
+  "page": "https://en.wikipedia.org/wiki/Dublinia",
+  "s": "dublinia-s.jpg"
+ },
+ "EPIC The Irish Emigration Museum": {
+  "page": "https://en.wikipedia.org/wiki/EPIC_The_Irish_Emigration_Museum",
+  "s": "epic-the-irish-emigration-museum-s.jpg"
+ },
+ "Firenze Santa Maria Novella railway station": {
+  "page": "https://en.wikipedia.org/wiki/Firenze_Santa_Maria_Novella_railway_station",
+  "s": "firenze-santa-maria-novella-railway-station-s.jpg"
+ },
+ "Florence": {
+  "page": "https://en.wikipedia.org/wiki/Florence",
+  "s": "florence-s.jpg",
+  "l": "florence-l.jpg"
+ },
+ "Florence Airport": {
+  "page": "https://en.wikipedia.org/wiki/Florence_Airport",
+  "s": "florence-airport-s.jpg"
+ },
+ "Florence Baptistery": {
+  "page": "https://en.wikipedia.org/wiki/Florence_Baptistery",
+  "s": "florence-baptistery-s.jpg"
+ },
+ "Florence Cathedral": {
+  "page": "https://en.wikipedia.org/wiki/Florence_Cathedral",
+  "s": "florence-cathedral-s.jpg",
+  "l": "florence-cathedral-l.jpg"
+ },
+ "Fontana dei Quattro Fiumi": {
+  "page": "https://en.wikipedia.org/wiki/Fontana_dei_Quattro_Fiumi",
+  "s": "fontana-dei-quattro-fiumi-s.jpg"
+ },
+ "Forte di Belvedere": {
+  "page": "https://en.wikipedia.org/wiki/Belvedere_(fort)",
+  "s": "forte-di-belvedere-s.jpg"
+ },
+ "Fountain of Neptune, Florence": {
+  "page": "https://en.wikipedia.org/wiki/Fountain_of_Neptune%2C_Florence",
+  "s": "fountain-of-neptune-florence-s.jpg"
+ },
+ "Galleria Borghese": {
+  "page": "https://en.wikipedia.org/wiki/Galleria_Borghese",
+  "s": "galleria-borghese-s.png"
+ },
+ "Galleria Doria Pamphilj": {
+  "page": "https://en.wikipedia.org/wiki/Galleria_Doria_Pamphilj",
+  "s": "galleria-doria-pamphilj-s.jpg"
+ },
+ "Galleria dell'Accademia": {
+  "page": "https://en.wikipedia.org/wiki/Galleria_dell'Accademia",
+  "s": "galleria-dell-accademia-s.jpg"
+ },
+ "Game of Thrones Studio Tour": {
+  "none": true
+ },
+ "General Post Office, Dublin": {
+  "page": "https://en.wikipedia.org/wiki/General_Post_Office%2C_Dublin",
+  "s": "general-post-office-dublin-s.png"
+ },
+ "Giant's Causeway": {
+  "page": "https://en.wikipedia.org/wiki/Giant's_Causeway",
+  "s": "giant-s-causeway-s.jpg"
+ },
+ "Giardino Bardini": {
+  "page": "https://en.wikipedia.org/wiki/Bardini_Gardens",
+  "s": "giardino-bardini-s.jpg"
+ },
+ "Giotto's Campanile": {
+  "page": "https://en.wikipedia.org/wiki/Giotto's_Campanile",
+  "s": "giotto-s-campanile-s.jpg"
+ },
+ "Glasnevin Cemetery": {
+  "page": "https://en.wikipedia.org/wiki/Glasnevin_Cemetery",
+  "s": "glasnevin-cemetery-s.jpg"
+ },
+ "Glendalough": {
+  "page": "https://en.wikipedia.org/wiki/Glendalough",
+  "s": "glendalough-s.jpg"
+ },
+ "Grafton Street": {
+  "page": "https://en.wikipedia.org/wiki/Grafton_Street",
+  "s": "grafton-street-s.jpg"
+ },
+ "Guinness Storehouse": {
+  "page": "https://en.wikipedia.org/wiki/Guinness_Storehouse",
+  "s": "guinness-storehouse-s.jpg"
+ },
+ "Historic Centre of Rome": {
+  "none": true
+ },
+ "Howth": {
+  "page": "https://en.wikipedia.org/wiki/Howth",
+  "s": "howth-s.jpg"
+ },
+ "Hugh Lane Gallery": {
+  "page": "https://en.wikipedia.org/wiki/Hugh_Lane_Gallery",
+  "s": "hugh-lane-gallery-s.jpg"
+ },
+ "Irish Museum of Modern Art": {
+  "page": "https://en.wikipedia.org/wiki/Irish_Museum_of_Modern_Art",
+  "s": "irish-museum-of-modern-art-s.jpg"
+ },
+ "Janiculum": {
+  "page": "https://en.wikipedia.org/wiki/Janiculum",
+  "s": "janiculum-s.jpg"
+ },
+ "Jeanie Johnston": {
+  "page": "https://en.wikipedia.org/wiki/Jeanie_Johnston",
+  "s": "jeanie-johnston-s.jpg"
+ },
+ "Kilkenny Castle": {
+  "page": "https://en.wikipedia.org/wiki/Kilkenny_Castle",
+  "s": "kilkenny-castle-s.jpg"
+ },
+ "Kilmainham Gaol": {
+  "page": "https://en.wikipedia.org/wiki/Kilmainham_Gaol",
+  "s": "kilmainham-gaol-s.jpg"
+ },
+ "Largo di Torre Argentina": {
+  "page": "https://en.wikipedia.org/wiki/Largo_di_Torre_Argentina",
+  "s": "largo-di-torre-argentina-s.jpg"
+ },
+ "Laurentian Library": {
+  "page": "https://en.wikipedia.org/wiki/Laurentian_Library",
+  "s": "laurentian-library-s.jpg"
+ },
+ "Leaning Tower of Pisa": {
+  "page": "https://en.wikipedia.org/wiki/Leaning_Tower_of_Pisa",
+  "s": "leaning-tower-of-pisa-s.jpg",
+  "l": "leaning-tower-of-pisa-l.jpg"
+ },
+ "Little Museum of Dublin": {
+  "page": "https://en.wikipedia.org/wiki/Little_Museum_of_Dublin",
+  "s": "little-museum-of-dublin-s.jpg"
+ },
+ "Loggia dei Lanzi": {
+  "page": "https://en.wikipedia.org/wiki/Loggia_dei_Lanzi",
+  "s": "loggia-dei-lanzi-s.jpg"
+ },
+ "Lucca": {
+  "page": "https://en.wikipedia.org/wiki/Lucca",
+  "s": "lucca-s.jpg"
+ },
+ "Marsh's Library": {
+  "page": "https://en.wikipedia.org/wiki/Marsh's_Library",
+  "s": "marsh-s-library-s.jpg"
+ },
+ "Medici Chapel": {
+  "none": true
+ },
+ "Mercato Centrale (Florence)": {
+  "page": "https://en.wikipedia.org/wiki/Mercato_Centrale_(Florence)",
+  "s": "mercato-centrale-florence-s.jpg"
+ },
+ "Merrion Square": {
+  "page": "https://en.wikipedia.org/wiki/Merrion_Square",
+  "s": "merrion-square-s.jpg",
+  "l": "merrion-square-l.jpg"
+ },
+ "Molly Malone": {
+  "page": "https://en.wikipedia.org/wiki/Molly_Malone",
+  "s": "molly-malone-s.jpg"
+ },
+ "Monteriggioni": {
+  "page": "https://en.wikipedia.org/wiki/Monteriggioni",
+  "s": "monteriggioni-s.jpg"
+ },
+ "Museo Galileo": {
+  "page": "https://en.wikipedia.org/wiki/Museo_Galileo",
+  "s": "museo-galileo-s.jpg"
+ },
+ "Museo Stibbert": {
+  "page": "https://en.wikipedia.org/wiki/Museo_Stibbert",
+  "s": "museo-stibbert-s.jpg"
+ },
+ "Museo dell'Opera del Duomo (Florence)": {
+  "page": "https://en.wikipedia.org/wiki/Museo_dell'Opera_del_Duomo_(Florence)",
+  "s": "museo-dell-opera-del-duomo-florence-s.jpg"
+ },
+ "National Botanic Gardens (Ireland)": {
+  "page": "https://en.wikipedia.org/wiki/National_Botanic_Gardens_(Ireland)",
+  "s": "national-botanic-gardens-ireland-s.jpg"
+ },
+ "National Gallery of Ireland": {
+  "page": "https://en.wikipedia.org/wiki/National_Gallery_of_Ireland",
+  "s": "national-gallery-of-ireland-s.jpg"
+ },
+ "National Library of Ireland": {
+  "page": "https://en.wikipedia.org/wiki/National_Library_of_Ireland",
+  "s": "national-library-of-ireland-s.png"
+ },
+ "National Museum of Ireland – Archaeology": {
+  "page": "https://en.wikipedia.org/wiki/National_Museum_of_Ireland_%E2%80%93_Archaeology",
+  "s": "national-museum-of-ireland-archaeology-s.jpg"
+ },
+ "Newgrange": {
+  "page": "https://en.wikipedia.org/wiki/Newgrange",
+  "s": "newgrange-s.jpg"
+ },
+ "Officina Profumo-Farmaceutica di Santa Maria Novella": {
+  "page": "https://en.wikipedia.org/wiki/Officina_Profumo-Farmaceutica_di_Santa_Maria_Novella",
+  "s": "officina-profumo-farmaceutica-di-santa-maria-novella-s.png"
+ },
+ "Ognissanti": {
+  "none": true
+ },
+ "Old Jameson Distillery": {
+  "page": "https://en.wikipedia.org/wiki/Jameson_Distillery_Bow_St.",
+  "s": "old-jameson-distillery-s.jpg",
+  "l": "old-jameson-distillery-l.jpg"
+ },
+ "Oltrarno": {
+  "page": "https://en.wikipedia.org/wiki/Oltrarno",
+  "s": "oltrarno-s.jpg"
+ },
+ "Opificio delle pietre dure": {
+  "none": true
+ },
+ "Orsanmichele": {
+  "page": "https://en.wikipedia.org/wiki/Orsanmichele",
+  "s": "orsanmichele-s.jpg"
+ },
+ "Palatine Gallery": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Pitti",
+  "s": "palatine-gallery-s.jpg"
+ },
+ "Palatine Hill": {
+  "page": "https://en.wikipedia.org/wiki/Palatine_Hill",
+  "s": "palatine-hill-s.jpg"
+ },
+ "Palazzo Barberini": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Barberini",
+  "s": "palazzo-barberini-s.jpg"
+ },
+ "Palazzo Colonna": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Colonna",
+  "s": "palazzo-colonna-s.jpg"
+ },
+ "Palazzo Davanzati": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Davanzati",
+  "s": "palazzo-davanzati-s.jpg"
+ },
+ "Palazzo Massimo alle Terme": {
+  "page": "https://en.wikipedia.org/wiki/National_Roman_Museum_of_Palazzo_Massimo",
+  "s": "palazzo-massimo-alle-terme-s.jpg"
+ },
+ "Palazzo Medici Riccardi": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Medici_Riccardi",
+  "s": "palazzo-medici-riccardi-s.jpg"
+ },
+ "Palazzo Pitti": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Pitti",
+  "s": "palazzo-pitti-s.jpg",
+  "l": "palazzo-pitti-l.jpg"
+ },
+ "Palazzo Strozzi": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Strozzi",
+  "s": "palazzo-strozzi-s.jpg"
+ },
+ "Palazzo Vecchio": {
+  "page": "https://en.wikipedia.org/wiki/Palazzo_Vecchio",
+  "s": "palazzo-vecchio-s.jpg"
+ },
+ "Pantheon, Rome": {
+  "page": "https://en.wikipedia.org/wiki/Pantheon%2C_Rome",
+  "s": "pantheon-rome-s.jpg"
+ },
+ "Parco delle Cascine": {
+  "page": "https://en.wikipedia.org/wiki/Parco_delle_Cascine",
+  "s": "parco-delle-cascine-s.jpg"
+ },
+ "Perseus with the Head of Medusa": {
+  "page": "https://en.wikipedia.org/wiki/Perseus_with_the_Head_of_Medusa",
+  "s": "perseus-with-the-head-of-medusa-s.jpg"
+ },
+ "Phoenix Park": {
+  "page": "https://en.wikipedia.org/wiki/Phoenix_Park",
+  "s": "phoenix-park-s.jpg"
+ },
+ "Piazza Navona": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_Navona",
+  "s": "piazza-navona-s.jpg"
+ },
+ "Piazza Santa Croce": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_Santa_Croce",
+  "s": "piazza-santa-croce-s.jpg"
+ },
+ "Piazza Santo Spirito": {
+  "page": "https://en.wikipedia.org/wiki/Santo_Spirito%2C_Florence",
+  "s": "piazza-santo-spirito-s.jpg"
+ },
+ "Piazza Venezia": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_Venezia",
+  "s": "piazza-venezia-s.jpg"
+ },
+ "Piazza del Campidoglio": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_del_Campidoglio",
+  "s": "piazza-del-campidoglio-s.jpg"
+ },
+ "Piazza del Duomo, Florence": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_del_Duomo%2C_Florence",
+  "s": "piazza-del-duomo-florence-s.jpg"
+ },
+ "Piazza del Popolo": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_del_Popolo",
+  "s": "piazza-del-popolo-s.jpg"
+ },
+ "Piazza della Repubblica, Florence": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_della_Repubblica%2C_Florence",
+  "s": "piazza-della-repubblica-florence-s.jpg"
+ },
+ "Piazza della Signoria": {
+  "page": "https://en.wikipedia.org/wiki/Piazza_della_Signoria",
+  "s": "piazza-della-signoria-s.jpg"
+ },
+ "Piazzale Michelangelo": {
+  "none": true
+ },
+ "Pisa": {
+  "page": "https://en.wikipedia.org/wiki/Pisa",
+  "s": "pisa-s.jpg"
+ },
+ "Ponte Vecchio": {
+  "page": "https://en.wikipedia.org/wiki/Ponte_Vecchio",
+  "s": "ponte-vecchio-s.jpg",
+  "l": "ponte-vecchio-l.jpg"
+ },
+ "Porcellino": {
+  "page": "https://en.wikipedia.org/wiki/Porcellino",
+  "s": "porcellino-s.jpg"
+ },
+ "Quartiere Coppedè": {
+  "none": true
+ },
+ "River Liffey": {
+  "page": "https://en.wikipedia.org/wiki/River_Liffey",
+  "s": "river-liffey-s.jpg",
+  "l": "river-liffey-l.jpg"
+ },
+ "Roma Termini railway station": {
+  "page": "https://en.wikipedia.org/wiki/Roma_Termini_railway_station",
+  "s": "roma-termini-railway-station-s.jpg"
+ },
+ "Roman Forum": {
+  "page": "https://en.wikipedia.org/wiki/Roman_Forum",
+  "s": "roman-forum-s.jpg"
+ },
+ "Rome": {
+  "page": "https://en.wikipedia.org/wiki/Rome",
+  "s": "rome-s.jpg"
+ },
+ "San Gimignano": {
+  "page": "https://en.wikipedia.org/wiki/San_Gimignano",
+  "s": "san-gimignano-s.jpg"
+ },
+ "San Luigi dei Francesi": {
+  "page": "https://en.wikipedia.org/wiki/San_Luigi_dei_Francesi",
+  "s": "san-luigi-dei-francesi-s.jpg"
+ },
+ "San Marco, Florence": {
+  "page": "https://en.wikipedia.org/wiki/San_Marco%2C_Florence",
+  "s": "san-marco-florence-s.jpg"
+ },
+ "San Miniato al Monte": {
+  "page": "https://en.wikipedia.org/wiki/San_Miniato_al_Monte",
+  "s": "san-miniato-al-monte-s.jpg"
+ },
+ "San Pietro in Vincoli": {
+  "page": "https://en.wikipedia.org/wiki/San_Pietro_in_Vincoli",
+  "s": "san-pietro-in-vincoli-s.jpg"
+ },
+ "Sant'Ignazio, Rome": {
+  "page": "https://en.wikipedia.org/wiki/Sant'Ignazio%2C_Rome",
+  "s": "sant-ignazio-rome-s.jpg"
+ },
+ "Santa Maria Maggiore": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Maria_Maggiore",
+  "s": "santa-maria-maggiore-s.jpg"
+ },
+ "Santa Maria Novella": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Maria_Novella",
+  "s": "santa-maria-novella-s.jpg"
+ },
+ "Santa Maria degli Angeli e dei Martiri": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Maria_degli_Angeli_e_dei_Martiri",
+  "s": "santa-maria-degli-angeli-e-dei-martiri-s.jpg"
+ },
+ "Santa Maria del Popolo": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Maria_del_Popolo",
+  "s": "santa-maria-del-popolo-s.jpg"
+ },
+ "Santa Maria della Vittoria": {
+  "none": true
+ },
+ "Santa Maria in Trastevere": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Maria_in_Trastevere",
+  "s": "santa-maria-in-trastevere-s.jpg"
+ },
+ "Santa Maria sopra Minerva": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Maria_sopra_Minerva",
+  "s": "santa-maria-sopra-minerva-s.jpg"
+ },
+ "Santa Prassede": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Prassede",
+  "s": "santa-prassede-s.jpg"
+ },
+ "Santo Spirito, Florence": {
+  "page": "https://en.wikipedia.org/wiki/Santo_Spirito%2C_Florence",
+  "s": "santo-spirito-florence-s.jpg"
+ },
+ "Siena": {
+  "page": "https://en.wikipedia.org/wiki/Siena",
+  "s": "siena-s.jpg"
+ },
+ "Smithfield, Dublin": {
+  "page": "https://en.wikipedia.org/wiki/Smithfield%2C_Dublin",
+  "s": "smithfield-dublin-s.jpg"
+ },
+ "Smock Alley Theatre": {
+  "page": "https://en.wikipedia.org/wiki/Smock_Alley_Theatre",
+  "s": "smock-alley-theatre-s.jpg"
+ },
+ "Spanish Steps": {
+  "page": "https://en.wikipedia.org/wiki/Spanish_Steps",
+  "s": "spanish-steps-s.jpg"
+ },
+ "St Patrick's Cathedral, Dublin": {
+  "page": "https://en.wikipedia.org/wiki/St_Patrick's_Cathedral%2C_Dublin",
+  "s": "st-patrick-s-cathedral-dublin-s.jpg"
+ },
+ "St Stephen's Green": {
+  "page": "https://en.wikipedia.org/wiki/St_Stephen's_Green",
+  "s": "st-stephen-s-green-s.jpg"
+ },
+ "Stadio Olimpico": {
+  "page": "https://en.wikipedia.org/wiki/Stadio_Olimpico",
+  "s": "stadio-olimpico-s.jpg"
+ },
+ "Stadium of Domitian": {
+  "page": "https://en.wikipedia.org/wiki/Stadium_of_Domitian",
+  "s": "stadium-of-domitian-s.jpg"
+ },
+ "Teeling Whiskey": {
+  "page": "https://en.wikipedia.org/wiki/Teeling_Distillery",
+  "s": "teeling-whiskey-s.jpg"
+ },
+ "Temple Bar, Dublin": {
+  "page": "https://en.wikipedia.org/wiki/Temple_Bar%2C_Dublin",
+  "s": "temple-bar-dublin-s.jpg",
+  "l": "temple-bar-dublin-l.jpg"
+ },
+ "Testaccio": {
+  "page": "https://en.wikipedia.org/wiki/Testaccio",
+  "s": "testaccio-s.jpg"
+ },
+ "The Birth of Venus": {
+  "page": "https://en.wikipedia.org/wiki/The_Birth_of_Venus",
+  "s": "the-birth-of-venus-s.jpg",
+  "l": "the-birth-of-venus-l.jpg"
+ },
+ "Trastevere": {
+  "page": "https://en.wikipedia.org/wiki/Trastevere",
+  "s": "trastevere-s.jpg"
+ },
+ "Trevi Fountain": {
+  "page": "https://en.wikipedia.org/wiki/Trevi_Fountain",
+  "s": "trevi-fountain-s.jpg"
+ },
+ "Trinity College Dublin": {
+  "page": "https://en.wikipedia.org/wiki/Trinity_College_Dublin",
+  "s": "trinity-college-dublin-s.jpg"
+ },
+ "Uffizi": {
+  "page": "https://en.wikipedia.org/wiki/Uffizi",
+  "s": "uffizi-s.jpg"
+ },
+ "Vasari Corridor": {
+  "page": "https://en.wikipedia.org/wiki/Vasari_Corridor",
+  "s": "vasari-corridor-s.jpg"
+ },
+ "Vatican Museums": {
+  "page": "https://en.wikipedia.org/wiki/Vatican_Museums",
+  "s": "vatican-museums-s.png"
+ },
+ "Via del Corso": {
+  "page": "https://en.wikipedia.org/wiki/Via_del_Corso",
+  "s": "via-del-corso-s.jpg"
+ },
+ "Victor Emmanuel II Monument": {
+  "page": "https://en.wikipedia.org/wiki/Victor_Emmanuel_II_Monument",
+  "s": "victor-emmanuel-ii-monument-s.jpg"
+ },
+ "Villa Borghese gardens": {
+  "page": "https://en.wikipedia.org/wiki/Villa_Borghese_gardens",
+  "s": "villa-borghese-gardens-s.jpg"
+ },
+ "Villa Farnesina": {
+  "page": "https://en.wikipedia.org/wiki/Villa_Farnesina",
+  "s": "villa-farnesina-s.jpg"
+ },
+ "de:Scuola del Cuoio": {
+  "none": true
+ },
+ "it:Biblioteca delle Oblate": {
+  "page": "https://it.wikipedia.org/wiki/Biblioteca_delle_Oblate",
+  "s": "it-biblioteca-delle-oblate-s.jpg"
+ },
+ "it:Domus romane di Palazzo Valentini": {
+  "none": true
+ }
+}
