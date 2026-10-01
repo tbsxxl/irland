@@ -25,6 +25,7 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Leaflet wird erst beim Öffnen von „Entdecken“ nachgeladen (`ensureMap`).
 - Kalender-Export (.ics) unter Infos: Uhrzeiten gelten als Ortszeit `tz` der Reise und werden in UTC umgerechnet.
 - Routen/Suche öffnen auf Apple-Geräten Apple Karten, sonst Google Maps.
+- Orte: optional `rating`/`reviews` (Tripadvisor, Stand angeben), `city` (andere Stadt als `center.name`, z. B. Rom-Tag – nur Liste, Kartensuche in dieser Stadt), `price`, `kind`, `free`.
 - Optionale Tagesfelder: `tip`, `alt` (Alternative), `ni` (Nordirland-Hinweis), `image`.
 - Bei Änderungen an Dateien unter `public/assets/`: `?v=` in `index.html` und `sw.js` sowie `VERSION` in `sw.js` hochzählen.
 - Prüfen: `npx wrangler dev`, dann `node tools/smoke.js` (Playwright; externe Anfragen werden blockiert).

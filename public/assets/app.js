@@ -108,8 +108,8 @@
   // Auf iPhone/iPad/Mac öffnen Routen in Apple Karten, sonst in Google Maps
   const APPLE = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
   const mapsSearch = (p) => APPLE
-    ? `https://maps.apple.com/?q=${encodeURIComponent(p.name + ", " + TRIP.center.name)}`
-    : "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " " + TRIP.center.name);
+    ? `https://maps.apple.com/?q=${encodeURIComponent(p.name + ", " + (p.city || TRIP.center.name))}`
+    : "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(p.name + " " + (p.city || TRIP.center.name));
   const mapsRoute = (p) => APPLE
     ? `https://maps.apple.com/?daddr=${p.lat},${p.lng}&dirflg=w`
     : `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
@@ -173,7 +173,9 @@
         const place = s.place && byId[s.place];
         const acts = [
           ...(s.links || []).map((l) => ext(l.url, l.label, linkIcon(l.label))),
-          place && hasPos(place) ? `<a class="btn" href="#entdecken/${esc(place.id)}">${ic("map-pin")}Karte</a>` : ""
+          !place ? "" : hasPos(place) ? `<a class="btn" href="#entdecken/${esc(place.id)}">${ic("map-pin")}Karte</a>`
+            : place.url && !(s.links || []).some((l) => l.url === place.url) ? ext(place.url, "Infos")
+            : !place.url ? ext(mapsSearch(place), "Karte", "map-pin") : ""
         ].join("");
         const cls = isToday ? (j === nowIdx ? "is-now" : j < nowIdx ? "is-past" : "") : "";
         return `<li class="stop ${cls}">
@@ -301,7 +303,8 @@
     const cat = CATS[p.cats[0]];
     const d = hasPos(p) ? km(refPoint(), p) : null;
     const meta = [
-      p.rating ? `<span class="star">${ic("star")}${num(p.rating)}</span>` : "",
+      p.rating ? `<span class="star">${ic("star")}${num(p.rating)}${p.reviews ? `<small>(${p.reviews.toLocaleString("de-DE")})</small>` : ""}</span>` : "",
+      p.city ? `<span>${esc(p.city)}</span>` : "",
       p.kind ? `<span>${esc(p.kind)}</span>` : "",
       p.price ? `<span>${esc(p.price)}</span>` : "",
       d !== null ? `<span>${fmtKm(d)} ${esc(refLabel())}${d < 4 ? ` · ${walk(d)} zu Fuß` : ""}</span>` : ""
@@ -340,7 +343,7 @@
     } else {
       const sorted = [...list].sort(state.sort === "dist"
         ? (a, b) => (hasPos(a) ? km(refPoint(), a) : 1e9) - (hasPos(b) ? km(refPoint(), b) : 1e9)
-        : (a, b) => (b.rating || 0) - (a.rating || 0));
+        : (a, b) => (b.rating || 0) - (a.rating || 0) || (b.reviews || 0) - (a.reviews || 0));
       $("#list").innerHTML = `<div class="group"><div class="list">${sorted.map(placeRow).join("")}</div></div>`;
     }
   }
