@@ -1021,5 +1021,20 @@
  },
  "Palace of the Grand Master of the Knights of Rhodes": {
   "none": true
+ },
+ "Lindos": {
+  "page": "https://en.wikipedia.org/wiki/Lindos",
+  "s": "lindos-s.jpg",
+  "l": "lindos-l.jpg"
+ },
+ "Spinalonga": {
+  "page": "https://en.wikipedia.org/wiki/Spinalonga",
+  "s": "spinalonga-s.jpg",
+  "l": "spinalonga-l.jpg"
+ },
+ "it:Poetto": {
+  "page": "https://it.wikipedia.org/wiki/Poetto",
+  "s": "it-poetto-s.jpg",
+  "l": "it-poetto-l.jpg"
  }
 }
