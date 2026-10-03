@@ -553,3 +553,5 @@ label.row{cursor:pointer}
 .day-map{height:min(60vh,340px);margin:0 16px 16px;border-radius:14px;overflow:hidden;background:#EDEAE4;z-index:0}
 .pin-num{width:28px;height:28px;font-size:13px;font-weight:700;font-variant-numeric:tabular-nums}
 .day-route .muted{flex-basis:100%}
+.inspo-name .bl{display:inline-flex;margin-left:6px;color:#AF52DE;font-size:14px;vertical-align:1px}
+.chip-bl .i{color:#AF52DE}

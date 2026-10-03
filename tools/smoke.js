@@ -66,7 +66,7 @@ const SHOTS = process.argv[3];
     // Fernreisen und Budget
     await filter('[data-f="dist"] [data-v="far"]');
     const far = await inspoCards();
-    if (far < 15 || far > 40) errors.push(`Fernreisen: ${far} Ziele`);
+    if (far < 30 || far > 80) errors.push(`Fernreisen: ${far} Ziele`);
     await page.click('#inspoActive [data-clear="dist"]'); await page.waitForTimeout(200);
     await page.click("#inspoFilterBtn"); await page.waitForTimeout(300);
     await page.evaluate(() => { const r = document.querySelector("#fBudget"); r.value = "1500"; r.dispatchEvent(new Event("input", { bubbles: true })); });
@@ -76,6 +76,12 @@ const SHOTS = process.argv[3];
     const tooExpensive = await page.evaluate(() => [...document.querySelectorAll(".inspo-price")].filter((e) => parseInt(e.textContent.replace(/\D/g, ""), 10) > 1500).length);
     if (!(cheap > 3 && cheap < dest) || tooExpensive) errors.push(`Budget-Filter: ${cheap} Ziele, ${tooExpensive} zu teuer`);
     await page.click('#inspoActive [data-clear="budget"]'); await page.waitForTimeout(200);
+    // Bucket List per Schnellwahl
+    await page.click('#inspoActive [data-quick="bucket"]'); await page.waitForTimeout(200);
+    const bl = await inspoCards();
+    if (bl < 40 || bl !== (await page.locator(".inspo-card .bl").count())) errors.push(`Bucket List: ${bl} Ziele`);
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-bucket.png` });
+    await page.click('#inspoActive [data-clear="tag"]'); await page.waitForTimeout(200);
     // Zwei Ziele merken und vergleichen
     await page.locator(".inspo-card .inspo-fav").nth(0).click(); await page.locator(".inspo-card .inspo-fav").nth(1).click(); await page.waitForTimeout(200);
     await page.click("#inspoActive [data-compare]"); await page.waitForTimeout(400);
