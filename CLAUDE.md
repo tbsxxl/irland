@@ -13,7 +13,19 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
   Flugzeit (ab 7 Std. = „Fernreise“), `rain` = Regenzeit-Monate, Tags, Highlights, Wochenplan, `wiki` fürs Foto,
   `off` = Nebensaison-Hinweis, nur Nov–März gezeigt).
   `INSPIRATION_MONTHS` (unten in derselben Datei) = Tipps pro Monat mit Grund; Reihenfolge = Rang bei „Empfohlen“.
-  Reisemonat (`inspo.month`) und gemerkte Ziele (`inspo.favs`) im `localStorage`. Fotos lädt dieselbe Action.
+  `ll` = Koordinaten für die Weltkarte (Ansicht „Weltkarte“, Marker = Temperatur im Monat, weit draußen nur Punkte).
+  Bedienung: Leiste mit Monat (Blatt), Suche, Filter-Knopf (Blatt: Sortierung, Flugzeit, Budget „Woche zu zweit“, Tipps,
+  Gemerkt, Warm, ohne Regenzeit, Thema); aktive Filter als Chips zum Entfernen, „Vergleichen“ ab 2 gemerkten Zielen.
+  Reisemonat (`inspo.month`), Ansicht (`inspo.view`) und gemerkte Ziele (`inspo.favs`) im `localStorage`. Fotos lädt dieselbe Action.
+- Eigene Reisen: „Als Reise planen“ im Ziel-Blatt speichert `{id: "x-<ziel>-<datum>", dest, start, nights}` in `localStorage`
+  `mytrips`; `buildMyTrip()` baut daraus beim Laden eine normale Reise (Tagesplan aus `week`, Checklisten, Infos) unter `/<id>/`.
+  Nur in diesem Browser; „Entwurf löschen“ unter Infos.
+- Buchungen (Flug, Hotel, Zug, Mietwagen, Ticket): fest in der Reisedatei als `bookings: [{type, title, date, time, info, ref, url}]`
+  oder selbst unter Infos eingetragen (`<id>.bookings`). Sie erscheinen im Tagesplan (nach Uhrzeit), im Kalender-Export,
+  vor der Reise als „Nächste Buchung“ und am Vortag/Tag selbst in der Status-Zeile (auch auf der Übersicht).
+- Tagesplan: Fußweg zwischen aufeinanderfolgenden Orten, „Route des Tages“ (Google Maps, zu Fuß, alle Orte der Hauptstadt des Tages)
+  und „Bei Regen: Ideen für drinnen“ (Orte aus den Kategorien `indoor` der Reise, nahe dem Tagesprogramm). Sagt die
+  Vorhersage (16 Tage) für einen Reisetag Regen an (≥ 60 % oder Regen-Code), klappt der Kasten auf.
 - Alte Links `/#entdecken` usw. leiten nach `/irland/#…` weiter.
 - Reiter über die Adresse: `#plan`, `#entdecken`, `#entdecken/<ort-id>`, `#infos`, `#tag-3`.
 - Florenz ist ein Entwurf: `hotel: null`, Entfernungen ab `base` (Dom); Flugzeiten fehlen noch.
@@ -26,13 +38,13 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Karte: CARTO Voyager mit API-Schlüssel (`CARTO_KEY` oben in `app.js`), Attribution OSM + CARTO muss sichtbar bleiben.
 - Selbst gehostet: Schrift Inter, Leaflet 1.9.4 unter `assets/vendor/`. Extern nur Karten-Kacheln (CARTO),
   Wetter (Open-Meteo) und Fotos (Wikimedia) – bei neuen Quellen die CSP in `public/_headers` erweitern.
-- Browser-Speicher pro Reise mit Präfix `<id>.`: `checks` (Checklisten), `favs` (gemerkte Orte), `wx` (letzte Wettervorhersage), `tab`.
+- Browser-Speicher pro Reise mit Präfix `<id>.`: `checks` (Checklisten), `favs` (gemerkte Orte), `wx` (letzte Wettervorhersage), `tab`, `bookings`.
 - Entdecken: Stadt-Umschalter, sobald Orte ein `city` haben (Suche läuft über alle Städte); lange Gruppen zeigen erst die
   6 besten (Bewertung gewichtet mit Anzahl), Rest per „Alle anzeigen“. Ort antippen (Liste, Karte, Plan-Text) öffnet das
   Detailblatt (`openSheet`) mit Foto, Route, Karte, Website, Merken; schließt per ×, Hintergrund, Wischen, Escape, Zurück.
 - Handy: kompakte Titelleiste (`#navbar`) erscheint, wenn die große Überschrift aus dem Bild scrollt.
 - Während der Reise: Plan springt beim Öffnen zum heutigen Tag; Karte „Jetzt / Als Nächstes“ oben im Plan (`renderNow`, aktualisiert jede Minute).
-- Leaflet wird erst beim Öffnen von „Entdecken“ nachgeladen (`ensureMap`).
+- Leaflet wird erst beim Öffnen von „Entdecken“ bzw. der Weltkarte nachgeladen (`loadLeaflet`, Kacheln über `tiles()`).
 - Kalender-Export (.ics) unter Infos: Uhrzeiten gelten als Ortszeit `tz` der Reise und werden in UTC umgerechnet.
 - Routen/Suche öffnen auf Apple-Geräten Apple Karten, sonst Google Maps.
 - Orte: optional `rating`/`reviews` (Tripadvisor, Stand angeben), `city` (andere Stadt als `center.name`, z. B. Rom-Tag – nur Liste, Kartensuche in dieser Stadt), `price`, `kind`, `free`.

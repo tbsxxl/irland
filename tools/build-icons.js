@@ -7,7 +7,10 @@ if (!src) { console.error("Pfad zu lucide-static/icons angeben"); process.exit(1
 
 const UI = ["calendar-days", "map", "list-checks", "chevron-left", "chevron-right", "arrow-up-right", "route", "globe",
   "star", "search", "locate-fixed", "bed-double", "map-pin", "check", "info", "clock", "pencil-line", "footprints",
-  "sun", "cloud-sun", "cloud", "cloud-fog", "cloud-drizzle", "cloud-rain", "cloud-snow", "cloud-lightning", "droplet", "wind", "heart", "share", "calendar-plus", "shuffle", "sparkles", "x"];
+  "sun", "cloud-sun", "cloud", "cloud-fog", "cloud-drizzle", "cloud-rain", "cloud-snow", "cloud-lightning", "droplet", "wind", "heart", "share", "calendar-plus", "shuffle", "sparkles", "x",
+  // Inspiration, Buchungen, Reise aus Inspiration
+  "plane", "euro", "waves", "landmark", "building-2", "mountain", "utensils", "moon", "sliders-horizontal", "chevron-down", "list",
+  "columns-3", "trash-2", "umbrella", "plus", "pencil", "navigation", "copy", "calendar", "ticket", "train-front", "car", "luggage"];
 const dir = path.join(__dirname, "../public/assets/trips");
 const fromData = fs.readdirSync(dir).flatMap((f) =>
   [...fs.readFileSync(path.join(dir, f), "utf8").matchAll(/icon: "([a-z0-9-]+)"/g)].map((m) => m[1]));
