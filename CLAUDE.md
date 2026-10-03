@@ -10,7 +10,8 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
   optional Farbschema `[data-theme="<id>"]` in `app.css`.
 - Startseite hat zwei Reiter: „Meine Reisen“ und „Inspiration“ (`#inspiration`, `#inspiration/<id>` öffnet ein Ziel).
   Ziele stehen in `public/assets/inspiration.js` (`temps` = 12 Monats-Höchstwerte, `hotel`/`fly` = Preisspannen in €,
-  Flugzeit, Tags, Highlights, Wochenplan, `wiki` fürs Foto, `off` = Nebensaison-Hinweis, nur Nov–März gezeigt).
+  Flugzeit (ab 7 Std. = „Fernreise“), `rain` = Regenzeit-Monate, Tags, Highlights, Wochenplan, `wiki` fürs Foto,
+  `off` = Nebensaison-Hinweis, nur Nov–März gezeigt).
   `INSPIRATION_MONTHS` (unten in derselben Datei) = Tipps pro Monat mit Grund; Reihenfolge = Rang bei „Empfohlen“.
   Reisemonat (`inspo.month`) und gemerkte Ziele (`inspo.favs`) im `localStorage`. Fotos lädt dieselbe Action.
 - Alte Links `/#entdecken` usw. leiten nach `/irland/#…` weiter.

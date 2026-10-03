@@ -222,7 +222,7 @@
     natur: ["Natur", "mountain"], essen: ["Essen & Trinken", "utensils"], nacht: ["Nachtleben", "moon"] };
   const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
   const MON = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
-  const inspo = { q: "", tag: "", warm: false, fav: false, tip: false, sort: "tip",
+  const inspo = { q: "", tag: "", warm: false, fav: false, tip: false, dist: "", sort: "tip",
     // Reisemonat (0–11): zuletzt gewählter, sonst der nächste Monat
     month: (() => { try { const m = Number(localStorage.getItem("inspo.month")); if (localStorage.getItem("inspo.month") !== null && m >= 0 && m < 12) return m; } catch { /* privat */ } return (new Date().getMonth() + 1) % 12; })(),
     favs: new Set((() => { try { return JSON.parse(localStorage.getItem("inspo.favs")) || []; } catch { return []; } })()) };
@@ -236,16 +236,19 @@
   // Woche zu zweit: 7 Nächte Hotel + 2 Flüge, auf 50 € gerundet
   const weekCost = (d) => [d.hotel[0] * 7 + d.fly[0] * 2, d.hotel[1] * 7 + d.fly[1] * 2].map((x) => Math.round(x / 50) * 50);
   const offSeason = (d) => d.off && [10, 11, 0, 1, 2].includes(inspo.month);
+  const rainy = (d, m = inspo.month) => d.rain?.includes(m + 1);
+  const FAR = 7; // ab 7 Std. Flug = Fernreise
 
   function inspoVisible() {
     const terms = fold(inspo.q).split(/\s+/).filter(Boolean);
     const list = INSPO.filter((d) => {
       const text = fold([d.name, d.country, d.pitch, ...d.highlights, ...d.tags.map((t) => INSPO_TAGS[t]?.[0]), tipOf(d) || ""].join(" "));
       return terms.every((t) => text.includes(t)) && (!inspo.tag || d.tags.includes(inspo.tag)) &&
-        (!inspo.warm || tempOf(d) >= 20) && (!inspo.fav || inspo.favs.has(d.id)) && (!inspo.tip || tipOf(d));
+        (!inspo.warm || tempOf(d) >= 20) && (!inspo.fav || inspo.favs.has(d.id)) && (!inspo.tip || tipOf(d)) &&
+        (!inspo.dist || (inspo.dist === "far" ? d.flight >= FAR : d.flight <= 3));
     });
     // Empfohlen: Monatstipps in ihrer Reihenfolge, danach angenehmstes Wetter (nahe 25 °C)
-    const comfort = (d) => Math.abs(tempOf(d) - 25);
+    const comfort = (d) => Math.abs(tempOf(d) - 25) + (rainy(d) ? 8 : 0);
     const by = {
       tip: (a, b) => tipRank(a) - tipRank(b) || comfort(a) - comfort(b) || a.flight - b.flight,
       warm: (a, b) => tempOf(b) - tempOf(a) || a.flight - b.flight,
@@ -270,7 +273,7 @@
           <div class="inspo-meta">${esc(d.country)} · ${flightText(d.flight)}</div>
           ${tip ? `<p class="inspo-tip">${ic("sparkles")}<span>${esc(tip)}</span></p>` : `<p class="inspo-pitch">${esc(d.pitch)}</p>`}
           <div class="inspo-price"><span title="Hotel pro Nacht">${ic("bed-double")}${euro(...d.hotel)}</span><span title="Flug hin & zurück">${ic("plane")}${euro(...d.fly)}</span></div>
-          ${offSeason(d) ? `<div class="inspo-off">${ic("info")}Nebensaison</div>` : ""}
+          ${rainy(d) ? `<div class="inspo-off rain">${ic("cloud-rain")}Regenzeit</div>` : offSeason(d) ? `<div class="inspo-off">${ic("info")}Nebensaison</div>` : ""}
         </div>
       </article>`;
     }).join("") : `<div class="card empty">Kein Ziel passt zu den Filtern.</div>`;
@@ -279,7 +282,7 @@
   function syncInspoChips() {
     $("#inspoChips").querySelectorAll(".chip").forEach((c) => {
       const k = c.dataset.k;
-      c.setAttribute("aria-pressed", String(k === "all" ? !inspo.tag && !inspo.warm && !inspo.fav && !inspo.tip : k === "warm" ? inspo.warm : k === "fav" ? inspo.fav : k === "tip" ? inspo.tip : inspo.tag === k));
+      c.setAttribute("aria-pressed", String(k === "all" ? !inspo.tag && !inspo.warm && !inspo.fav && !inspo.tip && !inspo.dist : k === "warm" ? inspo.warm : k === "fav" ? inspo.fav : k === "tip" ? inspo.tip : k === "near" || k === "far" ? inspo.dist === k : inspo.tag === k));
     });
     $("#inspoChips [data-favcount]").textContent = inspo.favs.size ? ` ${inspo.favs.size}` : "";
     $("#inspoChips [data-tipmonth]").textContent = MONTHS[inspo.month];
@@ -306,7 +309,6 @@
     const d = INSPO.find((x) => x.id === id); if (!d) return;
     inspoOpen = id;
     const t = tempOf(d), tip = tipOf(d), wk = weekCost(d);
-    const lo = Math.min(...d.temps), hi = Math.max(...d.temps);
     const good = MONTHS.map((name, m) => [name, tipOf(d, m)]).filter(([, why]) => why);
     showSheet(`
       ${d.wiki ? `<div class="sheet-photo" data-wiki="${esc(d.wiki)}" data-size="large"><a data-credit href="https://wikipedia.org" target="_blank" rel="noopener">Foto: Wikipedia</a></div>` : ""}
@@ -320,6 +322,7 @@
         <div class="meta"><span>${esc(d.country)}</span></div>
         <p class="sheet-note">${esc(d.pitch)}</p>
         ${tip ? `<div class="notice inspo-notice tip">${ic("sparkles")}<span><b>Tipp im ${MONTHS[inspo.month]}:</b> ${esc(tip)}</span></div>` : ""}
+        ${rainy(d) ? `<div class="notice inspo-notice rain">${ic("cloud-rain")}<span>Im ${MONTHS[inspo.month]} ist dort Regenzeit – oft kurze, kräftige Schauer, schwül, teils Stürme.</span></div>` : ""}
         ${offSeason(d) ? `<div class="notice inspo-notice">${ic("info")}<span>${esc(d.off)}</span></div>` : ""}
         <h3 class="sheet-h">Kosten (grobe Richtwerte)</h3>
         <div class="list inspo-costs">
@@ -330,8 +333,9 @@
         <p class="inspo-fine">Je nach Saison, Ferien und Buchungszeitpunkt – aktuelle Preise über die Links unten.</p>
         <h3 class="sheet-h">Klima (Tageshöchstwerte)</h3>
         <div class="clim" role="img" aria-label="Höchsttemperaturen Januar bis Dezember: ${d.temps.join(", ")} Grad">
-          ${d.temps.map((x, m) => `<button type="button" class="clim-m${m === inspo.month ? " on" : ""}${tipOf(d, m) ? " tip" : ""}" data-clim="${m}" aria-label="${MONTHS[m]}"><span class="v">${x}°</span><span class="bar ${tempClass(x)}" style="height:${Math.round(8 + 52 * (x - lo) / Math.max(1, hi - lo))}px"></span><span class="m">${MON[m].slice(0, 1)}</span></button>`).join("")}
+          ${d.temps.map((x, m) => `<button type="button" class="clim-m${m === inspo.month ? " on" : ""}${tipOf(d, m) ? " tip" : ""}${rainy(d, m) ? " rain" : ""}" data-clim="${m}" aria-label="${MONTHS[m]}"><span class="v">${x}°</span><span class="bar ${tempClass(x)}" style="height:${Math.round(6 + 54 * (Math.min(42, Math.max(-10, x)) + 10) / 52)}px"></span><span class="m">${MON[m].slice(0, 1)}</span></button>`).join("")}
         </div>
+        <p class="inspo-fine">Monat antippen zum Wechseln · <span class="lg-tip">lila</span> = Reisetipp${d.rain ? " · gestreift = Regenzeit" : ""}</p>
         ${good.length ? `<h3 class="sheet-h">Besonders gut im</h3><ul class="sheet-list good">${good.map(([name, why]) => `<li>${ic("sparkles")}<span><b>${name}:</b> ${esc(why)}</span></li>`).join("")}</ul>` : ""}
         <h3 class="sheet-h">Highlights</h3>
         <ul class="sheet-list">${d.highlights.map((h) => `<li>${ic("star")}${esc(h)}</li>`).join("")}</ul>
@@ -352,6 +356,8 @@
       `<button class="chip" type="button" data-k="tip" style="--c:#AF52DE">${ic("sparkles")}Tipps im <span data-tipmonth></span></button>`,
       `<button class="chip chip-fav" type="button" data-k="fav">${ic("heart")}Gemerkt<span data-favcount></span></button>`,
       `<button class="chip" type="button" data-k="warm" style="--c:#FF9500">${ic("sun")}Warm (ab 20°)</button>`,
+      `<button class="chip" type="button" data-k="near">${ic("plane")}Nah (bis 3 Std.)</button>`,
+      `<button class="chip" type="button" data-k="far">${ic("globe")}Fernreise</button>`,
       ...Object.entries(INSPO_TAGS).map(([k, [label, icon]]) => `<button class="chip" type="button" data-k="${k}">${ic(icon)}${esc(label)}</button>`)
     ].join("");
     $("#inspoQ").placeholder = `Suchen in ${INSPO.length} Zielen`;
@@ -363,7 +369,8 @@
     $("#inspoChips").addEventListener("click", (e) => {
       const c = e.target.closest(".chip"); if (!c) return;
       const k = c.dataset.k;
-      if (k === "all") { inspo.tag = ""; inspo.warm = false; inspo.fav = false; inspo.tip = false; }
+      if (k === "all") { inspo.tag = ""; inspo.warm = false; inspo.fav = false; inspo.tip = false; inspo.dist = ""; }
+      else if (k === "near" || k === "far") inspo.dist = inspo.dist === k ? "" : k;
       else if (k === "warm") inspo.warm = !inspo.warm;
       else if (k === "fav") inspo.fav = !inspo.fav;
       else if (k === "tip") inspo.tip = !inspo.tip;

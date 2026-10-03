@@ -56,6 +56,12 @@ const SHOTS = process.argv[3];
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-sheet.png` });
     await page.keyboard.press("Escape"); await page.waitForTimeout(300);
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo.png` });
+    // Fernreisen-Filter
+    await page.locator('#inspoChips [data-k="all"]').click();
+    await page.locator('#inspoChips [data-k="far"]').click(); await page.waitForTimeout(200);
+    const far = await page.locator(".inspo-card").count();
+    if (far < 15 || far > 40) errors.push(`Fernreisen: ${far} Ziele`);
+    await page.locator('#inspoChips [data-k="all"]').click();
     // Daten: jedes Ziel mit 12 Temperaturen und Preisen, Monatstipps nur für vorhandene Ziele
     const bad = await page.evaluate(() => {
       const ids = new Set(window.INSPIRATION.map((d) => d.id));

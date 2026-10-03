@@ -369,12 +369,17 @@ html.has-sheet{overflow:hidden}
 .inspo-price span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
 .inspo-price .i{font-size:13px}
 .inspo-notice.tip{background:#F5EBFA}
+.inspo-notice.rain{background:#E8F1FD}
+.inspo-notice.rain .i{color:#3478F6}
+.inspo-off.rain{color:#1D5FC9;background:#E8F1FD}
+.clim-m.rain .bar.bar{background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.55) 0 3px,transparent 3px 6px)}
 .inspo-notice.tip .i{color:#AF52DE}
 .inspo-costs .row{gap:12px}
 .inspo-costs .title{font-size:15px}
 .inspo-costs .trail b{color:var(--label);font-variant-numeric:tabular-nums}
 .inspo-costs small{font-weight:400;color:var(--label-2);font-size:12px}
 .cost-ic{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--fill-2);color:var(--brand);font-size:16px;flex:0 0 auto}
+.lg-tip{color:#AF52DE;font-weight:600}
 .inspo-fine{font-size:12px;color:var(--label-2);margin:6px 4px 0}
 .clim{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;padding:10px 8px 6px;border-radius:12px;background:var(--fill-2)}
 .clim-m{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;border:0;background:none;padding:2px 0;border-radius:8px;color:var(--label-2);font-variant-numeric:tabular-nums}
