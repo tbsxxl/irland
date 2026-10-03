@@ -151,6 +151,23 @@ const SHOTS = process.argv[3];
         await page.goto(url + "#" + tab, { waitUntil: "load" });
         await page.waitForTimeout(400);
         if (!(await page.locator("#" + tab).isVisible())) errors.push(`${trip.id}: Reiter ${tab} nicht sichtbar`);
+        if (tab === "plan") {
+          // Tagesroute auf der Karte: nummerierte Stopps und Fußweg (Routing-Dienst gemockt)
+          await page.route("https://routing.openstreetmap.de/**", (r) => {
+            const pts = decodeURIComponent(new URL(r.request().url()).pathname.split("/").pop()).split(";").map((x) => x.split(",").map(Number));
+            r.fulfill({ status: 200, headers: { "access-control-allow-origin": "*", "content-type": "application/json" },
+              body: JSON.stringify({ routes: [{ distance: 2345, duration: 1800, geometry: { type: "LineString", coordinates: pts } }] }) });
+          });
+          const b = page.locator("[data-daymap]").first();
+          const idx = await b.getAttribute("data-daymap");
+          await b.scrollIntoViewIfNeeded(); await b.click(); await page.waitForTimeout(1200);
+          const nums = await page.locator(`#daymap-${idx} .pin-num`).count();
+          const info = await page.locator(`[data-routeinfo="${idx}"]`).textContent();
+          if (nums < 2 || !/30 Min\. zu Fuß/.test(info)) errors.push(`${trip.id}: Tagesroute auf der Karte fehlt (${nums} Stopps, „${info}“)`);
+          if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-${trip.id}-daymap.png` });
+          await b.click(); await page.waitForTimeout(200);
+          if (!(await page.locator(`#daymap-${idx}`).isHidden())) errors.push(`${trip.id}: Tageskarte schließt nicht`);
+        }
         if (tab === "plan" && !(await page.locator(".day-route a").count() && await page.locator(".leg").count() && await page.locator(".rainbox").count()))
           errors.push(`${trip.id}: Route des Tages, Fußwege oder Regen-Ideen fehlen`);
         if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-${trip.id}-${tab}.png`, fullPage: false });
