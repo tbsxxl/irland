@@ -1005,5 +1005,21 @@
   "page": "https://en.wikipedia.org/wiki/Zagreb",
   "s": "zagreb-s.jpg",
   "l": "zagreb-l.jpg"
+ },
+ "Bastione di Saint Remy": {
+  "none": true
+ },
+ "Guggenheim Museum Bilbao": {
+  "page": "https://en.wikipedia.org/wiki/Guggenheim_Museum_Bilbao",
+  "s": "guggenheim-museum-bilbao-s.jpg",
+  "l": "guggenheim-museum-bilbao-l.jpg"
+ },
+ "Knossos": {
+  "page": "https://en.wikipedia.org/wiki/Knossos",
+  "s": "knossos-s.png",
+  "l": "knossos-l.png"
+ },
+ "Palace of the Grand Master of the Knights of Rhodes": {
+  "none": true
  }
 }
