@@ -12,12 +12,12 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/app.css?v=15">
+  <link rel="stylesheet" href="/assets/app.css?v=16">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=15" defer></script>
-  <script src="/assets/trips/irland.js?v=15" defer></script>
-  <script src="/assets/inspiration.js?v=15" defer></script>
-  <script src="/assets/app.js?v=15" defer></script>
+  <script src="/assets/trips/florenz.js?v=16" defer></script>
+  <script src="/assets/trips/irland.js?v=16" defer></script>
+  <script src="/assets/inspiration.js?v=16" defer></script>
+  <script src="/assets/app.js?v=16" defer></script>
 </head>
 <body>
   <!-- Kompakte Titelleiste (Handy), erscheint beim Scrollen -->
@@ -65,6 +65,7 @@
               <button type="button" data-view="list" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#list"/></svg>Liste</button>
               <button type="button" data-view="map" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#globe"/></svg>Weltkarte</button>
             </div>
+            <button class="pill pill-soft" type="button" id="inspoGroupBtn" aria-haspopup="dialog" aria-label="Reisende und Dauer"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#users"/></svg><span>2 P. · 7 N.</span></button>
             <div class="chips" id="inspoActive"></div>
           </div>
         </div>

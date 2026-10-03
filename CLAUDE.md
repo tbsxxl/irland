@@ -16,7 +16,11 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
   `ll` = Koordinaten für die Weltkarte (Ansicht „Weltkarte“, Marker = Temperatur im Monat, weit draußen nur Punkte).
   Bedienung: Leiste mit Monat (Blatt), Suche, Filter-Knopf (Blatt: Sortierung, Flugzeit, Budget „Woche zu zweit“, Tipps,
   Gemerkt, Warm, ohne Regenzeit, Thema); aktive Filter als Chips zum Entfernen, „Vergleichen“ ab 2 gemerkten Zielen.
-  Reisemonat (`inspo.month`), Ansicht (`inspo.view`) und gemerkte Ziele (`inspo.favs`) im `localStorage`. Fotos lädt dieselbe Action.
+  Kosten: `tripCost()` rechnet für die gewählte Gruppe (Knopf „2 P. · 7 N.“ bzw. Kostenrechner im Ziel-Blatt): Doppelzimmer je
+  2 Personen × Nächte + Flüge pro Person, optional Ausgaben vor Ort (`daily` am Ziel, sonst geschätzt aus dem Hotelpreis).
+  Karten, Budget-Filter, Sortierung „Günstig“, Vergleich und eigene Reisen nutzen denselben Wert.
+  Im `localStorage`: `inspo.month`, `inspo.view`, `inspo.favs` (auch als „Gemerkte Ideen“ auf der Übersicht),
+  `inspo.prefs` (Personen, Nächte, vor Ort, Sortierung, Flugzeit, Budget). Fotos lädt dieselbe Action.
 - Eigene Reisen: „Als Reise planen“ im Ziel-Blatt speichert `{id: "x-<ziel>-<datum>", dest, start, nights}` in `localStorage`
   `mytrips`; `buildMyTrip()` baut daraus beim Laden eine normale Reise (Tagesplan aus `week`, Checklisten, Infos) unter `/<id>/`.
   Nur in diesem Browser; „Entwurf löschen“ unter Infos.

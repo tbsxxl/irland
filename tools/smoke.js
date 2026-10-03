@@ -54,7 +54,7 @@ const SHOTS = process.argv[3];
     if (julCards !== julTips || (await page.locator(".inspo-card .inspo-tip").count()) !== julTips) errors.push(`Monatstipps Juli: ${julCards} Karten statt ${julTips}`);
     await page.locator(".inspo-card").first().click(); await page.waitForTimeout(400);
     if ((await page.locator("#sheet .inspo-notice.tip").count()) !== 1) errors.push("Monatstipp im Detailblatt fehlt");
-    if ((await page.locator("#sheet .inspo-costs .row").count()) !== 3) errors.push("Kosten im Detailblatt fehlen");
+    if ((await page.locator("#sheet .cost-sum .row").count()) < 3) errors.push("Kosten im Detailblatt fehlen");
     if ((await page.locator("#sheet .clim-m").count()) !== 12) errors.push("Klima-Diagramm fehlt");
     await page.locator('#sheet [data-clim="0"]').click(); await page.waitForTimeout(200);
     if ((await page.locator("#inspoMonthBtn span").textContent()) !== "Januar" || !(await page.locator('#sheet [data-clim="0"]').getAttribute("class")).includes("on"))
@@ -82,6 +82,27 @@ const SHOTS = process.argv[3];
     if ((await page.locator("#sheet .cmp thead th").count()) !== 3) errors.push("Vergleich zeigt nicht zwei Ziele");
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-cmp.png` });
     await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    // Reisende ändern: Preise rechnen mit 3 Personen, im Blatt Gesamtsumme
+    const price2 = await page.locator(".inspo-card .inspo-price").first().textContent();
+    await page.click("#inspoGroupBtn"); await page.waitForTimeout(300);
+    await page.click('#sheet [data-step="pax"][data-d="1"]'); await page.waitForTimeout(200);
+    await page.click("#sheet [data-spend]"); await page.waitForTimeout(200);
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-group.png` });
+    await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    const price3 = await page.locator(".inspo-card .inspo-price").first().textContent();
+    if (price2 === price3 || !(await page.locator("#inspoCount").textContent()).includes("3 Personen")) errors.push(`Reisende: Preis ändert sich nicht (${price2} / ${price3})`);
+    await page.locator(".inspo-card").first().click(); await page.waitForTimeout(400);
+    await page.locator("#costBox").scrollIntoViewIfNeeded();
+    if (!(await page.locator("#costBox .row.total").count())) errors.push("Kostenrechner im Detailblatt fehlt");
+    await page.click('#costBox [data-step="nights"][data-d="1"]'); await page.waitForTimeout(200);
+    if (!(await page.locator("#costBox").textContent()).includes("8 Nächte")) errors.push("Nächte im Kostenrechner ändern sich nicht");
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-cost.png` });
+    await page.click('#costBox [data-step="nights"][data-d="-1"]'); await page.click('#costBox [data-step="pax"][data-d="-1"]'); await page.click("#costBox [data-spend]");
+    await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    // Gemerkte Ideen auf der Übersicht
+    await page.click('#hubTabs [data-hubtab="reisen"]'); await page.waitForTimeout(200);
+    if ((await page.locator("#hubList .idea").count()) !== 2) errors.push("Gemerkte Ideen fehlen auf der Übersicht");
+    await page.click('#hubTabs [data-hubtab="inspiration"]'); await page.waitForTimeout(200);
     // Weltkarte
     await page.click('#inspoView [data-view="map"]'); await page.waitForTimeout(1200);
     const pins = await page.locator(".wpin").count();
