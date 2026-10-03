@@ -89,7 +89,8 @@
  },
  "Cinque Terre": {
   "page": "https://en.wikipedia.org/wiki/Cinque_Terre",
-  "s": "cinque-terre-s.jpg"
+  "s": "cinque-terre-s.jpg",
+  "l": "cinque-terre-l.jpg"
  },
  "Cliffs of Moher": {
   "page": "https://en.wikipedia.org/wiki/Cliffs_of_Moher",
@@ -1036,5 +1037,166 @@
   "page": "https://it.wikipedia.org/wiki/Poetto",
   "s": "it-poetto-s.jpg",
   "l": "it-poetto-l.jpg"
+ },
+ "Alhambra": {
+  "page": "https://en.wikipedia.org/wiki/Alhambra",
+  "s": "alhambra-s.jpg",
+  "l": "alhambra-l.jpg"
+ },
+ "Amsterdam": {
+  "page": "https://en.wikipedia.org/wiki/Amsterdam",
+  "s": "amsterdam-s.png",
+  "l": "amsterdam-l.png"
+ },
+ "Antalya": {
+  "page": "https://en.wikipedia.org/wiki/Antalya",
+  "s": "antalya-s.jpg",
+  "l": "antalya-l.jpg"
+ },
+ "Avignon": {
+  "page": "https://en.wikipedia.org/wiki/Avignon",
+  "s": "avignon-s.jpg",
+  "l": "avignon-l.jpg"
+ },
+ "Bryggen": {
+  "page": "https://en.wikipedia.org/wiki/Bryggen",
+  "s": "bryggen-s.jpg",
+  "l": "bryggen-l.jpg"
+ },
+ "Cappadocia": {
+  "page": "https://en.wikipedia.org/wiki/Cappadocia",
+  "s": "cappadocia-s.jpg",
+  "l": "cappadocia-l.jpg"
+ },
+ "Corfu": {
+  "page": "https://en.wikipedia.org/wiki/Corfu",
+  "s": "corfu-s.jpg",
+  "l": "corfu-l.jpg"
+ },
+ "Dubai": {
+  "page": "https://en.wikipedia.org/wiki/Dubai",
+  "s": "dubai-s.jpg",
+  "l": "dubai-l.jpg"
+ },
+ "Dunes of Maspalomas": {
+  "none": true
+ },
+ "Funchal": {
+  "page": "https://en.wikipedia.org/wiki/Funchal",
+  "s": "funchal-s.jpg",
+  "l": "funchal-l.jpg"
+ },
+ "Hagia Sophia": {
+  "page": "https://en.wikipedia.org/wiki/Hagia_Sophia",
+  "s": "hagia-sophia-s.jpg",
+  "l": "hagia-sophia-l.jpg"
+ },
+ "Hallgrímskirkja": {
+  "page": "https://en.wikipedia.org/wiki/Hallgr%C3%ADmskirkja",
+  "s": "hallgrimskirkja-s.jpg",
+  "l": "hallgrimskirkja-l.jpg"
+ },
+ "Hurghada": {
+  "page": "https://en.wikipedia.org/wiki/Hurghada",
+  "s": "hurghada-s.jpg",
+  "l": "hurghada-l.jpg"
+ },
+ "Karnak": {
+  "page": "https://en.wikipedia.org/wiki/Karnak",
+  "s": "karnak-s.jpg",
+  "l": "karnak-l.jpg"
+ },
+ "Kotor": {
+  "page": "https://en.wikipedia.org/wiki/Kotor",
+  "s": "kotor-s.jpg",
+  "l": "kotor-l.jpg"
+ },
+ "Lake Bled": {
+  "page": "https://en.wikipedia.org/wiki/Lake_Bled",
+  "s": "lake-bled-s.jpg",
+  "l": "lake-bled-l.jpg"
+ },
+ "Lake Garda": {
+  "page": "https://en.wikipedia.org/wiki/Lake_Garda",
+  "s": "lake-garda-s.jpg",
+  "l": "lake-garda-l.jpg"
+ },
+ "Marrakesh": {
+  "page": "https://en.wikipedia.org/wiki/Marrakesh",
+  "s": "marrakesh-s.jpg",
+  "l": "marrakesh-l.jpg"
+ },
+ "Mosque–Cathedral of Córdoba": {
+  "page": "https://en.wikipedia.org/wiki/Mosque%E2%80%93Cathedral_of_C%C3%B3rdoba",
+  "s": "mosque-cathedral-of-cordoba-s.jpg",
+  "l": "mosque-cathedral-of-cordoba-l.jpg"
+ },
+ "Paphos": {
+  "page": "https://en.wikipedia.org/wiki/Paphos",
+  "s": "paphos-s.jpg",
+  "l": "paphos-l.jpg"
+ },
+ "Petra": {
+  "page": "https://en.wikipedia.org/wiki/Petra",
+  "s": "petra-s.jpg",
+  "l": "petra-l.jpg"
+ },
+ "Positano": {
+  "page": "https://en.wikipedia.org/wiki/Positano",
+  "s": "positano-s.jpg",
+  "l": "positano-l.jpg"
+ },
+ "Rovaniemi": {
+  "page": "https://en.wikipedia.org/wiki/Rovaniemi",
+  "s": "rovaniemi-s.jpg",
+  "l": "rovaniemi-l.jpg"
+ },
+ "San Sebastián": {
+  "page": "https://en.wikipedia.org/wiki/San_Sebasti%C3%A1n",
+  "s": "san-sebastian-s.jpg",
+  "l": "san-sebastian-l.jpg"
+ },
+ "Santa Maria, Cape Verde": {
+  "page": "https://en.wikipedia.org/wiki/Santa_Maria%2C_Cape_Verde",
+  "s": "santa-maria-cape-verde-s.jpg",
+  "l": "santa-maria-cape-verde-l.jpg"
+ },
+ "Santorini": {
+  "page": "https://en.wikipedia.org/wiki/Santorini",
+  "s": "santorini-s.png",
+  "l": "santorini-l.png"
+ },
+ "Sete Cidades": {
+  "none": true
+ },
+ "Sultan Qaboos Grand Mosque": {
+  "page": "https://en.wikipedia.org/wiki/Sultan_Qaboos_Grand_Mosque",
+  "s": "sultan-qaboos-grand-mosque-s.jpg",
+  "l": "sultan-qaboos-grand-mosque-l.jpg"
+ },
+ "Tbilisi": {
+  "page": "https://en.wikipedia.org/wiki/Tbilisi",
+  "s": "tbilisi-s.jpg",
+  "l": "tbilisi-l.jpg"
+ },
+ "Teide National Park": {
+  "page": "https://en.wikipedia.org/wiki/Teide_National_Park",
+  "s": "teide-national-park-s.jpg",
+  "l": "teide-national-park-l.jpg"
+ },
+ "Timanfaya National Park": {
+  "page": "https://en.wikipedia.org/wiki/Timanfaya_National_Park",
+  "s": "timanfaya-national-park-s.jpg",
+  "l": "timanfaya-national-park-l.jpg"
+ },
+ "Tromsø": {
+  "page": "https://en.wikipedia.org/wiki/Troms%C3%B8",
+  "s": "troms-s.jpg",
+  "l": "troms-l.jpg"
+ },
+ "Vilnius": {
+  "page": "https://en.wikipedia.org/wiki/Vilnius",
+  "s": "vilnius-s.jpg",
+  "l": "vilnius-l.jpg"
  }
 }
