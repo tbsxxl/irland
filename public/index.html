@@ -12,12 +12,12 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/app.css?v=12">
+  <link rel="stylesheet" href="/assets/app.css?v=13">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=12" defer></script>
-  <script src="/assets/trips/irland.js?v=12" defer></script>
-  <script src="/assets/inspiration.js?v=12" defer></script>
-  <script src="/assets/app.js?v=12" defer></script>
+  <script src="/assets/trips/florenz.js?v=13" defer></script>
+  <script src="/assets/trips/irland.js?v=13" defer></script>
+  <script src="/assets/inspiration.js?v=13" defer></script>
+  <script src="/assets/app.js?v=13" defer></script>
 </head>
 <body>
   <!-- Kompakte Titelleiste (Handy), erscheint beim Scrollen -->
@@ -51,15 +51,17 @@
       <div id="hubList"></div>
       <div id="inspo" hidden>
         <div class="inspo-filters">
+          <div class="months" id="inspoMonth" role="group" aria-label="Reisemonat"></div>
           <div class="search">
             <svg class="i" aria-hidden="true"><use href="/assets/icons.svg#search"/></svg>
             <label class="visually-hidden" for="inspoQ">Ziele suchen</label>
             <input id="inspoQ" type="search" placeholder="Suchen" autocomplete="off" enterkeyhint="search">
           </div>
           <div class="segmented" id="inspoSort" role="group" aria-label="Sortierung">
-            <button type="button" data-sort="warm" aria-pressed="true">Wärmste</button>
-            <button type="button" data-sort="flight" aria-pressed="false">Kürzester Flug</button>
-            <button type="button" data-sort="az" aria-pressed="false">A–Z</button>
+            <button type="button" data-sort="tip" aria-pressed="true">Empfohlen</button>
+            <button type="button" data-sort="warm" aria-pressed="false">Wärmste</button>
+            <button type="button" data-sort="price" aria-pressed="false">Günstig</button>
+            <button type="button" data-sort="flight" aria-pressed="false">Kurzer Flug</button>
           </div>
           <div class="chips" id="inspoChips"></div>
         </div>

@@ -9,8 +9,10 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
   Neue Reise: Datei + `<script>` in `index.html` + Eintrag in `sw.js` (`PRECACHE`) + Icon in `public/icons/`,
   optional Farbschema `[data-theme="<id>"]` in `app.css`.
 - Startseite hat zwei Reiter: „Meine Reisen“ und „Inspiration“ (`#inspiration`, `#inspiration/<id>` öffnet ein Ziel).
-  Ziele stehen in `public/assets/inspiration.js` (Nov.-Temperatur, Flugzeit, Tags, Highlights, Wochenplan, `wiki` fürs Foto,
-  `off` = Nebensaison-Hinweis); gemerkte Ziele in `localStorage` `inspo.favs`. Fotos lädt dieselbe Action.
+  Ziele stehen in `public/assets/inspiration.js` (`temps` = 12 Monats-Höchstwerte, `hotel`/`fly` = Preisspannen in €,
+  Flugzeit, Tags, Highlights, Wochenplan, `wiki` fürs Foto, `off` = Nebensaison-Hinweis, nur Nov–März gezeigt).
+  `INSPIRATION_MONTHS` (unten in derselben Datei) = Tipps pro Monat mit Grund; Reihenfolge = Rang bei „Empfohlen“.
+  Reisemonat (`inspo.month`) und gemerkte Ziele (`inspo.favs`) im `localStorage`. Fotos lädt dieselbe Action.
 - Alte Links `/#entdecken` usw. leiten nach `/irland/#…` weiter.
 - Reiter über die Adresse: `#plan`, `#entdecken`, `#entdecken/<ort-id>`, `#infos`, `#tag-3`.
 - Florenz ist ein Entwurf: `hotel: null`, Entfernungen ab `base` (Dom); Flugzeiten fehlen noch.

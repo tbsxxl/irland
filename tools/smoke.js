@@ -39,6 +39,30 @@ const SHOTS = process.argv[3];
     await page.locator(".inspo-card").first().click(); await page.waitForTimeout(400);
     if ((await page.locator("#sheet .week li").count()) !== 7) errors.push("Inspiration: Wochenplan im Detailblatt fehlt");
     await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    // Reisemonat: Juli wählen, nur Tipps zeigen → genau die Juli-Tipps, Blatt mit Tipp, Kosten und Klima
+    await page.locator('#inspoChips [data-k="all"]').click();
+    await page.locator('#inspoMonth [data-month="6"]').click();
+    await page.locator('#inspoChips [data-k="tip"]').click(); await page.waitForTimeout(200);
+    const julTips = await page.evaluate(() => Object.keys(window.INSPIRATION_MONTHS[7]).length);
+    const julCards = await page.locator(".inspo-card").count();
+    if (julCards !== julTips || (await page.locator(".inspo-card .inspo-tip").count()) !== julTips) errors.push(`Monatstipps Juli: ${julCards} Karten statt ${julTips}`);
+    await page.locator(".inspo-card").first().click(); await page.waitForTimeout(400);
+    if ((await page.locator("#sheet .inspo-notice.tip").count()) !== 1) errors.push("Monatstipp im Detailblatt fehlt");
+    if ((await page.locator("#sheet .inspo-costs .row").count()) !== 3) errors.push("Kosten im Detailblatt fehlen");
+    if ((await page.locator("#sheet .clim-m").count()) !== 12) errors.push("Klima-Diagramm fehlt");
+    await page.locator('#sheet [data-clim="0"]').click(); await page.waitForTimeout(200);
+    if ((await page.locator('#inspoMonth [data-month="0"][aria-pressed="true"]').count()) !== 1 || !(await page.locator('#sheet [data-clim="0"]').getAttribute("class")).includes("on"))
+      errors.push("Monat im Klima-Diagramm wechselt den Reisemonat nicht");
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-sheet.png` });
+    await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo.png` });
+    // Daten: jedes Ziel mit 12 Temperaturen und Preisen, Monatstipps nur für vorhandene Ziele
+    const bad = await page.evaluate(() => {
+      const ids = new Set(window.INSPIRATION.map((d) => d.id));
+      return [...window.INSPIRATION.filter((d) => d.temps?.length !== 12 || d.hotel?.length !== 2 || d.fly?.length !== 2 || d.hotel[0] > d.hotel[1] || d.fly[0] > d.fly[1]).map((d) => d.id),
+        ...Object.values(window.INSPIRATION_MONTHS).flatMap((o) => Object.keys(o)).filter((id) => !ids.has(id))];
+    });
+    if (bad.length) errors.push("Inspiration-Daten unvollständig: " + bad.join(", "));
     // Alte Irland-Links leiten weiter
     await page.goto(BASE + "#entdecken", { waitUntil: "load" }); await page.waitForTimeout(300);
     if (!page.url().includes("/irland/#entdecken")) errors.push("Weiterleitung alter Link fehlt: " + page.url());
