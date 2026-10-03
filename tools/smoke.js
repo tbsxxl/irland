@@ -31,37 +31,86 @@ const SHOTS = process.argv[3];
     if (cards < 2) errors.push(`Übersicht: nur ${cards} Reisen`);
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-hub.png` });
     // Inspiration: Reiter, Filter, Detailblatt
+    const inspoCards = () => page.locator(".inspo-card").count();
+    const filter = async (sel) => { await page.click("#inspoFilterBtn"); await page.waitForTimeout(300); await page.click("#sheet " + sel); await page.click("#fShow"); await page.waitForTimeout(350); };
     await page.goto(BASE + "#inspiration", { waitUntil: "load" }); await page.waitForTimeout(400);
-    const dest = await page.locator(".inspo-card").count();
-    await page.locator('#inspoChips [data-k="warm"]').click(); await page.waitForTimeout(200);
-    const warm = await page.locator(".inspo-card").count();
-    if (!(dest > 50 && warm > 5 && warm < dest)) errors.push(`Inspiration: ${dest} Ziele, ${warm} warm`);
+    const dest = await inspoCards();
+    await filter('[data-ft="warm"]');
+    const warm = await inspoCards();
+    if (!(dest > 100 && warm > 5 && warm < dest)) errors.push(`Inspiration: ${dest} Ziele, ${warm} warm`);
+    if ((await page.locator("#inspoFilterBtn .badge").textContent()) !== "1") errors.push("Filter-Zähler fehlt");
+    await page.click('#inspoActive [data-clear="warm"]'); await page.waitForTimeout(200);
+    if ((await inspoCards()) !== dest) errors.push("Filter-Chip entfernt den Filter nicht");
     await page.locator(".inspo-card").first().click(); await page.waitForTimeout(400);
     if ((await page.locator("#sheet .week li").count()) !== 7) errors.push("Inspiration: Wochenplan im Detailblatt fehlt");
+    if (!(await page.locator("#sheet [data-share-inspo]").count())) errors.push("Teilen-Knopf fehlt");
     await page.keyboard.press("Escape"); await page.waitForTimeout(300);
     // Reisemonat: Juli wählen, nur Tipps zeigen → genau die Juli-Tipps, Blatt mit Tipp, Kosten und Klima
-    await page.locator('#inspoChips [data-k="all"]').click();
-    await page.locator('#inspoMonth [data-month="6"]').click();
-    await page.locator('#inspoChips [data-k="tip"]').click(); await page.waitForTimeout(200);
+    await page.click("#inspoMonthBtn"); await page.waitForTimeout(300);
+    await page.click('#sheet [data-month-pick="6"]'); await page.waitForTimeout(350);
+    await filter('[data-ft="tip"]');
     const julTips = await page.evaluate(() => Object.keys(window.INSPIRATION_MONTHS[7]).length);
-    const julCards = await page.locator(".inspo-card").count();
+    const julCards = await inspoCards();
     if (julCards !== julTips || (await page.locator(".inspo-card .inspo-tip").count()) !== julTips) errors.push(`Monatstipps Juli: ${julCards} Karten statt ${julTips}`);
     await page.locator(".inspo-card").first().click(); await page.waitForTimeout(400);
     if ((await page.locator("#sheet .inspo-notice.tip").count()) !== 1) errors.push("Monatstipp im Detailblatt fehlt");
     if ((await page.locator("#sheet .inspo-costs .row").count()) !== 3) errors.push("Kosten im Detailblatt fehlen");
     if ((await page.locator("#sheet .clim-m").count()) !== 12) errors.push("Klima-Diagramm fehlt");
     await page.locator('#sheet [data-clim="0"]').click(); await page.waitForTimeout(200);
-    if ((await page.locator('#inspoMonth [data-month="0"][aria-pressed="true"]').count()) !== 1 || !(await page.locator('#sheet [data-clim="0"]').getAttribute("class")).includes("on"))
+    if ((await page.locator("#inspoMonthBtn span").textContent()) !== "Januar" || !(await page.locator('#sheet [data-clim="0"]').getAttribute("class")).includes("on"))
       errors.push("Monat im Klima-Diagramm wechselt den Reisemonat nicht");
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-sheet.png` });
     await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    await page.click('#inspoActive [data-clear="tip"]'); await page.waitForTimeout(200);
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo.png` });
-    // Fernreisen-Filter
-    await page.locator('#inspoChips [data-k="all"]').click();
-    await page.locator('#inspoChips [data-k="far"]').click(); await page.waitForTimeout(200);
-    const far = await page.locator(".inspo-card").count();
+    // Fernreisen und Budget
+    await filter('[data-f="dist"] [data-v="far"]');
+    const far = await inspoCards();
     if (far < 15 || far > 40) errors.push(`Fernreisen: ${far} Ziele`);
-    await page.locator('#inspoChips [data-k="all"]').click();
+    await page.click('#inspoActive [data-clear="dist"]'); await page.waitForTimeout(200);
+    await page.click("#inspoFilterBtn"); await page.waitForTimeout(300);
+    await page.evaluate(() => { const r = document.querySelector("#fBudget"); r.value = "1500"; r.dispatchEvent(new Event("input", { bubbles: true })); });
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-filter.png` });
+    await page.click("#fShow"); await page.waitForTimeout(300);
+    const cheap = await inspoCards();
+    const tooExpensive = await page.evaluate(() => [...document.querySelectorAll(".inspo-price")].filter((e) => parseInt(e.textContent.replace(/\D/g, ""), 10) > 1500).length);
+    if (!(cheap > 3 && cheap < dest) || tooExpensive) errors.push(`Budget-Filter: ${cheap} Ziele, ${tooExpensive} zu teuer`);
+    await page.click('#inspoActive [data-clear="budget"]'); await page.waitForTimeout(200);
+    // Zwei Ziele merken und vergleichen
+    await page.locator(".inspo-card .inspo-fav").nth(0).click(); await page.locator(".inspo-card .inspo-fav").nth(1).click(); await page.waitForTimeout(200);
+    await page.click("#inspoActive [data-compare]"); await page.waitForTimeout(400);
+    if ((await page.locator("#sheet .cmp thead th").count()) !== 3) errors.push("Vergleich zeigt nicht zwei Ziele");
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-cmp.png` });
+    await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    // Weltkarte
+    await page.click('#inspoView [data-view="map"]'); await page.waitForTimeout(1200);
+    const pins = await page.locator(".wpin").count();
+    if (pins !== dest) errors.push(`Weltkarte: ${pins} Marker statt ${dest}`);
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-map.png` });
+    await page.locator(".wpin").first().click({ force: true }); await page.waitForTimeout(400);
+    if (!(await page.locator("#sheet .clim").isVisible())) errors.push("Marker auf der Weltkarte öffnet kein Ziel");
+    await page.keyboard.press("Escape"); await page.waitForTimeout(300);
+    await page.click('#inspoView [data-view="list"]'); await page.waitForTimeout(200);
+    // Aus einem Ziel eine Reise machen, Buchung eintragen, wieder löschen
+    await page.goto(BASE + "#inspiration/bali", { waitUntil: "load" }); await page.waitForTimeout(500);
+    await page.click("#sheet [data-plan]"); await page.waitForTimeout(300);
+    await page.fill("#planStart", "2027-07-03");
+    await Promise.all([page.waitForNavigation(), page.click("#sheet [data-plan-create]")]);
+    await page.waitForTimeout(500);
+    if (!page.url().includes("/x-bali-2027-07-03/") || (await page.locator("#title").textContent()) !== "Bali") errors.push("Eigene Reise: Seite fehlt " + page.url());
+    if ((await page.locator("#days .day").count()) !== 8) errors.push("Eigene Reise: nicht 8 Tage");
+    await page.goto(page.url().split("#")[0] + "#infos", { waitUntil: "load" }); await page.waitForTimeout(300);
+    await page.click('#bookings [data-booking="new"]'); await page.waitForTimeout(300);
+    await page.fill("#bkTitle", "QR 81 Frankfurt → Denpasar"); await page.fill("#bkDate", "2027-07-03"); await page.fill("#bkTime", "10:40"); await page.fill("#bkRef", "ABC123");
+    await page.click("#sheet [data-bk-save]"); await page.waitForTimeout(400);
+    if ((await page.locator("#bookings .row").count()) !== 2) errors.push("Buchung wird nicht gespeichert");
+    if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-mytrip-infos.png` });
+    await page.click("#tab-plan"); await page.waitForTimeout(300);
+    if (!(await page.locator("#tag-1 .stop.is-booking").count())) errors.push("Buchung fehlt im Tagesplan");
+    page.once("dialog", (d) => d.accept());
+    await page.click("#tab-infos"); await page.waitForTimeout(200);
+    await Promise.all([page.waitForNavigation(), page.click('[data-act="delete"]')]);
+    if ((await page.evaluate(() => (JSON.parse(localStorage.getItem("mytrips")) || []).length)) !== 0) errors.push("Eigene Reise wird nicht gelöscht");
     // Daten: jedes Ziel mit 12 Temperaturen und Preisen, Monatstipps nur für vorhandene Ziele
     const bad = await page.evaluate(() => {
       const ids = new Set(window.INSPIRATION.map((d) => d.id));
@@ -81,6 +130,8 @@ const SHOTS = process.argv[3];
         await page.goto(url + "#" + tab, { waitUntil: "load" });
         await page.waitForTimeout(400);
         if (!(await page.locator("#" + tab).isVisible())) errors.push(`${trip.id}: Reiter ${tab} nicht sichtbar`);
+        if (tab === "plan" && !(await page.locator(".day-route a").count() && await page.locator(".leg").count() && await page.locator(".rainbox").count()))
+          errors.push(`${trip.id}: Route des Tages, Fußwege oder Regen-Ideen fehlen`);
         if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-${trip.id}-${tab}.png`, fullPage: false });
       }
       await page.goto(url + "#entdecken", { waitUntil: "load" });

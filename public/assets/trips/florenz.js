@@ -12,6 +12,7 @@ const TRIP = {
   end: "2026-11-18",
   center: { lat: 43.7700, lng: 11.2545, zoom: 15, name: "Florenz" },
   near: 1,
+  indoor: ["kunst", "kirche", "markt"],  // Kategorien für „Bei Regen: Ideen für drinnen“
   tz: "Europe/Rome",
   notice: "Entwurf: Hotel und Flugzeiten fehlen noch. Bis dahin gelten Entfernungen ab dem Dom.",
   cost: "",

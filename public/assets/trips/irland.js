@@ -8,6 +8,7 @@ const TRIP = {
   theme: "irland", themeColor: "#1E6A4E",
   center: { lat: 53.3455, lng: -6.2635, zoom: 14, name: "Dublin" },
   near: 2,
+  indoor: ["hist", "kunst", "bibl", "brau"],  // Kategorien für „Bei Regen: Ideen für drinnen“
   tz: "Europe/Dublin",
   subtitle: "Solo-Reise · Dublin, Belfast & Westküste",
   start: "2025-10-16",          // Tag 1 (für „Heute“-Markierung und Countdown)

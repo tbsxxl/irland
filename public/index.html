@@ -12,12 +12,12 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/app.css?v=14">
+  <link rel="stylesheet" href="/assets/app.css?v=15">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=14" defer></script>
-  <script src="/assets/trips/irland.js?v=14" defer></script>
-  <script src="/assets/inspiration.js?v=14" defer></script>
-  <script src="/assets/app.js?v=14" defer></script>
+  <script src="/assets/trips/florenz.js?v=15" defer></script>
+  <script src="/assets/trips/irland.js?v=15" defer></script>
+  <script src="/assets/inspiration.js?v=15" defer></script>
+  <script src="/assets/app.js?v=15" defer></script>
 </head>
 <body>
   <!-- Kompakte Titelleiste (Handy), erscheint beim Scrollen -->
@@ -51,21 +51,28 @@
       <div id="hubList"></div>
       <div id="inspo" hidden>
         <div class="inspo-filters">
-          <div class="months" id="inspoMonth" role="group" aria-label="Reisemonat"></div>
-          <div class="search">
-            <svg class="i" aria-hidden="true"><use href="/assets/icons.svg#search"/></svg>
-            <label class="visually-hidden" for="inspoQ">Ziele suchen</label>
-            <input id="inspoQ" type="search" placeholder="Suchen" autocomplete="off" enterkeyhint="search">
+          <div class="inspo-bar">
+            <button class="pill" type="button" id="inspoMonthBtn" aria-haspopup="dialog" aria-label="Reisemonat wählen"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#calendar"/></svg><span>November</span><svg class="i chev" aria-hidden="true"><use href="/assets/icons.svg#chevron-down"/></svg></button>
+            <div class="search">
+              <svg class="i" aria-hidden="true"><use href="/assets/icons.svg#search"/></svg>
+              <label class="visually-hidden" for="inspoQ">Ziele suchen</label>
+              <input id="inspoQ" type="search" placeholder="Suchen" autocomplete="off" enterkeyhint="search">
+            </div>
+            <button class="icon-btn" type="button" id="inspoFilterBtn" aria-haspopup="dialog" aria-label="Filter &amp; Sortierung"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#sliders-horizontal"/></svg><span class="badge" hidden></span></button>
           </div>
-          <div class="segmented" id="inspoSort" role="group" aria-label="Sortierung">
-            <button type="button" data-sort="tip" aria-pressed="true">Empfohlen</button>
-            <button type="button" data-sort="warm" aria-pressed="false">Wärmste</button>
-            <button type="button" data-sort="price" aria-pressed="false">Günstig</button>
-            <button type="button" data-sort="flight" aria-pressed="false">Kurzer Flug</button>
+          <div class="inspo-sub">
+            <div class="segmented seg-view" id="inspoView" role="group" aria-label="Ansicht">
+              <button type="button" data-view="list" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#list"/></svg>Liste</button>
+              <button type="button" data-view="map" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#globe"/></svg>Weltkarte</button>
+            </div>
+            <div class="chips" id="inspoActive"></div>
           </div>
-          <div class="chips" id="inspoChips"></div>
         </div>
-        <div class="count" id="inspoCount"></div>
+        <div class="count" id="inspoCount" aria-live="polite"></div>
+        <div class="inspo-mapbox" id="inspoMapBox" hidden>
+          <div id="inspoMap" role="region" aria-label="Weltkarte der Reiseziele"></div>
+          <div class="inspo-legend" id="inspoLegend"></div>
+        </div>
         <div class="inspo-grid" id="inspoGrid"></div>
       </div>
     </main>
@@ -135,6 +142,8 @@
 
       <!-- Infos -->
       <section class="panel" id="infos" role="tabpanel" aria-labelledby="tab-infos" hidden>
+        <div class="section"><div class="group-label">Buchungen</div><div class="list" id="bookings"></div>
+          <p class="fine">Flüge, Hotel, Tickets – gespeichert nur in diesem Browser. Erscheinen auch im Tagesplan und im Kalender-Export.</p></div>
         <div class="section"><div class="group-label">Unterkunft</div><div class="list" id="hotel"></div></div>
         <div class="section infos-2" id="checklists"></div>
         <div class="section"><div class="group-label">Gut zu wissen</div><div class="list" id="infolist"></div></div>

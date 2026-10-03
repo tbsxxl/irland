@@ -10,6 +10,10 @@
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const ic = (name) => `<svg class="i" aria-hidden="true"><use href="/assets/icons.svg#${esc(name)}"/></svg>`;
   const num = (n) => String(n).replace(".", ",");
+  const pad = (n) => String(n).padStart(2, "0");
+  const isoDay = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+  const lsGet = (k, d) => { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } };
+  const lsSet = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch { /* privat/voll */ } };
 
   // ---------- Reisezeitraum ----------
   const DAY_MS = 864e5;
@@ -36,6 +40,26 @@
     if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
       navigator.serviceWorker.register("/sw.js").catch(() => {});
     }
+  }
+
+  // ---------- Buchungen: aus der Reisedatei (TRIP.bookings) und selbst eingetragen (localStorage „<id>.bookings“) ----------
+  const BOOK_TYPES = { flight: ["Flug", "plane"], hotel: ["Hotel", "bed-double"], train: ["Zug & Bus", "train-front"],
+    car: ["Mietwagen", "car"], ticket: ["Ticket", "ticket"], other: ["Sonstiges", "pencil"] };
+  const bookingsOf = (trip) => [...(trip.bookings || []).map((b, i) => ({ ...b, id: "fix" + i, fixed: true })), ...lsGet(trip.id + ".bookings", [])]
+    .filter((b) => b && /^\d{4}-\d\d-\d\d$/.test(b.date))
+    .sort((a, b) => (a.date + (a.time || "99")).localeCompare(b.date + (b.time || "99")));
+  const nextBooking = (trip) => { const today = isoDay(new Date()); return bookingsOf(trip).find((b) => b.date >= today); };
+  function bookingWhen(b) {
+    const diff = Math.round((dateOf(b.date) - dateOf(isoDay(new Date()))) / DAY_MS);
+    const day = diff === 0 ? "Heute" : diff === 1 ? "Morgen" : dateOf(b.date).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "numeric" });
+    return day + (b.time ? " um " + b.time : "");
+  }
+  const bookingLabel = (b) => `${(BOOK_TYPES[b.type] || BOOK_TYPES.other)[0]}${b.title ? ": " + b.title : ""}`;
+  // Status-Zeile: Buchung heute/morgen hat Vorrang vor dem Countdown
+  function bookingStatus(trip) {
+    const b = nextBooking(trip);
+    if (!b || Math.round((dateOf(b.date) - dateOf(isoDay(new Date()))) / DAY_MS) > 1) return null;
+    return { icon: (BOOK_TYPES[b.type] || BOOK_TYPES.other)[1], text: `${bookingWhen(b)} · ${bookingLabel(b)}` };
   }
 
   // ---------- Bilder aus Wikipedia ----------
@@ -121,6 +145,32 @@
   const ext = (url, label, icon = "arrow-up-right", cls = "btn") =>
     `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${ic(icon)}${esc(label)}</a>`;
 
+  // ---------- Hinweis unten (Toast) ----------
+  function toast(text) {
+    const t = document.createElement("div");
+    t.className = "toast"; t.setAttribute("role", "status"); t.textContent = text;
+    document.body.append(t);
+    setTimeout(() => t.classList.add("out"), 1800);
+    setTimeout(() => t.remove(), 2200);
+  }
+
+  // ---------- Karte: Leaflet wird erst bei Bedarf geladen, Kacheln von CARTO ----------
+  let leafletLoading = null;
+  function loadLeaflet() {
+    if (window.L) return Promise.resolve();
+    const load = (el) => new Promise((res, rej) => { el.onload = res; el.onerror = rej; });
+    const css = Object.assign(document.createElement("link"), { rel: "stylesheet", href: "/assets/vendor/leaflet/leaflet.css" });
+    const js = Object.assign(document.createElement("script"), { src: "/assets/vendor/leaflet/leaflet.js" });
+    const done = Promise.all([load(css), load(js)]);
+    document.head.insertBefore(css, document.querySelector('link[href^="/assets/app.css"]'));  // app.css überschreibt Leaflet
+    document.head.append(js);
+    return (leafletLoading ||= done);
+  }
+  const tiles = () => L.tileLayer(`https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
+    maxZoom: 19,
+    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>'
+  });
+
   // ---------- Detailblatt (allgemein): von unten, schließt per ×, Hintergrund, Wischen, Escape oder Zurück ----------
   let sheetFrom = null, sheetHistory = false;
   function showSheet(html) {
@@ -188,9 +238,9 @@
         (a.st.kind === "past" ? b.t.start.localeCompare(a.t.start) : a.t.start.localeCompare(b.t.start)));
     const next = list.find((x) => x.st.kind !== "past");
     $("#subtitle").textContent = `${TRIPS.length} ${TRIPS.length === 1 ? "Reise" : "Reisen"} · Pläne, Karten & Checklisten`;
-    setStatus(next && (next.st.kind === "now"
+    setStatus(next && (bookingStatus(next.t) || (next.st.kind === "now"
       ? { icon: "map-pin", text: `Unterwegs: ${next.t.title}` }
-      : { icon: "plane", text: `${next.t.title} in ${next.st.days} ${next.st.days === 1 ? "Tag" : "Tagen"}` }));
+      : { icon: "plane", text: `${next.t.title} in ${next.st.days} ${next.st.days === 1 ? "Tag" : "Tagen"}` })));
 
     const card = ({ t, st }) => `<a class="trip-card t-${esc(t.theme)} ${st.kind === "past" ? "is-past" : ""}" href="/${esc(t.id)}/">
       <div class="trip-cover">
@@ -202,6 +252,7 @@
       <div class="trip-foot">
         <span>${ic("calendar-days")}${t.days.length} Tage</span>
         <span>${ic("map-pin")}${t.places.length} Orte</span>
+        ${t.mine ? `<span>${ic("pencil")}Entwurf</span>` : ""}
         <span class="go">${ic("chevron-right")}</span>
       </div>
     </a>`;
@@ -222,22 +273,29 @@
     natur: ["Natur", "mountain"], essen: ["Essen & Trinken", "utensils"], nacht: ["Nachtleben", "moon"] };
   const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
   const MON = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
-  const inspo = { q: "", tag: "", warm: false, fav: false, tip: false, dist: "", sort: "tip",
+  const SORTS = { tip: "Empfohlen", warm: "Wärmste", price: "Günstig", flight: "Kurzer Flug" };
+  const DIST = { "": "Alle", near: "bis 3 Std.", mid: "3–7 Std.", far: "Fernreise" };
+  const FAR = 7;              // ab 7 Std. Flug = Fernreise
+  const BUDGET_MAX = 8000;    // Regler ganz rechts = egal
+  const inspo = { q: "", tag: "", warm: false, fav: false, tip: false, dry: false, dist: "", budget: BUDGET_MAX, sort: "tip",
+    view: lsGet("inspo.view", "list") === "map" ? "map" : "list",
     // Reisemonat (0–11): zuletzt gewählter, sonst der nächste Monat
-    month: (() => { try { const m = Number(localStorage.getItem("inspo.month")); if (localStorage.getItem("inspo.month") !== null && m >= 0 && m < 12) return m; } catch { /* privat */ } return (new Date().getMonth() + 1) % 12; })(),
-    favs: new Set((() => { try { return JSON.parse(localStorage.getItem("inspo.favs")) || []; } catch { return []; } })()) };
+    month: (() => { const m = Number(lsGet("inspo.month", NaN)); return Number.isInteger(m) && m >= 0 && m < 12 ? m : (new Date().getMonth() + 1) % 12; })(),
+    favs: new Set(lsGet("inspo.favs", [])) };
   const tempClass = (t) => t >= 20 ? "hot" : t >= 13 ? "mild" : "cold";
   const tempIcon = (t) => t >= 20 ? "sun" : t >= 13 ? "cloud-sun" : t >= 3 ? "cloud" : "cloud-snow";
   const flightText = (h) => `${String(h).replace(".5", "½").replace(".25", "¼")} Std. Flug`;
   const tempOf = (d, m = inspo.month) => d.temps[m];
   const tipOf = (d, m = inspo.month) => INSPO_MONTHS[m + 1]?.[d.id];
-  const tipRank = (d) => { const keys = Object.keys(INSPO_MONTHS[inspo.month + 1] || {}); const i = keys.indexOf(d.id); return i < 0 ? 99 : i; };
-  const euro = (a, b) => `${a}–${b} €`;
+  const tipRank = (d) => { const i = Object.keys(INSPO_MONTHS[inspo.month + 1] || {}).indexOf(d.id); return i < 0 ? 99 : i; };
+  const fmtEuro = (n) => n.toLocaleString("de-DE") + " €";
+  const euro = (a, b) => `${a.toLocaleString("de-DE")}–${fmtEuro(b)}`;
   // Woche zu zweit: 7 Nächte Hotel + 2 Flüge, auf 50 € gerundet
   const weekCost = (d) => [d.hotel[0] * 7 + d.fly[0] * 2, d.hotel[1] * 7 + d.fly[1] * 2].map((x) => Math.round(x / 50) * 50);
   const offSeason = (d) => d.off && [10, 11, 0, 1, 2].includes(inspo.month);
-  const rainy = (d, m = inspo.month) => d.rain?.includes(m + 1);
-  const FAR = 7; // ab 7 Std. Flug = Fernreise
+  const rainy = (d, m = inspo.month) => !!d.rain?.includes(m + 1);
+  const distOk = (d) => !inspo.dist || (inspo.dist === "near" ? d.flight <= 3 : inspo.dist === "mid" ? d.flight > 3 && d.flight < FAR : d.flight >= FAR);
+  const shortName = (d) => d.name.replace(/ \(.*\)/, "");
 
   function inspoVisible() {
     const terms = fold(inspo.q).split(/\s+/).filter(Boolean);
@@ -245,9 +303,9 @@
       const text = fold([d.name, d.country, d.pitch, ...d.highlights, ...d.tags.map((t) => INSPO_TAGS[t]?.[0]), tipOf(d) || ""].join(" "));
       return terms.every((t) => text.includes(t)) && (!inspo.tag || d.tags.includes(inspo.tag)) &&
         (!inspo.warm || tempOf(d) >= 20) && (!inspo.fav || inspo.favs.has(d.id)) && (!inspo.tip || tipOf(d)) &&
-        (!inspo.dist || (inspo.dist === "far" ? d.flight >= FAR : d.flight <= 3));
+        (!inspo.dry || !rainy(d)) && distOk(d) && (inspo.budget >= BUDGET_MAX || weekCost(d)[0] <= inspo.budget);
     });
-    // Empfohlen: Monatstipps in ihrer Reihenfolge, danach angenehmstes Wetter (nahe 25 °C)
+    // Empfohlen: Monatstipps in ihrer Reihenfolge, danach angenehmstes Wetter (nahe 25 °C, Regenzeit hinten)
     const comfort = (d) => Math.abs(tempOf(d) - 25) + (rainy(d) ? 8 : 0);
     const by = {
       tip: (a, b) => tipRank(a) - tipRank(b) || comfort(a) - comfort(b) || a.flight - b.flight,
@@ -257,12 +315,20 @@
     };
     return list.sort(by[inspo.sort]);
   }
-  function renderInspo() {
-    const list = inspoVisible();
-    $("#inspoCount").textContent = `${list.length} ${list.length === 1 ? "Ziel" : "Ziele"} · Temperatur = übliche Tageshöchstwerte im ${MONTHS[inspo.month]} · Preise grobe Richtwerte`;
-    $("#inspoGrid").innerHTML = list.length ? list.map((d) => {
-      const t = tempOf(d), tip = tipOf(d);
-      return `
+  // Aktive Filter als Chips unter der Leiste (antippen = entfernen)
+  const activeFilters = () => [
+    inspo.tip && ["tip", `Tipps im ${MONTHS[inspo.month]}`], inspo.fav && ["fav", "Gemerkt"], inspo.warm && ["warm", "Warm ab 20°"],
+    inspo.dry && ["dry", "Ohne Regenzeit"], inspo.dist && ["dist", "Flug " + DIST[inspo.dist]],
+    inspo.budget < BUDGET_MAX && ["budget", `Woche bis ${fmtEuro(inspo.budget)}`], inspo.tag && ["tag", INSPO_TAGS[inspo.tag][0]]
+  ].filter(Boolean);
+  function clearFilter(k) {
+    if (k === "all") { Object.assign(inspo, { tip: false, fav: false, warm: false, dry: false, dist: "", budget: BUDGET_MAX, tag: "" }); return; }
+    inspo[k] = k === "budget" ? BUDGET_MAX : k === "dist" || k === "tag" ? "" : false;
+  }
+
+  function inspoCard(d) {
+    const t = tempOf(d), tip = tipOf(d), wk = weekCost(d);
+    return `
       <article class="inspo-card" data-inspo="${esc(d.id)}" role="button" tabindex="0" aria-label="${esc(d.name)} – Details">
         <div class="inspo-photo">${wikiSlot(d.wiki, "cover-photo", "large")}
           <span class="temp ${tempClass(t)}">${ic(tempIcon(t))}${t}°</span>
@@ -271,43 +337,168 @@
         <div class="inspo-body">
           <div class="inspo-name">${esc(d.name)}</div>
           <div class="inspo-meta">${esc(d.country)} · ${flightText(d.flight)}</div>
-          ${tip ? `<p class="inspo-tip">${ic("sparkles")}<span>${esc(tip)}</span></p>` : `<p class="inspo-pitch">${esc(d.pitch)}</p>`}
-          <div class="inspo-price"><span title="Hotel pro Nacht">${ic("bed-double")}${euro(...d.hotel)}</span><span title="Flug hin & zurück">${ic("plane")}${euro(...d.fly)}</span></div>
-          ${rainy(d) ? `<div class="inspo-off rain">${ic("cloud-rain")}Regenzeit</div>` : offSeason(d) ? `<div class="inspo-off">${ic("info")}Nebensaison</div>` : ""}
+          ${tip ? `<p class="inspo-tip">${ic("sparkles")}${esc(tip)}</p>` : `<p class="inspo-pitch">${esc(d.pitch)}</p>`}
+          <div class="inspo-foot">
+            <span class="inspo-price" title="Woche zu zweit: ${euro(...wk)} (Hotel ${euro(...d.hotel)}/Nacht, Flug ${euro(...d.fly)})">${ic("euro")}Woche ab ${fmtEuro(wk[0])}</span>
+            ${rainy(d) ? `<span class="inspo-off rain">${ic("cloud-rain")}Regenzeit</span>` : offSeason(d) ? `<span class="inspo-off">${ic("info")}Nebensaison</span>` : ""}
+          </div>
         </div>
       </article>`;
-    }).join("") : `<div class="card empty">Kein Ziel passt zu den Filtern.</div>`;
+  }
+  function renderInspo() {
+    const list = inspoVisible(), act = activeFilters();
+    $("#inspoMonthBtn span").textContent = MONTHS[inspo.month];
+    const badge = $("#inspoFilterBtn .badge");
+    badge.textContent = act.length; badge.hidden = !act.length;
+    $("#inspoView").querySelectorAll("[data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === inspo.view)));
+    $("#inspoActive").innerHTML = [
+      ...act.map(([k, label]) => `<button class="chip is-on" type="button" data-clear="${k}" aria-label="Filter ${esc(label)} entfernen">${esc(label)}${ic("x")}</button>`),
+      act.length > 1 ? `<button class="chip" type="button" data-clear="all">Alle entfernen</button>` : "",
+      inspo.favs.size >= 2 ? `<button class="chip chip-cmp" type="button" data-compare>${ic("columns-3")}Vergleichen (${inspo.favs.size})</button>` : ""
+    ].join("");
+    $("#inspoCount").textContent = `${list.length} ${list.length === 1 ? "Ziel" : "Ziele"} · ${SORTS[inspo.sort]} · Höchstwerte im ${MONTHS[inspo.month]} · Preise grobe Richtwerte`;
+    $("#inspoGrid").hidden = inspo.view !== "list";
+    $("#inspoMapBox").hidden = inspo.view !== "map";
+    if (inspo.view === "map") { $("#inspoGrid").innerHTML = ""; renderWorldMap(list); return; }
+    $("#inspoGrid").innerHTML = list.length ? list.map(inspoCard).join("")
+      : `<div class="card empty">Kein Ziel passt.${act.length ? ` <button class="btn" type="button" data-clear="all">Filter entfernen</button>` : ""}</div>`;
     observeWiki($("#inspoGrid"));
   }
-  function syncInspoChips() {
-    $("#inspoChips").querySelectorAll(".chip").forEach((c) => {
-      const k = c.dataset.k;
-      c.setAttribute("aria-pressed", String(k === "all" ? !inspo.tag && !inspo.warm && !inspo.fav && !inspo.tip && !inspo.dist : k === "warm" ? inspo.warm : k === "fav" ? inspo.fav : k === "tip" ? inspo.tip : k === "near" || k === "far" ? inspo.dist === k : inspo.tag === k));
-    });
-    $("#inspoChips [data-favcount]").textContent = inspo.favs.size ? ` ${inspo.favs.size}` : "";
-    $("#inspoChips [data-tipmonth]").textContent = MONTHS[inspo.month];
-    $("#inspoMonth").querySelectorAll("[data-month]").forEach((b) => b.setAttribute("aria-pressed", String(Number(b.dataset.month) === inspo.month)));
+
+  // ---------- Weltkarte: Temperatur im gewählten Monat als Marker ----------
+  let wmap = null, wlayer = null, wkey = "";
+  function renderWorldMap(list) {
+    const box = $("#inspoMap");
+    $("#inspoLegend").innerHTML = `Tageshöchstwerte im ${MONTHS[inspo.month]} · <span class="lg-tip">lila Rand</span> = Reisetipp · gestreift = Regenzeit · reinzoomen für Temperaturen`;
+    (leafletLoading || loadLeaflet()).then(() => {
+      if (!wmap) {
+        wmap = L.map(box, { zoomControl: false, worldCopyJump: true, minZoom: 1, zoomSnap: 0.5 }).setView([30, 10], 2);
+        L.control.zoom({ position: "bottomright" }).addTo(wmap);
+        tiles().addTo(wmap);
+        wmap.attributionControl.setPrefix(false).setPosition("bottomleft");
+        wlayer = L.layerGroup().addTo(wmap);
+        // Weit herausgezoomt nur Punkte (sonst überlappen die Temperaturen in Europa), ab Zoom 4 mit Zahl
+        const dense = () => box.classList.toggle("is-far", wmap.getZoom() < 4);
+        wmap.on("zoomend", dense); dense();
+      }
+      wmap.invalidateSize();
+      wlayer.clearLayers();
+      list.forEach((d) => {
+        const t = tempOf(d), tip = tipOf(d);
+        L.marker(d.ll, {
+          title: d.name, riseOnHover: true, zIndexOffset: tip ? 500 : 0, keyboard: true,
+          icon: L.divIcon({ className: "", html: `<div class="wpin ${tempClass(t)}${tip ? " tip" : ""}${rainy(d) ? " rain" : ""}${inspo.favs.has(d.id) ? " fav" : ""}">${t}°</div>`, iconSize: [38, 24], iconAnchor: [19, 12] })
+        }).bindTooltip(`<b>${esc(d.name)}</b>${tip ? `<br>${esc(tip)}` : ""}`, { direction: "top", offset: [0, -12] })
+          .on("click", () => openInspo(d.id)).addTo(wlayer);
+      });
+      // Ausschnitt nur anpassen, wenn sich die Auswahl geändert hat (nicht beim Monatswechsel)
+      const key = list.map((d) => d.id).sort().join();
+      if (key !== wkey && list.length) wmap.fitBounds(L.latLngBounds(list.map((d) => d.ll)).pad(0.05), { maxZoom: 5 });
+      wkey = key;
+    }).catch(() => { box.innerHTML = `<div class="empty">Karte konnte nicht geladen werden.</div>`; });
   }
+
   function setInspoMonth(m) {
     inspo.month = m;
-    try { localStorage.setItem("inspo.month", String(m)); } catch { /* privat */ }
-    syncInspoChips(); renderInspo();
+    lsSet("inspo.month", m);
+    renderInspo();
   }
   function toggleInspoFav(id) {
     const on = !inspo.favs.has(id);
     on ? inspo.favs.add(id) : inspo.favs.delete(id);
-    try { localStorage.setItem("inspo.favs", JSON.stringify([...inspo.favs])); } catch { /* privat */ }
+    lsSet("inspo.favs", [...inspo.favs]);
     document.querySelectorAll(`[data-inspo-fav="${CSS.escape(id)}"]`).forEach((b) => {
       b.setAttribute("aria-pressed", String(on));
       const label = b.querySelector("span"); if (label) label.textContent = on ? "Gemerkt" : "Merken";
     });
-    syncInspoChips();
-    if (inspo.fav) renderInspo();
+    renderInspo();
   }
-  let inspoOpen = null;
+
+  // ---------- Blätter: Monat, Filter, Vergleich ----------
+  function openMonthSheet() {
+    sheetMode = "month";
+    showSheet(`<div class="sheet-content">
+      <h2 id="sheetTitle">Reisemonat</h2>
+      <p class="sheet-note">Temperaturen, Tipps und Regenzeiten gelten für den gewählten Monat.</p>
+      <div class="month-grid">${MONTHS.map((name, m) => {
+        const n = Object.keys(INSPO_MONTHS[m + 1] || {}).length;
+        return `<button type="button" data-month-pick="${m}" aria-pressed="${m === inspo.month}"><b>${name}</b><small>${n} Tipps</small></button>`;
+      }).join("")}</div>
+    </div>`);
+  }
+  function filterSheetHtml() {
+    const seg = (f, opts, cur) => `<div class="segmented seg-${Object.keys(opts).length}" data-f="${f}" role="group">${Object.entries(opts).map(([k, l]) =>
+      `<button type="button" data-v="${k}" aria-pressed="${cur === k}">${esc(l)}</button>`).join("")}</div>`;
+    const tog = (k, label, icon) => `<button class="chip" type="button" data-ft="${k}" aria-pressed="${!!inspo[k]}">${ic(icon)}${esc(label)}</button>`;
+    return `<div class="sheet-content">
+      <h2 id="sheetTitle">Filter &amp; Sortierung</h2>
+      <h3 class="sheet-h">Sortieren nach</h3>${seg("sort", SORTS, inspo.sort)}
+      <h3 class="sheet-h">Flugzeit ab Deutschland</h3>${seg("dist", DIST, inspo.dist)}
+      <h3 class="sheet-h">Budget: Woche zu zweit <b class="f-val" id="fBudgetVal"></b></h3>
+      <input class="range" type="range" id="fBudget" min="1000" max="${BUDGET_MAX}" step="250" value="${inspo.budget}" aria-label="Budget für eine Woche zu zweit">
+      <p class="inspo-fine">7 Nächte Hotel (Mittelklasse) + 2 Flüge, jeweils günstiger Richtwert</p>
+      <h3 class="sheet-h">Anzeigen</h3>
+      <div class="chips wrap">
+        ${tog("tip", `Tipps im ${MONTHS[inspo.month]}`, "sparkles")}${tog("fav", "Gemerkt", "heart")}
+        ${tog("warm", "Warm ab 20°", "sun")}${tog("dry", "Ohne Regenzeit", "umbrella")}
+      </div>
+      <h3 class="sheet-h">Thema</h3>
+      <div class="chips wrap">${Object.entries(INSPO_TAGS).map(([k, [label, icon]]) =>
+        `<button class="chip" type="button" data-ftag="${k}" aria-pressed="${inspo.tag === k}">${ic(icon)}${esc(label)}</button>`).join("")}</div>
+      <div class="sheet-acts">
+        <button class="btn btn-lg" type="button" data-freset>Zurücksetzen</button>
+        <button class="btn btn-fill btn-lg" type="button" data-close id="fShow"></button>
+      </div>
+    </div>`;
+  }
+  function syncFilterSheet() {
+    const n = inspoVisible().length;
+    $("#fShow").textContent = n ? `${n} ${n === 1 ? "Ziel" : "Ziele"} anzeigen` : "Kein Ziel passt";
+    $("#fBudgetVal").textContent = inspo.budget >= BUDGET_MAX ? "egal" : "bis " + fmtEuro(inspo.budget);
+  }
+  function openFilterSheet() {
+    sheetMode = "filter";
+    showSheet(filterSheetHtml());
+    syncFilterSheet();
+  }
+  function redrawFilterSheet() {
+    const panel = $(".sheet-panel"), y = panel.scrollTop;
+    $("#sheetBody").innerHTML = filterSheetHtml(); panel.scrollTop = y;
+    syncFilterSheet(); renderInspo();
+  }
+  function openCompare() {
+    const ds = INSPO.filter((d) => inspo.favs.has(d.id));
+    if (ds.length < 2) return;
+    sheetMode = "compare";
+    const wk = Object.fromEntries(ds.map((d) => [d.id, weekCost(d)]));
+    const best = (fn, max) => { const v = ds.map(fn); const b = max ? Math.max(...v) : Math.min(...v); return (d) => fn(d) === b ? " best" : ""; };
+    const bt = best((d) => tempOf(d), true), bf = best((d) => d.flight), bw = best((d) => wk[d.id][0]);
+    const row = (label, cell) => `<tr><th scope="row">${label}</th>${ds.map(cell).join("")}</tr>`;
+    showSheet(`<div class="sheet-content">
+      <h2 id="sheetTitle">Vergleich</h2>
+      <p class="sheet-note">Für den ${MONTHS[inspo.month]} · Bestwert je Zeile hervorgehoben · Preise grobe Richtwerte</p>
+      <div class="cmp-wrap"><table class="cmp">
+        <thead><tr><th></th>${ds.map((d) => `<th scope="col"><button type="button" data-inspo-open="${esc(d.id)}">${wikiSlot(d.wiki, "cmp-ph")}<span>${esc(d.name)}</span></button></th>`).join("")}</tr></thead>
+        <tbody>
+          ${row(`Temperatur`, (d) => `<td class="${bt(d)}">${tempOf(d)} °C</td>`)}
+          ${row("Regenzeit", (d) => `<td>${rainy(d) ? `${ic("cloud-rain")}ja` : "–"}</td>`)}
+          ${row("Flugzeit", (d) => `<td class="${bf(d)}">${num(d.flight)} Std.</td>`)}
+          ${row("Woche zu zweit", (d) => `<td class="${bw(d)}">${euro(...wk[d.id])}</td>`)}
+          ${row("Hotel / Nacht", (d) => `<td>${euro(...d.hotel)}</td>`)}
+          ${row("Flug p. P.", (d) => `<td>${euro(...d.fly)}</td>`)}
+          ${row(`Tipp im ${MON[inspo.month]}`, (d) => `<td class="small">${esc(tipOf(d) || "–")}</td>`)}
+          ${row("Beste Monate", (d) => `<td class="small">${MON.filter((_, m) => tipOf(d, m)).join(", ") || "–"}</td>`)}
+          ${row("Themen", (d) => `<td class="small">${d.tags.map((t) => INSPO_TAGS[t]?.[0]).filter(Boolean).join(", ")}</td>`)}
+        </tbody>
+      </table></div>
+    </div>`);
+  }
+
+  // ---------- Detailblatt eines Ziels ----------
+  let inspoOpen = null, sheetMode = "";
   function openInspo(id) {
     const d = INSPO.find((x) => x.id === id); if (!d) return;
-    inspoOpen = id;
+    inspoOpen = id; sheetMode = "inspo";
     const t = tempOf(d), tip = tipOf(d), wk = weekCost(d);
     const good = MONTHS.map((name, m) => [name, tipOf(d, m)]).filter(([, why]) => why);
     showSheet(`
@@ -321,6 +512,10 @@
         <h2 id="sheetTitle">${esc(d.name)}</h2>
         <div class="meta"><span>${esc(d.country)}</span></div>
         <p class="sheet-note">${esc(d.pitch)}</p>
+        <div class="sheet-acts sheet-acts-top">
+          <button class="btn btn-fill btn-lg" type="button" data-plan="${esc(d.id)}">${ic("calendar-plus")}Als Reise planen</button>
+          <button class="btn btn-lg fav-btn" type="button" data-inspo-fav="${esc(d.id)}" aria-pressed="${inspo.favs.has(d.id)}">${ic("heart")}<span>${inspo.favs.has(d.id) ? "Gemerkt" : "Merken"}</span></button>
+        </div>
         ${tip ? `<div class="notice inspo-notice tip">${ic("sparkles")}<span><b>Tipp im ${MONTHS[inspo.month]}:</b> ${esc(tip)}</span></div>` : ""}
         ${rainy(d) ? `<div class="notice inspo-notice rain">${ic("cloud-rain")}<span>Im ${MONTHS[inspo.month]} ist dort Regenzeit – oft kurze, kräftige Schauer, schwül, teils Stürme.</span></div>` : ""}
         ${offSeason(d) ? `<div class="notice inspo-notice">${ic("info")}<span>${esc(d.off)}</span></div>` : ""}
@@ -342,50 +537,158 @@
         <h3 class="sheet-h">Eine Woche in ${esc(d.name)}</h3>
         <ol class="week">${d.week.map((w, i) => `<li><b>Tag ${i + 1}</b><span>${esc(w)}</span></li>`).join("")}</ol>
         <div class="sheet-acts">
-          ${ext("https://www.google.com/travel/flights?q=" + encodeURIComponent("Flüge nach " + d.name.replace(/ \(.*\)/, "")), "Flüge suchen", "plane", "btn btn-fill btn-lg")}
-          ${ext("https://www.google.com/travel/hotels/" + encodeURIComponent(d.name.replace(/ \(.*\)/, "")), "Unterkünfte", "bed-double", "btn btn-lg")}
+          ${ext("https://www.google.com/travel/flights?q=" + encodeURIComponent("Flüge nach " + shortName(d)), "Flüge suchen", "plane", "btn btn-lg")}
+          ${ext("https://www.google.com/travel/hotels/" + encodeURIComponent(shortName(d)), "Unterkünfte", "bed-double", "btn btn-lg")}
           ${ext("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(d.name + ", " + d.country), "Karte", "map", "btn btn-lg")}
-          <button class="btn btn-lg fav-btn" type="button" data-inspo-fav="${esc(d.id)}" aria-pressed="${inspo.favs.has(d.id)}">${ic("heart")}<span>${inspo.favs.has(d.id) ? "Gemerkt" : "Merken"}</span></button>
+          <button class="btn btn-lg" type="button" data-share-inspo="${esc(d.id)}">${ic("share")}Teilen</button>
         </div>
       </div>`);
   }
-  function initInspo() {
-    $("#inspoMonth").innerHTML = MON.map((m, i) => `<button type="button" data-month="${i}" aria-label="${MONTHS[i]}">${m}</button>`).join("");
-    $("#inspoChips").innerHTML = [
-      `<button class="chip" type="button" data-k="all" aria-pressed="true">Alle</button>`,
-      `<button class="chip" type="button" data-k="tip" style="--c:#AF52DE">${ic("sparkles")}Tipps im <span data-tipmonth></span></button>`,
-      `<button class="chip chip-fav" type="button" data-k="fav">${ic("heart")}Gemerkt<span data-favcount></span></button>`,
-      `<button class="chip" type="button" data-k="warm" style="--c:#FF9500">${ic("sun")}Warm (ab 20°)</button>`,
-      `<button class="chip" type="button" data-k="near">${ic("plane")}Nah (bis 3 Std.)</button>`,
-      `<button class="chip" type="button" data-k="far">${ic("globe")}Fernreise</button>`,
-      ...Object.entries(INSPO_TAGS).map(([k, [label, icon]]) => `<button class="chip" type="button" data-k="${k}">${ic(icon)}${esc(label)}</button>`)
-    ].join("");
-    $("#inspoQ").placeholder = `Suchen in ${INSPO.length} Zielen`;
-    syncInspoChips();
-    $("#inspoMonth").querySelector(`[data-month="${inspo.month}"]`)?.scrollIntoView({ block: "nearest", inline: "center" });
-    $("#inspoMonth").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-month]"); if (b) setInspoMonth(Number(b.dataset.month));
+  async function shareInspo(id) {
+    const d = INSPO.find((x) => x.id === id); if (!d) return;
+    const url = `${location.origin}/#inspiration/${encodeURIComponent(d.id)}`;
+    try {
+      if (navigator.share) await navigator.share({ title: `${d.name} – Reiseidee`, text: d.pitch, url });
+      else { await navigator.clipboard.writeText(url); toast("Link kopiert"); }
+    } catch { /* abgebrochen */ }
+  }
+
+  // ---------- Aus einem Ziel eine eigene Reise machen (nur auf diesem Gerät, localStorage „mytrips“) ----------
+  function defaultStart() {
+    // erster Samstag im gewählten Monat, der noch in der Zukunft liegt
+    const now = new Date();
+    for (let y = now.getFullYear(); y <= now.getFullYear() + 1; y++) {
+      const d = new Date(y, inspo.month, 1);
+      d.setDate(1 + ((6 - d.getDay() + 7) % 7));
+      if (d > now) return isoDay(d);
+    }
+    return isoDay(new Date(now.getTime() + 30 * DAY_MS));
+  }
+  function openPlanSheet(id) {
+    const d = INSPO.find((x) => x.id === id); if (!d) return;
+    sheetMode = "plan";
+    showSheet(`<div class="sheet-content">
+      <h2 id="sheetTitle">Reise nach ${esc(shortName(d))} planen</h2>
+      <p class="sheet-note">Der Wochenplan wird als Entwurf übernommen – mit Tagesplan, Checklisten, Wetter und Karte. Buchungen kannst du danach unter „Infos“ eintragen.</p>
+      <div class="list form">
+        <label class="row"><span class="main title">Anreise</span><input type="date" id="planStart" value="${defaultStart()}" min="${isoDay(new Date())}"></label>
+        <label class="row"><span class="main title">Nächte</span><select id="planNights">${Array.from({ length: 12 }, (_, i) => i + 3).map((n) => `<option value="${n}"${n === 7 ? " selected" : ""}>${n}</option>`).join("")}</select></label>
+      </div>
+      <p class="inspo-fine">Gespeichert nur in diesem Browser.</p>
+      <div class="sheet-acts">
+        <button class="btn btn-lg" type="button" data-inspo-open="${esc(d.id)}">Zurück</button>
+        <button class="btn btn-fill btn-lg" type="button" data-plan-create="${esc(d.id)}">${ic("plus")}Reise anlegen</button>
+      </div>
+    </div>`);
+  }
+  function createMyTrip(destId) {
+    const start = $("#planStart").value, nights = Number($("#planNights").value) || 7;
+    if (!/^\d{4}-\d\d-\d\d$/.test(start)) { $("#planStart").focus(); return; }
+    const id = `x-${destId}-${start}`;
+    const list = lsGet("mytrips", []).filter((t) => t.id !== id);
+    list.push({ id, dest: destId, start, nights });
+    lsSet("mytrips", list);
+    location.href = `/${id}/`;
+  }
+  function buildMyTrip(t) {
+    const d = INSPO.find((x) => x.id === t.dest);
+    if (!d || !/^\d{4}-\d\d-\d\d$/.test(t.start)) return null;
+    const n = Math.min(Math.max(Number(t.nights) || 7, 1), 30) + 1, s = dateOf(t.start), m = s.getMonth();
+    const name = shortName(d), far = d.flight >= FAR, temp = d.temps[m], wk = weekCost(d), tip = tipOf(d, m);
+    const highlights = d.highlights.map((h, i) => ({ id: "h" + (i + 1), cats: ["highlight"], name: h, wiki: "" }));
+    const match = (part) => highlights.find((h) => { const a = fold(h.name), b = fold(part); return a.includes(b) || b.includes(a.split(/[ (]/)[0]); });
+    const days = Array.from({ length: n }, (_, i) => {
+      const day = new Date(s.getFullYear(), s.getMonth(), s.getDate() + i);
+      const date = `${day.toLocaleDateString("de-DE", { weekday: "short" }).replace(".", "")} ${day.getDate()}.${day.getMonth() + 1}.`;
+      const last = i === n - 1;
+      const text = last ? d.week[6] : i < 6 ? d.week[i] : "Freier Tag: Lieblingsorte, Ausflug oder einfach Pause";
+      const parts = last ? [] : text.replace(/^(Ankommen|Ankunft)[^,&]*(,|&)?\s*/i, "").split(/\s*(?:,|&| und |→)\s*/).filter((x) => x.length > 2);
+      const stops = [
+        ...(i === 0 ? [{ time: "", icon: "plane", text: "Anreise & ankommen" }] : []),
+        ...parts.map((p) => { const h = match(p); return { time: "", icon: h ? "star" : "map-pin", text: p, place: h && h.id }; }),
+        ...(last ? [{ time: "", icon: "plane", text: "Abreise" }] : [])
+      ];
+      return { date, title: last ? "Abreise" : text, stops };
     });
-    $("#inspoChips").addEventListener("click", (e) => {
-      const c = e.target.closest(".chip"); if (!c) return;
-      const k = c.dataset.k;
-      if (k === "all") { inspo.tag = ""; inspo.warm = false; inspo.fav = false; inspo.tip = false; inspo.dist = ""; }
-      else if (k === "near" || k === "far") inspo.dist = inspo.dist === k ? "" : k;
-      else if (k === "warm") inspo.warm = !inspo.warm;
-      else if (k === "fav") inspo.fav = !inspo.fav;
-      else if (k === "tip") inspo.tip = !inspo.tip;
-      else inspo.tag = inspo.tag === k ? "" : k;
-      syncInspoChips(); renderInspo();
+    const end = new Date(s.getFullYear(), s.getMonth(), s.getDate() + n - 1);
+    return {
+      id: t.id, mine: true, dest: d.id, title: name, icon: "/icons/reisen.svg", wiki: d.wiki, theme: "hub",
+      subtitle: `${d.country} · eigener Entwurf`, start: t.start, end: isoDay(end),
+      center: { lat: d.ll[0], lng: d.ll[1], zoom: 11, name }, near: 3,
+      notice: "Eigener Entwurf aus der Inspiration – gespeichert nur in diesem Browser.",
+      cost: `ca. ${euro(...wk)} / Woche zu zweit`, hotel: null,
+      base: { name, label: "vom Zentrum", around: "um das Zentrum", lat: d.ll[0], lng: d.ll[1] },
+      facts: [
+        { label: "Dauer", value: `${n} Tage / ${n - 1} Nächte` },
+        { label: `Wetter im ${MONTHS[m]}`, value: `ca. ${temp} °C tagsüber${rainy(d, m) ? ", Regenzeit" : ""}` },
+        { label: "Anreise", value: `ca. ${flightText(d.flight)}` }
+      ],
+      images: {}, days,
+      cats: { ort: { label: "Ziel", icon: "map-pin", color: "#34566f" }, highlight: { label: "Highlights", icon: "star", color: "#007AFF" } },
+      places: [{ id: "zentrum", cats: ["ort"], name, note: d.pitch, wiki: d.wiki, lat: d.ll[0], lng: d.ll[1] }, ...highlights],
+      checklists: [
+        { id: "vorher", title: "Vor der Reise", items: [
+          { id: "flug", text: "Flug buchen" }, { id: "hotel", text: "Unterkunft buchen" },
+          { id: "pass", text: far ? "Reisepass mind. 6 Monate gültig" : "Ausweis oder Reisepass gültig" },
+          { id: "einreise", text: "Einreise & Visum prüfen (Auswärtiges Amt)" },
+          { id: "vers", text: "Auslandskrankenversicherung" },
+          ...(far ? [{ id: "impf", text: "Impfungen beim Hausarzt klären" }] : []),
+          { id: "geld", text: "Kreditkarte & etwas Bargeld" }] },
+        { id: "pack", title: "Packliste", items: [
+          { id: "lader", text: "Ladekabel, Powerbank, ggf. Adapter" }, { id: "medis", text: "Medikamente & Reiseapotheke" },
+          temp >= 20 ? { id: "sonne", text: "Sonnencreme, Sonnenbrille, Badesachen" } : { id: "jacke", text: "Warme Jacke & Regenschutz" },
+          { id: "schuhe", text: "Bequeme Schuhe" }] }
+      ],
+      infos: [
+        { icon: "sun", title: `Wetter im ${MONTHS[m]}`, text: `Üblich ca. ${temp} °C tagsüber.${rainy(d, m) ? " Regenzeit: kurze, kräftige Schauer einplanen." : ""}` },
+        ...(tip ? [{ icon: "sparkles", title: `Tipp im ${MONTHS[m]}`, text: tip }] : []),
+        { icon: "euro", title: "Kosten (Richtwerte)", text: `Hotel ${euro(...d.hotel)} pro Nacht, Flug ${euro(...d.fly)} hin & zurück pro Person.` },
+        ...(d.off ? [{ icon: "info", title: "Nebensaison", text: d.off }] : [])
+      ]
+    };
+  }
+  lsGet("mytrips", []).map(buildMyTrip).filter(Boolean).forEach((t) => TRIPS.push(t));
+
+  function onHubSheetClick(e) {
+    const t = e.target;
+    const f = t.closest("[data-inspo-fav]"); if (f) return toggleInspoFav(f.dataset.inspoFav);
+    const c = t.closest("[data-clim]");
+    if (c && inspoOpen) {
+      // Monat im Klima-Diagramm antippen = Reisemonat wechseln, Blatt bleibt an der Stelle
+      const panel = $(".sheet-panel"), y = panel.scrollTop;
+      setInspoMonth(Number(c.dataset.clim)); openInspo(inspoOpen); panel.scrollTop = y;
+      return;
+    }
+    const mp = t.closest("[data-month-pick]"); if (mp) { setInspoMonth(Number(mp.dataset.monthPick)); return closeSheet(); }
+    const seg = t.closest("[data-f] [data-v]");
+    if (seg) { inspo[seg.parentElement.dataset.f] = seg.dataset.v; return redrawFilterSheet(); }
+    const ft = t.closest("[data-ft]"); if (ft) { inspo[ft.dataset.ft] = !inspo[ft.dataset.ft]; return redrawFilterSheet(); }
+    const tg = t.closest("[data-ftag]"); if (tg) { inspo.tag = inspo.tag === tg.dataset.ftag ? "" : tg.dataset.ftag; return redrawFilterSheet(); }
+    if (t.closest("[data-freset]")) { clearFilter("all"); inspo.sort = "tip"; return redrawFilterSheet(); }
+    const op = t.closest("[data-inspo-open]"); if (op) return openInspo(op.dataset.inspoOpen);
+    const sh = t.closest("[data-share-inspo]"); if (sh) return shareInspo(sh.dataset.shareInspo);
+    const pl = t.closest("[data-plan]"); if (pl) return openPlanSheet(pl.dataset.plan);
+    const pc = t.closest("[data-plan-create]"); if (pc) return createMyTrip(pc.dataset.planCreate);
+  }
+  function initInspo() {
+    $("#inspoQ").placeholder = "Ziel suchen";
+    $("#inspoMonthBtn").addEventListener("click", openMonthSheet);
+    $("#inspoFilterBtn").addEventListener("click", openFilterSheet);
+    $("#inspoView").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-view]"); if (!b) return;
+      inspo.view = b.dataset.view; lsSet("inspo.view", inspo.view);
+      renderInspo();
     });
     let t;
     $("#inspoQ").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { inspo.q = e.target.value.trim(); renderInspo(); }, 120); });
-    $("#inspoSort").addEventListener("click", (e) => {
-      const b = e.target.closest("[data-sort]"); if (!b) return;
-      inspo.sort = b.dataset.sort;
-      $("#inspoSort").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      renderInspo();
-    });
+    const onClear = (e) => {
+      const c = e.target.closest("[data-clear]"); if (c) { clearFilter(c.dataset.clear); renderInspo(); return true; }
+      if (e.target.closest("[data-compare]")) { openCompare(); return true; }
+      return false;
+    };
+    $("#inspoActive").addEventListener("click", onClear);
     $("#inspoGrid").addEventListener("click", (e) => {
+      if (onClear(e)) return;
       const f = e.target.closest("[data-inspo-fav]");
       if (f) { toggleInspoFav(f.dataset.inspoFav); return; }
       const c = e.target.closest("[data-inspo]");
@@ -395,6 +698,12 @@
       const c = e.target.closest("[data-inspo]");
       if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openInspo(c.dataset.inspo); }
     });
+    // Budget-Regler im Filterblatt: live filtern, Blatt nicht neu zeichnen (sonst reißt das Ziehen ab)
+    $("#sheetBody").addEventListener("input", (e) => {
+      if (e.target.id !== "fBudget") return;
+      inspo.budget = Number(e.target.value);
+      syncFilterSheet(); renderInspo();
+    });
     renderInspo();
   }
   // Reiter der Startseite: Meine Reisen | Inspiration (#inspiration)
@@ -403,10 +712,12 @@
     $("#hubList").hidden = tab !== "reisen";
     $("#inspo").hidden = tab !== "inspiration";
     $("#hubTabs").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.hubtab === tab)));
-    if (tab === "inspiration" && !$("#inspoGrid").childElementCount) initInspo();
+    if (tab === "inspiration" && !inspoReady) { inspoReady = true; initInspo(); }
+    else if (tab === "inspiration" && inspo.view === "map" && wmap) wmap.invalidateSize();
     const id = location.hash.split("/")[1];
     if (id) openInspo(decodeURIComponent(id));
   }
+  let inspoReady = false;
 
   // ---------- Welche Seite? ----------
   const slug = decodeURIComponent(location.pathname.split("/").filter(Boolean)[0] || "");
@@ -423,15 +734,7 @@
     if (slug) history.replaceState(null, "", "/");
     window.addEventListener("hashchange", () => { if (!legacy()) { if (!$("#sheet").hidden) { sheetHistory = false; closeSheet(true); } hubRoute(); } });
     renderHub();
-    initSheet((e) => {
-      const f = e.target.closest("[data-inspo-fav]"); if (f) { toggleInspoFav(f.dataset.inspoFav); return; }
-      const c = e.target.closest("[data-clim]");
-      if (c && inspoOpen) {
-        // Monat im Klima-Diagramm antippen = Reisemonat wechseln, Blatt bleibt an der Stelle
-        const panel = $(".sheet-panel"), y = panel.scrollTop;
-        setInspoMonth(Number(c.dataset.clim)); openInspo(inspoOpen); panel.scrollTop = y;
-      }
-    });
+    initSheet(onHubSheetClick);
     $("#hubTabs").addEventListener("click", (e) => {
       const b = e.target.closest("[data-hubtab]"); if (!b) return;
       history.replaceState(null, "", b.dataset.hubtab === "inspiration" ? "#inspiration" : location.pathname);
@@ -466,15 +769,7 @@
   const mapsRoute = (p) => APPLE
     ? `https://maps.apple.com/?daddr=${p.lat},${p.lng}&dirflg=w`
     : `https://www.google.com/maps/dir/?api=1&destination=${p.lat},${p.lng}&travelmode=walking`;
-  const pad = (n) => String(n).padStart(2, "0");
   const nowHM = () => { const d = new Date(); return pad(d.getHours()) + ":" + pad(d.getMinutes()); };
-  function toast(text) {
-    const t = document.createElement("div");
-    t.className = "toast"; t.setAttribute("role", "status"); t.textContent = text;
-    document.body.append(t);
-    setTimeout(() => t.classList.add("out"), 1800);
-    setTimeout(() => t.remove(), 2200);
-  }
   const linkIcon = (label) => /ticket/i.test(label) ? "ticket" : /reserv/i.test(label) ? "utensils" : /karte/i.test(label) ? "map" : "arrow-up-right";
 
   // Bezugspunkt für Entfernungen: eigener Standort, sonst Hotel, sonst ein fester Punkt der Reise (z. B. der Dom)
@@ -492,7 +787,7 @@
     $("#title").textContent = TRIP.title;
     $("#subtitle").textContent = TRIP.subtitle;
     $("#wxTitle").textContent = "Wetter in " + TRIP.center.name;
-    setStatus(tripStatus(TRIP));
+    setStatus(bookingStatus(TRIP) || tripStatus(TRIP));
     if (TRIP.notice) { $("#notice").textContent = TRIP.notice; $("#noticeBox").hidden = false; }
   }
 
@@ -503,6 +798,38 @@
     $("#cost").textContent = TRIP.cost || "";
   }
 
+  // Datum (ISO) von Reisetag i
+  const dayIso = (i) => { const s = dateOf(TRIP.start); return isoDay(new Date(s.getFullYear(), s.getMonth(), s.getDate() + i)); };
+  // Programmpunkte eines Tages inkl. Buchungen (nach Uhrzeit einsortiert)
+  function dayStops(i) {
+    const stops = [...DAYS[i].stops], iso = dayIso(i);
+    bookingsOf(TRIP).filter((b) => b.date === iso).forEach((b) => {
+      const [label, icon] = BOOK_TYPES[b.type] || BOOK_TYPES.other;
+      const st = { time: b.time || "", icon, text: b.title ? `${label}: ${b.title}` : label, booking: b };
+      const at = b.time ? stops.findIndex((x) => /^\d\d:\d\d$/.test(x.time) && x.time > b.time) : 0;
+      stops.splice(at < 0 ? stops.length : at, 0, st);
+    });
+    return stops;
+  }
+  // Orte eines Tages mit Koordinaten, nur in der Stadt, in der die meisten liegen (Rom-Tag: nur Rom)
+  function dayPoints(stops) {
+    const ps = stops.map((s) => s.place && byId[s.place]).filter((p) => p && hasPos(p));
+    const count = {}; ps.forEach((p) => { count[cityOf(p)] = (count[cityOf(p)] || 0) + 1; });
+    const city = Object.keys(count).sort((a, b) => count[b] - count[a])[0];
+    return ps.filter((p, j) => cityOf(p) === city && (j === 0 || p !== ps[j - 1]));
+  }
+  const googleRoute = (pts) => "https://www.google.com/maps/dir/?api=1&travelmode=walking" +
+    `&origin=${pts[0].lat},${pts[0].lng}&destination=${pts[pts.length - 1].lat},${pts[pts.length - 1].lng}` +
+    (pts.length > 2 ? "&waypoints=" + encodeURIComponent(pts.slice(1, -1).slice(0, 9).map((p) => `${p.lat},${p.lng}`).join("|")) : "");
+  // Schlechtwetter-Ideen: Orte „drinnen“ (TRIP.indoor = Kategorien) nahe den Orten des Tages
+  function indoorIdeas(pts) {
+    if (!TRIP.indoor || !pts.length) return [];
+    const c = { lat: pts.reduce((a, p) => a + p.lat, 0) / pts.length, lng: pts.reduce((a, p) => a + p.lng, 0) / pts.length };
+    const city = cityOf(pts[0]), inDay = new Set(pts.map((p) => p.id));
+    return PLACES.filter((p) => hasPos(p) && !inDay.has(p.id) && cityOf(p) === city && p.cats.some((k) => TRIP.indoor.includes(k)) && (!p.rating || p.rating >= 4.3))
+      .map((p) => ({ p, d: km(c, p) })).sort((a, b) => a.d - b.d).slice(0, 4);
+  }
+
   function renderDays() {
     const today = dayIndex(TRIP);
     const hhmm = nowHM();
@@ -510,9 +837,11 @@
     $("#daynav").innerHTML = DAYS.map((d, i) =>
       `<a href="#tag-${i + 1}" class="${i === today ? "is-today" : ""}"><small>${esc(d.date.split(" ")[0])}</small><b>${esc(parseInt(d.date.split(" ")[1], 10) || i + 1)}</b></a>`).join("");
 
+    const openRain = new Set([...document.querySelectorAll(".rainbox[open]")].map((x) => x.dataset.rain));
     $("#days").innerHTML = DAYS.map((d, i) => {
       const isToday = i === today;
-      const nowIdx = isToday ? d.stops.reduce((acc, s, j) => (s.time <= hhmm ? j : acc), -1) : -1;
+      const all = dayStops(i);
+      const nowIdx = isToday ? all.reduce((acc, s, j) => (s.time && s.time <= hhmm ? j : acc), -1) : -1;
       const img = d.image && IMAGES[d.image];
       const tags = [
         isToday ? `<span class="tag today">Heute</span>` : "",
@@ -521,19 +850,32 @@
         d.alt ? `<span class="tag alt">${ic("shuffle")}${esc(d.alt)}</span>` : ""
       ].join("");
       const stopActs = (s) => (s.links || []).map((l) => ext(l.url, l.label, linkIcon(l.label))).join("");
-      // Programmpunkte mit Ort: Text antippen öffnet das Detailblatt (Foto, Route, Karte)
-      const stopText = (s) => s.place && byId[s.place]
-        ? `<button class="txt txt-link" type="button" data-open="${esc(s.place)}">${esc(s.text)}${ic("chevron-right")}</button>`
-        : `<div class="txt">${esc(s.text)}</div>`;
-      const stops = d.stops.map((s, j) => {
-        const acts = stopActs(s);
-        const cls = isToday ? (j === nowIdx ? "is-now" : j < nowIdx ? "is-past" : "") : "";
+      // Programmpunkte mit Ort: Text antippen öffnet das Detailblatt (Foto, Route, Karte); Buchungen öffnen ihr Formular
+      const stopText = (s) => s.booking
+        ? `<button class="txt txt-link" type="button" data-booking="${esc(s.booking.id)}">${esc(s.text)}${ic("chevron-right")}</button>
+           ${s.booking.info || s.booking.ref ? `<div class="sub">${esc([s.booking.info, s.booking.ref && "Nr. " + s.booking.ref].filter(Boolean).join(" · "))}</div>` : ""}`
+        : s.place && byId[s.place]
+          ? `<button class="txt txt-link" type="button" data-open="${esc(s.place)}">${esc(s.text)}${ic("chevron-right")}</button>`
+          : `<div class="txt">${esc(s.text)}</div>`;
+      // Fußweg zwischen zwei aufeinanderfolgenden Orten
+      const leg = (a, b) => {
+        const pa = a.place && byId[a.place], pb = b && b.place && byId[b.place];
+        if (!pa || !pb || pa === pb || !hasPos(pa) || !hasPos(pb) || cityOf(pa) !== cityOf(pb)) return "";
+        const dist = km(pa, pb);
+        if (dist < 0.08) return "";
+        return `<li class="leg"><span>${ic(dist <= 4 ? "footprints" : "bus")}${dist <= 4 ? `${walk(dist)} zu Fuß` : "Bus, Taxi oder Bahn"} · ${fmtKm(dist)}</span></li>`;
+      };
+      const stops = all.map((s, j) => {
+        const cls = [isToday ? (j === nowIdx ? "is-now" : j < nowIdx ? "is-past" : "") : "", s.booking ? "is-booking" : ""].join(" ");
         return `<li class="stop ${cls}">
           <div class="time">${esc(s.time)}</div>
           <div class="tile">${ic(s.icon)}</div>
-          <div>${stopText(s)}<div class="acts">${acts}</div></div>
-        </li>`;
+          <div>${stopText(s)}<div class="acts">${stopActs(s)}</div></div>
+        </li>${leg(s, all[j + 1])}`;
       }).join("");
+      const pts = dayPoints(all);
+      const total = pts.slice(1).reduce((a, p, j) => a + km(pts[j], p), 0);
+      const ideas = indoorIdeas(pts);
       return `<article class="card day ${isToday ? "is-today" : ""}" id="tag-${i + 1}">
         ${img ? `<div class="day-img is-loaded"><img src="${esc(img.src)}" alt="${esc(img.alt)}" loading="lazy" decoding="async" width="960" height="480"><a href="${esc(img.page)}" target="_blank" rel="noopener">Foto: Wikimedia</a></div>`
           : wikiSlot(d.wiki, "day-img", "large", true)}
@@ -543,24 +885,55 @@
           ${tags ? `<div class="day-meta">${tags}</div>` : ""}
         </div>
         <ol class="timeline">${stops}</ol>
+        ${pts.length >= 2 ? `<div class="day-route">${ext(googleRoute(pts), `Route des Tages · ${pts.length} Stopps`, "route", "btn")}<span class="muted">ca. ${fmtKm(total)} Luftlinie</span></div>` : ""}
         ${d.extras && d.extras.length ? `<div class="extras">
           <div class="extras-head">${ic("sparkles")}Falls noch Zeit ist</div>
           <ul>${d.extras.map((x) => `<li class="extra"><div class="tile">${ic(x.icon || "sparkles")}</div>
             <div>${stopText(x)}<div class="acts">${stopActs(x)}</div></div></li>`).join("")}</ul>
         </div>` : ""}
+        ${ideas.length ? `<details class="rainbox" data-rain="${i}">
+          <summary>${ic("umbrella")}<span>Bei Regen: Ideen für drinnen</span>${ic("chevron-down")}</summary>
+          <div class="rain-list">${ideas.map(({ p, d: dist }) => `<button class="rain-idea" type="button" data-open="${esc(p.id)}">
+            <span class="tile" style="--c:${esc(CATS[p.cats.find((k) => TRIP.indoor.includes(k))].color)}">${ic(CATS[p.cats.find((k) => TRIP.indoor.includes(k))].icon)}</span>
+            <span class="main"><span class="title">${esc(p.name)}</span><span class="text">${p.rating ? `${ic("star")}${num(p.rating)} · ` : ""}${fmtKm(dist)} vom Tagesprogramm</span></span>${ic("chevron-right")}</button>`).join("")}</div>
+        </details>` : ""}
       </article>`;
     }).join("");
 
     // Wikimedia-Vorschau fehlt (z. B. offline) → Bildbereich ausblenden
     document.querySelectorAll(".day-img img").forEach((im) => im.addEventListener("error", () => im.parentElement.remove(), { once: true }));
     observeWiki($("#days"));
+    openRain.forEach((k) => { const x = $(`.rainbox[data-rain="${k}"]`); if (x) x.open = true; });
+    if (wxData) markRainDays(wxData);
+  }
+  // Regen in der Vorhersage für einen Reisetag → Schlechtwetter-Ideen aufklappen und hervorheben
+  const RAIN_CODES = [61, 63, 65, 66, 67, 80, 81, 82, 95, 96, 99];
+  function markRainDays(data) {
+    const t = data.daily.time;
+    DAYS.forEach((_, i) => {
+      const box = $(`.rainbox[data-rain="${i}"]`), k = t.indexOf(dayIso(i));
+      if (!box || k < 0) return;
+      const prob = data.daily.precipitation_probability_max[k] || 0;
+      if (prob < 60 && !RAIN_CODES.includes(data.daily.weather_code[k])) return;
+      box.classList.add("is-rain"); box.open = true;
+      box.querySelector("summary span").textContent = `Regen angesagt (${prob} %) – Ideen für drinnen`;
+    });
   }
 
   function renderNow() {
     const i = dayIndex(TRIP), box = $("#nowBox");
+    if (i < 0 && i >= -21) {
+      // Vor der Reise: nächste Buchung zeigen
+      const b = nextBooking(TRIP);
+      box.innerHTML = b ? `<div class="group-label">Nächste Buchung</div><div class="list"><button class="row has-tile" type="button" data-booking="${esc(b.id)}">
+        <div class="tile">${ic((BOOK_TYPES[b.type] || BOOK_TYPES.other)[1])}</div>
+        <div class="main"><div class="text">${esc(bookingWhen(b))}</div><div class="title">${esc(bookingLabel(b))}</div></div>
+        <span class="trail">${ic("chevron-right")}</span></button></div>` : "";
+      box.hidden = !b; return;
+    }
     if (i < 0 || i >= DAYS.length) { box.hidden = true; return; }
-    const d = DAYS[i], hhmm = nowHM();
-    const cur = d.stops.reduce((acc, s, j) => (s.time <= hhmm ? j : acc), -1);
+    const d = { ...DAYS[i], stops: dayStops(i) }, hhmm = nowHM();
+    const cur = d.stops.reduce((acc, s, j) => (s.time && s.time <= hhmm ? j : acc), -1);
     const row = (label, s, day) => `<a class="row has-tile" href="#tag-${day + 1}">
       <div class="tile">${ic(s.icon)}</div>
       <div class="main"><div class="text">${esc(label)} · ${esc(s.time)}</div><div class="title">${esc(s.text)}</div></div>
@@ -568,7 +941,7 @@
     const rows = [];
     if (cur >= 0) rows.push(row("Jetzt", d.stops[cur], i));
     if (d.stops[cur + 1]) rows.push(row("Als Nächstes", d.stops[cur + 1], i));
-    else if (DAYS[i + 1]) rows.push(row("Morgen", DAYS[i + 1].stops[0], i + 1));
+    else if (DAYS[i + 1]) rows.push(row("Morgen", dayStops(i + 1)[0], i + 1));
     box.innerHTML = `<div class="group-label">Heute · Tag ${i + 1}: ${esc(d.title)}</div><div class="list">${rows.join("")}</div>`;
     box.hidden = !rows.length;
   }
@@ -578,9 +951,11 @@
     [[51, 53, 55, 56, 57], "cloud-drizzle", "Niesel", "rain"], [[61, 63, 65, 66, 67, 80, 81, 82], "cloud-rain", "Regen", "rain"],
     [[71, 73, 75, 77, 85, 86], "cloud-snow", "Schnee"], [[95, 96, 99], "cloud-lightning", "Gewitter", "rain"]];
 
+  let wxData = null;
   function drawWeather(data, stamp) {
     const d = data.daily;
-    $("#weather").innerHTML = d.time.map((t, i) => {
+    wxData = data; markRainDays(data);
+    $("#weather").innerHTML = d.time.slice(0, 7).map((t, i) => {
       const [, icon, label, tone = ""] = WX.find(([codes]) => codes.includes(d.weather_code[i])) || [0, "cloud", ""];
       const day = i === 0 ? "Heute" : new Date(t + "T12:00:00").toLocaleDateString("de-DE", { weekday: "short" }).replace(".", "");
       const rain = d.precipitation_probability_max[i];
@@ -597,7 +972,7 @@
   async function initWeather() {
     const cached = store.get("wx");
     if (cached) drawWeather(cached.data, cached.at);
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${TRIP.center.lat}&longitude=${TRIP.center.lng}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&wind_speed_unit=kmh&timezone=auto&forecast_days=7`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${TRIP.center.lat}&longitude=${TRIP.center.lng}&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max&wind_speed_unit=kmh&timezone=auto&forecast_days=16`;
     try {
       const res = await fetch(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
@@ -759,27 +1134,13 @@
     iconSize: [size, size], iconAnchor: [size / 2, size / 2], popupAnchor: [0, -size / 2]
   });
 
-  let leafletLoading = null;
-  function loadLeaflet() {
-    if (window.L) return Promise.resolve();
-    const load = (el) => new Promise((res, rej) => { el.onload = res; el.onerror = rej; });
-    const css = Object.assign(document.createElement("link"), { rel: "stylesheet", href: "/assets/vendor/leaflet/leaflet.css" });
-    const js = Object.assign(document.createElement("script"), { src: "/assets/vendor/leaflet/leaflet.js" });
-    const done = Promise.all([load(css), load(js)]);
-    document.head.insertBefore(css, document.querySelector('link[href^="/assets/app.css"]'));  // app.css überschreibt Leaflet
-    document.head.append(js);
-    return (leafletLoading ||= done);
-  }
   const ensureMap = () => (leafletLoading || loadLeaflet()).then(() => { initMap(); map.invalidateSize(); });
 
   function initMap() {
     if (map || !window.L) return;
     map = L.map("map", { scrollWheelZoom: false, zoomControl: false }).setView([TRIP.center.lat, TRIP.center.lng], TRIP.center.zoom || 14);
     L.control.zoom({ position: "bottomright" }).addTo(map);
-    L.tileLayer(`https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
-      maxZoom: 19,
-      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>'
-    }).addTo(map);
+    tiles().addTo(map);
     map.attributionControl.setPrefix(false).setPosition("bottomleft");
 
     layer = L.layerGroup().addTo(map);
@@ -917,6 +1278,18 @@
       </div>`);
   }
   function onTripSheetClick(e) {
+    const t = e.target;
+    const bt = t.closest("[data-bk-type]");
+    if (bt) {
+      bkType = bt.dataset.bkType;
+      bt.parentElement.querySelectorAll("[data-bk-type]").forEach((x) => x.setAttribute("aria-pressed", String(x === bt)));
+      $("#bkTitle").placeholder = BOOK_HINT[bkType]; $("#bkInfo").placeholder = BOOK_INFO[bkType];
+      return;
+    }
+    const sv = t.closest("[data-bk-save]"); if (sv) return saveBooking(sv.dataset.bkSave);
+    const dl = t.closest("[data-bk-del]"); if (dl) return deleteBooking(dl.dataset.bkDel);
+    const cp = t.closest("[data-copy]");
+    if (cp) { navigator.clipboard?.writeText(cp.dataset.copy).then(() => toast("Kopiert"), () => {}); return; }
     const f = e.target.closest("[data-fav]");
     if (f) return toggleFav(f.dataset.fav);
     const m = e.target.closest("[data-sheet-map]");
@@ -951,7 +1324,7 @@
     const [y, m, d0] = TRIP.start.split("-").map(Number);
     const stamp = icsDate(new Date());
     const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Reisen//Reiseplan//DE", "CALSCALE:GREGORIAN", "METHOD:PUBLISH", "X-WR-CALNAME:" + icsText(TRIP.title)];
-    DAYS.forEach((day, i) => day.stops.forEach((s, j) => {
+    DAYS.forEach((day0, i) => { const day = { ...day0, stops: dayStops(i) }; day.stops.forEach((s, j) => {
       if (!/^\d\d:\d\d$/.test(s.time)) return;
       const start = zonedToUtc(y, m - 1, d0 + i, s.time, tz);
       const next = day.stops[j + 1];
@@ -961,12 +1334,13 @@
       const url = (s.links && s.links[0] && s.links[0].url) || (place && place.url);
       lines.push("BEGIN:VEVENT", `UID:${TRIP.id}-${i + 1}-${j + 1}@reisen`, "DTSTAMP:" + stamp,
         "DTSTART:" + icsDate(start), "DTEND:" + icsDate(end), "SUMMARY:" + icsText(s.text),
-        "DESCRIPTION:" + icsText(`${TRIP.title} – Tag ${i + 1}: ${day.title}`));
+        "DESCRIPTION:" + icsText(`${TRIP.title} – Tag ${i + 1}: ${day.title}` + (s.booking ? `\n${[s.booking.info, s.booking.ref && "Buchungsnr. " + s.booking.ref].filter(Boolean).join("\n")}` : "")));
       if (place) lines.push("LOCATION:" + icsText(place.name + ", " + TRIP.center.name));
       if (place && hasPos(place)) lines.push(`GEO:${place.lat};${place.lng}`);
-      if (url) lines.push("URL:" + url);
+      const bUrl = s.booking && s.booking.url;
+      if (url || bUrl) lines.push("URL:" + (url || bUrl));
       lines.push("END:VEVENT");
-    }));
+    }); });
     lines.push("END:VCALENDAR");
     const blob = new Blob([lines.map(icsFold).join("\r\n") + "\r\n"], { type: "text/calendar;charset=utf-8" });
     const a = Object.assign(document.createElement("a"), { href: URL.createObjectURL(blob), download: `${TRIP.id}.ics` });
@@ -975,6 +1349,12 @@
     return lines.length;
   }
 
+  function deleteMyTrip() {
+    if (!confirm(`Entwurf „${TRIP.title}“ löschen?`)) return;
+    lsSet("mytrips", lsGet("mytrips", []).filter((t) => t.id !== TRIP.id));
+    try { Object.keys(localStorage).filter((k) => k.startsWith(TRIP.id + ".")).forEach((k) => localStorage.removeItem(k)); } catch { /* privat */ }
+    location.href = "/";
+  }
   async function shareTrip() {
     const data = { title: `${TRIP.title} – Reiseplan`, url: `${location.origin}/${TRIP.id}/` };
     try {
@@ -983,16 +1363,85 @@
     } catch { /* abgebrochen */ }
   }
 
+  // ---------- Buchungen (Infos): Liste, Formular ----------
+  function renderBookings() {
+    const list = bookingsOf(TRIP);
+    const when = (b) => [dateOf(b.date).toLocaleDateString("de-DE", { weekday: "short", day: "numeric", month: "short" }), b.time].filter(Boolean).join(" · ");
+    $("#bookings").innerHTML = list.map((b) => `<button class="row has-tile" type="button" data-booking="${esc(b.id)}">
+        <div class="tile">${ic((BOOK_TYPES[b.type] || BOOK_TYPES.other)[1])}</div>
+        <div class="main"><div class="title">${esc(bookingLabel(b))}</div>
+          <div class="text">${esc([when(b), b.info, b.ref && "Nr. " + b.ref].filter(Boolean).join(" · "))}</div></div>
+        <span class="trail">${ic("chevron-right")}</span></button>`).join("") +
+      `<button class="row has-tile add-row" type="button" data-booking="new"><div class="tile">${ic("plus")}</div>
+        <div class="main"><div class="title">Buchung hinzufügen</div>${list.length ? "" : `<div class="text">Flug, Hotel, Zug, Mietwagen oder Tickets</div>`}</div></button>`;
+    // Unterkunft: ohne festes Hotel die eingetragene Hotelbuchung zeigen
+    const hb = !TRIP.hotel && list.find((b) => b.type === "hotel");
+    if (hb) $("#hotel").innerHTML = `<button class="row has-tile" type="button" data-booking="${esc(hb.id)}"><div class="tile">${ic("bed-double")}</div>
+      <div class="main"><div class="title">${esc(hb.title || "Hotel")}</div><div class="text">${esc([hb.info, hb.ref && "Nr. " + hb.ref].filter(Boolean).join(" · ") || "Check-in " + bookingWhen(hb))}</div></div>
+      <span class="trail">${ic("chevron-right")}</span></button>`;
+  }
+  const BOOK_HINT = { flight: "z. B. LH 330 Frankfurt → Florenz", hotel: "Name des Hotels", train: "z. B. Frecciarossa Florenz → Rom",
+    car: "Anbieter, Abholort", ticket: "z. B. Uffizien", other: "Bezeichnung" };
+  const BOOK_INFO = { flight: "Terminal, Sitzplatz, Gepäck …", hotel: "Adresse, Check-in ab …", train: "Wagen, Platz, Gleis …",
+    car: "Abholung/Rückgabe …", ticket: "Zeitfenster, Treffpunkt …", other: "Details" };
+  let bkType = "flight";
+  function openBooking(id) {
+    const b = id === "new" ? null : bookingsOf(TRIP).find((x) => x.id === id);
+    if (id !== "new" && !b) return;
+    bkType = b ? b.type || "other" : "flight";
+    const v = (k) => esc(b ? b[k] || "" : "");
+    const ro = b && b.fixed ? " readonly" : "";
+    showSheet(`<div class="sheet-content">
+      <h2 id="sheetTitle">${b ? "Buchung" : "Neue Buchung"}</h2>
+      <div class="chips wrap bk-types" role="group" aria-label="Art">${Object.entries(BOOK_TYPES).map(([k, [label, icon]]) =>
+        `<button class="chip" type="button" data-bk-type="${k}" aria-pressed="${k === bkType}"${ro ? " disabled" : ""}>${ic(icon)}${label}</button>`).join("")}</div>
+      <div class="list form">
+        <label class="row"><span class="title">Was</span><input id="bkTitle" value="${v("title")}" placeholder="${esc(BOOK_HINT[bkType])}" autocomplete="off"${ro}></label>
+        <label class="row"><span class="title">Datum</span><input id="bkDate" type="date" value="${b ? v("date") : esc(TRIP.start)}"${ro}></label>
+        <label class="row"><span class="title">Uhrzeit</span><input id="bkTime" type="time" value="${v("time")}"${ro}></label>
+        <label class="row"><span class="title">Details</span><input id="bkInfo" value="${v("info")}" placeholder="${esc(BOOK_INFO[bkType])}" autocomplete="off"${ro}></label>
+        <label class="row"><span class="title">Buchungsnr.</span><input id="bkRef" value="${v("ref")}" autocomplete="off" autocapitalize="characters"${ro}></label>
+        <label class="row"><span class="title">Link</span><input id="bkUrl" type="url" value="${v("url")}" placeholder="https://…" autocomplete="off"${ro}></label>
+      </div>
+      <div class="sheet-acts">
+        ${b && b.ref ? `<button class="btn btn-lg" type="button" data-copy="${v("ref")}">${ic("copy")}Nr. kopieren</button>` : ""}
+        ${b && b.url ? ext(b.url, "Öffnen", "arrow-up-right", "btn btn-lg") : ""}
+        ${b && !b.fixed ? `<button class="btn btn-lg btn-danger" type="button" data-bk-del="${esc(b.id)}">${ic("trash-2")}Löschen</button>` : ""}
+        ${ro ? "" : `<button class="btn btn-fill btn-lg" type="button" data-bk-save="${esc(b ? b.id : "new")}">${ic("check")}Speichern</button>`}
+      </div>
+    </div>`);
+  }
+  function saveBooking(id) {
+    const val = (s) => $(s).value.trim();
+    const date = val("#bkDate");
+    if (!/^\d{4}-\d\d-\d\d$/.test(date)) { $("#bkDate").focus(); return; }
+    const url = val("#bkUrl");
+    const b = { id: id === "new" ? "b" + Date.now().toString(36) : id, type: bkType, title: val("#bkTitle"), date, time: val("#bkTime"),
+      info: val("#bkInfo"), ref: val("#bkRef"), url: /^https?:\/\//i.test(url) ? url : "" };
+    const list = store.get("bookings", []).filter((x) => x.id !== b.id);
+    list.push(b);
+    store.set("bookings", list);
+    closeSheet(); afterBookings(); toast("Gespeichert");
+  }
+  function deleteBooking(id) {
+    store.set("bookings", store.get("bookings", []).filter((x) => x.id !== id));
+    closeSheet(); afterBookings(); toast("Gelöscht");
+  }
+  function afterBookings() { renderBookings(); renderDays(); renderNow(); setStatus(bookingStatus(TRIP) || tripStatus(TRIP)); }
+
   // ---------- Infos ----------
   function renderInfos() {
     $("#tools").innerHTML = `
       <button class="row has-tile" type="button" data-act="ics"><div class="tile">${ic("calendar-plus")}</div>
         <div class="main"><div class="title">Zum Kalender hinzufügen</div><div class="text">Alle Programmpunkte als Termine (.ics)</div></div></button>
       <button class="row has-tile" type="button" data-act="share"><div class="tile">${ic("share")}</div>
-        <div class="main"><div class="title">Reise teilen</div><div class="text">Link zu dieser Seite senden</div></div></button>`;
+        <div class="main"><div class="title">Reise teilen</div><div class="text">Link zu dieser Seite senden</div></div></button>
+      ${TRIP.mine ? `<button class="row has-tile danger-row" type="button" data-act="delete"><div class="tile">${ic("trash-2")}</div>
+        <div class="main"><div class="title">Entwurf löschen</div><div class="text">Entfernt die Reise samt Buchungen aus diesem Browser</div></div></button>` : ""}`;
     $("#tools").addEventListener("click", (e) => {
       const b = e.target.closest("[data-act]"); if (!b) return;
       if (b.dataset.act === "ics") { exportCalendar(); toast("Kalenderdatei erstellt"); }
+      else if (b.dataset.act === "delete") deleteMyTrip();
       else shareTrip();
     });
     const H = TRIP.hotel;
@@ -1003,6 +1452,9 @@
       : `<div class="row has-tile"><div class="tile" style="--c:#8E8E93">${ic("bed-double")}</div>
           <div class="main"><div class="title">Noch nicht eingetragen</div><div class="text">Entfernungen gelten bis dahin ${esc(TRIP.base.label)}.</div></div></div>`;
 
+    renderBookings();
+    $("#bookings").addEventListener("click", (e) => { const b = e.target.closest("[data-booking]"); if (b) openBooking(b.dataset.booking); });
+    $("#hotel").addEventListener("click", (e) => { const b = e.target.closest("[data-booking]"); if (b) openBooking(b.dataset.booking); });
     const checks = store.get("checks", {});
     $("#checklists").innerHTML = CHECKLISTS.map((l) => `<div data-list="${esc(l.id)}">
       <div class="check-head"><div class="group-label">${esc(l.title)}</div><span class="muted" data-progress></span></div>
@@ -1071,9 +1523,11 @@
   renderNow();
   renderDays();
   $("#days").addEventListener("click", (e) => {
+    const k = e.target.closest("[data-booking]"); if (k) return openBooking(k.dataset.booking);
     const b = e.target.closest("[data-open]");
     if (b) openSheet(b.dataset.open);
   });
+  $("#nowBox").addEventListener("click", (e) => { const k = e.target.closest("[data-booking]"); if (k) openBooking(k.dataset.booking); });
   initSheet(onTripSheetClick);
   initNavbar(TRIP.title, true);
   if (dayIndex(TRIP) >= 0 && dayIndex(TRIP) < DAYS.length) setInterval(() => { renderNow(); renderDays(); }, 60e3);
