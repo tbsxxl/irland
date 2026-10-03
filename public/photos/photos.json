@@ -1544,5 +1544,20 @@
  },
  "Walled City of Cartagena": {
   "none": true
+ },
+ "Castillo San Felipe de Barajas": {
+  "page": "https://en.wikipedia.org/wiki/Castillo_San_Felipe_de_Barajas",
+  "s": "castillo-san-felipe-de-barajas-s.jpg",
+  "l": "castillo-san-felipe-de-barajas-l.jpg"
+ },
+ "Gentoo penguin": {
+  "page": "https://en.wikipedia.org/wiki/Gentoo_penguin",
+  "s": "gentoo-penguin-s.png",
+  "l": "gentoo-penguin-l.png"
+ },
+ "Victoria Peak": {
+  "page": "https://en.wikipedia.org/wiki/Victoria_Peak",
+  "s": "victoria-peak-s.jpg",
+  "l": "victoria-peak-l.jpg"
  }
 }
