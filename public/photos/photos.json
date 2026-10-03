@@ -40,7 +40,8 @@
  },
  "Bologna": {
   "page": "https://en.wikipedia.org/wiki/Bologna",
-  "s": "bologna-s.jpg"
+  "s": "bologna-s.jpg",
+  "l": "bologna-l.jpg"
  },
  "Book of Kells": {
   "page": "https://en.wikipedia.org/wiki/Book_of_Kells",
@@ -480,7 +481,8 @@
  },
  "Rome": {
   "page": "https://en.wikipedia.org/wiki/Rome",
-  "s": "rome-s.jpg"
+  "s": "rome-s.jpg",
+  "l": "rome-l.jpg"
  },
  "San Gimignano": {
   "page": "https://en.wikipedia.org/wiki/San_Gimignano",
@@ -683,5 +685,325 @@
  },
  "it:Scuola del Cuoio": {
   "none": true
+ },
+ "Alicante": {
+  "page": "https://en.wikipedia.org/wiki/Alicante",
+  "s": "alicante-s.jpg",
+  "l": "alicante-l.jpg"
+ },
+ "Athens": {
+  "page": "https://en.wikipedia.org/wiki/Athens",
+  "s": "athens-s.jpg",
+  "l": "athens-l.jpg"
+ },
+ "Barcelona": {
+  "page": "https://en.wikipedia.org/wiki/Barcelona",
+  "s": "barcelona-s.jpg",
+  "l": "barcelona-l.jpg"
+ },
+ "Bari": {
+  "page": "https://en.wikipedia.org/wiki/Bari",
+  "s": "bari-s.jpg",
+  "l": "bari-l.jpg"
+ },
+ "Belgrade": {
+  "page": "https://en.wikipedia.org/wiki/Belgrade",
+  "s": "belgrade-s.jpg",
+  "l": "belgrade-l.jpg"
+ },
+ "Bilbao": {
+  "page": "https://en.wikipedia.org/wiki/Bilbao",
+  "s": "bilbao-s.png",
+  "l": "bilbao-l.png"
+ },
+ "Birmingham": {
+  "page": "https://en.wikipedia.org/wiki/Birmingham",
+  "s": "birmingham-s.jpg",
+  "l": "birmingham-l.jpg"
+ },
+ "Bordeaux": {
+  "page": "https://en.wikipedia.org/wiki/Bordeaux",
+  "s": "bordeaux-s.jpg",
+  "l": "bordeaux-l.jpg"
+ },
+ "Bristol": {
+  "page": "https://en.wikipedia.org/wiki/Bristol",
+  "s": "bristol-s.jpg",
+  "l": "bristol-l.jpg"
+ },
+ "Brussels": {
+  "page": "https://en.wikipedia.org/wiki/Brussels",
+  "s": "brussels-s.jpg",
+  "l": "brussels-l.jpg"
+ },
+ "Bucharest": {
+  "page": "https://en.wikipedia.org/wiki/Bucharest",
+  "s": "bucharest-s.jpg",
+  "l": "bucharest-l.jpg"
+ },
+ "Budapest": {
+  "page": "https://en.wikipedia.org/wiki/Budapest",
+  "s": "budapest-s.jpg",
+  "l": "budapest-l.jpg"
+ },
+ "Cagliari": {
+  "page": "https://en.wikipedia.org/wiki/Cagliari",
+  "s": "cagliari-s.png",
+  "l": "cagliari-l.png"
+ },
+ "Catania": {
+  "page": "https://en.wikipedia.org/wiki/Catania",
+  "s": "catania-s.jpg",
+  "l": "catania-l.jpg"
+ },
+ "Chania": {
+  "page": "https://en.wikipedia.org/wiki/Chania",
+  "s": "chania-s.jpg",
+  "l": "chania-l.jpg"
+ },
+ "Copenhagen": {
+  "page": "https://en.wikipedia.org/wiki/Copenhagen",
+  "s": "copenhagen-s.jpg",
+  "l": "copenhagen-l.jpg"
+ },
+ "Dubrovnik": {
+  "page": "https://en.wikipedia.org/wiki/Dubrovnik",
+  "s": "dubrovnik-s.jpg",
+  "l": "dubrovnik-l.jpg"
+ },
+ "Edinburgh": {
+  "page": "https://en.wikipedia.org/wiki/Edinburgh",
+  "s": "edinburgh-s.jpg",
+  "l": "edinburgh-l.jpg"
+ },
+ "Faro, Portugal": {
+  "page": "https://en.wikipedia.org/wiki/Faro%2C_Portugal",
+  "s": "faro-portugal-s.jpg",
+  "l": "faro-portugal-l.jpg"
+ },
+ "Gdańsk": {
+  "page": "https://en.wikipedia.org/wiki/Gda%C5%84sk",
+  "s": "gdansk-s.jpg",
+  "l": "gdansk-l.jpg"
+ },
+ "Geneva": {
+  "page": "https://en.wikipedia.org/wiki/Geneva",
+  "s": "geneva-s.jpg",
+  "l": "geneva-l.jpg"
+ },
+ "Glasgow": {
+  "page": "https://en.wikipedia.org/wiki/Glasgow",
+  "s": "glasgow-s.jpg",
+  "l": "glasgow-l.jpg"
+ },
+ "Gothenburg": {
+  "page": "https://en.wikipedia.org/wiki/Gothenburg",
+  "s": "gothenburg-s.jpg",
+  "l": "gothenburg-l.jpg"
+ },
+ "Helsinki": {
+  "page": "https://en.wikipedia.org/wiki/Helsinki",
+  "s": "helsinki-s.jpg",
+  "l": "helsinki-l.jpg"
+ },
+ "Heraklion": {
+  "page": "https://en.wikipedia.org/wiki/Heraklion",
+  "s": "heraklion-s.png",
+  "l": "heraklion-l.png"
+ },
+ "Kos": {
+  "page": "https://en.wikipedia.org/wiki/Kos",
+  "s": "kos-s.jpg",
+  "l": "kos-l.jpg"
+ },
+ "Kraków": {
+  "page": "https://en.wikipedia.org/wiki/Krak%C3%B3w",
+  "s": "krakow-s.jpg",
+  "l": "krakow-l.jpg"
+ },
+ "Leeds": {
+  "page": "https://en.wikipedia.org/wiki/Leeds",
+  "s": "leeds-s.jpg",
+  "l": "leeds-l.jpg"
+ },
+ "Lisbon": {
+  "page": "https://en.wikipedia.org/wiki/Lisbon",
+  "s": "lisbon-s.jpg",
+  "l": "lisbon-l.jpg"
+ },
+ "Liverpool": {
+  "page": "https://en.wikipedia.org/wiki/Liverpool",
+  "s": "liverpool-s.jpg",
+  "l": "liverpool-l.jpg"
+ },
+ "London": {
+  "page": "https://en.wikipedia.org/wiki/London",
+  "s": "london-s.jpg",
+  "l": "london-l.jpg"
+ },
+ "Lyon": {
+  "page": "https://en.wikipedia.org/wiki/Lyon",
+  "s": "lyon-s.jpg",
+  "l": "lyon-l.jpg"
+ },
+ "Madrid": {
+  "page": "https://en.wikipedia.org/wiki/Madrid",
+  "s": "madrid-s.jpg",
+  "l": "madrid-l.jpg"
+ },
+ "Manchester": {
+  "page": "https://en.wikipedia.org/wiki/Manchester",
+  "s": "manchester-s.jpg",
+  "l": "manchester-l.jpg"
+ },
+ "Marseille": {
+  "page": "https://en.wikipedia.org/wiki/Marseille",
+  "s": "marseille-s.jpg",
+  "l": "marseille-l.jpg"
+ },
+ "Milan": {
+  "page": "https://en.wikipedia.org/wiki/Milan",
+  "s": "milan-s.jpg",
+  "l": "milan-l.jpg"
+ },
+ "Málaga": {
+  "page": "https://en.wikipedia.org/wiki/M%C3%A1laga",
+  "s": "malaga-s.jpg",
+  "l": "malaga-l.jpg"
+ },
+ "Naples": {
+  "page": "https://en.wikipedia.org/wiki/Naples",
+  "s": "naples-s.jpg",
+  "l": "naples-l.jpg"
+ },
+ "Nice": {
+  "page": "https://en.wikipedia.org/wiki/Nice",
+  "s": "nice-s.jpg",
+  "l": "nice-l.jpg"
+ },
+ "Oslo": {
+  "page": "https://en.wikipedia.org/wiki/Oslo",
+  "s": "oslo-s.jpg",
+  "l": "oslo-l.jpg"
+ },
+ "Palermo": {
+  "page": "https://en.wikipedia.org/wiki/Palermo",
+  "s": "palermo-s.jpg",
+  "l": "palermo-l.jpg"
+ },
+ "Palma de Mallorca": {
+  "page": "https://en.wikipedia.org/wiki/Palma_de_Mallorca",
+  "s": "palma-de-mallorca-s.jpg",
+  "l": "palma-de-mallorca-l.jpg"
+ },
+ "Paris": {
+  "page": "https://en.wikipedia.org/wiki/Paris",
+  "s": "paris-s.jpg",
+  "l": "paris-l.jpg"
+ },
+ "Porto": {
+  "page": "https://en.wikipedia.org/wiki/Porto",
+  "s": "porto-s.jpg",
+  "l": "porto-l.jpg"
+ },
+ "Prague": {
+  "page": "https://en.wikipedia.org/wiki/Prague",
+  "s": "prague-s.jpg",
+  "l": "prague-l.jpg"
+ },
+ "Pula": {
+  "page": "https://en.wikipedia.org/wiki/Pula",
+  "s": "pula-s.jpg",
+  "l": "pula-l.jpg"
+ },
+ "Rhodes": {
+  "page": "https://en.wikipedia.org/wiki/Rhodes",
+  "s": "rhodes-s.jpg",
+  "l": "rhodes-l.jpg"
+ },
+ "Riga": {
+  "page": "https://en.wikipedia.org/wiki/Riga",
+  "s": "riga-s.jpg",
+  "l": "riga-l.jpg"
+ },
+ "Sarajevo": {
+  "page": "https://en.wikipedia.org/wiki/Sarajevo",
+  "s": "sarajevo-s.jpg",
+  "l": "sarajevo-l.jpg"
+ },
+ "Seville": {
+  "page": "https://en.wikipedia.org/wiki/Seville",
+  "s": "seville-s.jpg",
+  "l": "seville-l.jpg"
+ },
+ "Sofia": {
+  "page": "https://en.wikipedia.org/wiki/Sofia",
+  "s": "sofia-s.jpg",
+  "l": "sofia-l.jpg"
+ },
+ "Split, Croatia": {
+  "page": "https://en.wikipedia.org/wiki/Split%2C_Croatia",
+  "s": "split-croatia-s.jpg",
+  "l": "split-croatia-l.jpg"
+ },
+ "Stockholm": {
+  "page": "https://en.wikipedia.org/wiki/Stockholm",
+  "s": "stockholm-s.jpg",
+  "l": "stockholm-l.jpg"
+ },
+ "Tallinn": {
+  "page": "https://en.wikipedia.org/wiki/Tallinn",
+  "s": "tallinn-s.jpg",
+  "l": "tallinn-l.jpg"
+ },
+ "Thessaloniki": {
+  "page": "https://en.wikipedia.org/wiki/Thessaloniki",
+  "s": "thessaloniki-s.jpg",
+  "l": "thessaloniki-l.jpg"
+ },
+ "Tirana": {
+  "page": "https://en.wikipedia.org/wiki/Tirana",
+  "s": "tirana-s.jpg",
+  "l": "tirana-l.jpg"
+ },
+ "Toulouse": {
+  "page": "https://en.wikipedia.org/wiki/Toulouse",
+  "s": "toulouse-s.jpg",
+  "l": "toulouse-l.jpg"
+ },
+ "Valencia": {
+  "page": "https://en.wikipedia.org/wiki/Valencia",
+  "s": "valencia-s.jpg",
+  "l": "valencia-l.jpg"
+ },
+ "Valletta": {
+  "page": "https://en.wikipedia.org/wiki/Valletta",
+  "s": "valletta-s.jpg",
+  "l": "valletta-l.jpg"
+ },
+ "Venice": {
+  "page": "https://en.wikipedia.org/wiki/Venice",
+  "s": "venice-s.jpg",
+  "l": "venice-l.jpg"
+ },
+ "Vienna": {
+  "page": "https://en.wikipedia.org/wiki/Vienna",
+  "s": "vienna-s.jpg",
+  "l": "vienna-l.jpg"
+ },
+ "Warsaw": {
+  "page": "https://en.wikipedia.org/wiki/Warsaw",
+  "s": "warsaw-s.jpg",
+  "l": "warsaw-l.jpg"
+ },
+ "Zadar": {
+  "page": "https://en.wikipedia.org/wiki/Zadar",
+  "s": "zadar-s.jpg",
+  "l": "zadar-l.jpg"
+ },
+ "Zagreb": {
+  "page": "https://en.wikipedia.org/wiki/Zagreb",
+  "s": "zagreb-s.jpg",
+  "l": "zagreb-l.jpg"
  }
 }
