@@ -30,6 +30,15 @@ const SHOTS = process.argv[3];
     const cards = await page.locator(".trip-card").count();
     if (cards < 2) errors.push(`Übersicht: nur ${cards} Reisen`);
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-hub.png` });
+    // Inspiration: Reiter, Filter, Detailblatt
+    await page.goto(BASE + "#inspiration", { waitUntil: "load" }); await page.waitForTimeout(400);
+    const dest = await page.locator(".inspo-card").count();
+    await page.locator('#inspoChips [data-k="warm"]').click(); await page.waitForTimeout(200);
+    const warm = await page.locator(".inspo-card").count();
+    if (!(dest > 50 && warm > 5 && warm < dest)) errors.push(`Inspiration: ${dest} Ziele, ${warm} warm`);
+    await page.locator(".inspo-card").first().click(); await page.waitForTimeout(400);
+    if ((await page.locator("#sheet .week li").count()) !== 7) errors.push("Inspiration: Wochenplan im Detailblatt fehlt");
+    await page.keyboard.press("Escape"); await page.waitForTimeout(300);
     // Alte Irland-Links leiten weiter
     await page.goto(BASE + "#entdecken", { waitUntil: "load" }); await page.waitForTimeout(300);
     if (!page.url().includes("/irland/#entdecken")) errors.push("Weiterleitung alter Link fehlt: " + page.url());
