@@ -11,7 +11,8 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Startseite hat zwei Reiter: „Meine Reisen“ und „Inspiration“ (`#inspiration`, `#inspiration/<id>` öffnet ein Ziel).
   Ziele stehen in `public/assets/inspiration.js` (`temps` = 12 Monats-Höchstwerte, `hotel`/`fly` = Preisspannen in €,
   Flugzeit (ab 7 Std. = „Fernreise“), `rain` = Regenzeit-Monate, Tags, Highlights, Wochenplan, `wiki` fürs Foto,
-  `off` = Nebensaison-Hinweis, nur Nov–März gezeigt).
+  `off` = Nebensaison-Hinweis, gezeigt in `offMonths` (Standard Nov–März; Südhalbkugel eigene Monate)).
+  Tag `bucket` = Bucket List (Fahne an der Karte, Schnellwahl-Chip in der Leiste).
   `INSPIRATION_MONTHS` (unten in derselben Datei) = Tipps pro Monat mit Grund; Reihenfolge = Rang bei „Empfohlen“.
   `ll` = Koordinaten für die Weltkarte (Ansicht „Weltkarte“, Marker = Temperatur im Monat, weit draußen nur Punkte).
   Bedienung: Leiste mit Monat (Blatt), Suche, Filter-Knopf (Blatt: Sortierung, Flugzeit, Budget „Woche zu zweit“, Tipps,

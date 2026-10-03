@@ -283,7 +283,7 @@
   const INSPO = window.INSPIRATION || [];
   const INSPO_MONTHS = window.INSPIRATION_MONTHS || {};
   const INSPO_TAGS = { strand: ["Strand", "waves"], kultur: ["Kultur & Geschichte", "landmark"], stadt: ["Großstadt", "building-2"],
-    natur: ["Natur", "mountain"], essen: ["Essen & Trinken", "utensils"], nacht: ["Nachtleben", "moon"] };
+    natur: ["Natur", "mountain"], essen: ["Essen & Trinken", "utensils"], nacht: ["Nachtleben", "moon"], bucket: ["Bucket List", "flag"] };
   const MONTHS = ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"];
   const MON = ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"];
   const SORTS = { tip: "Empfohlen", warm: "Wärmste", price: "Günstig", flight: "Kurzer Flug" };
@@ -323,7 +323,7 @@
   }
   const groupText = (pax = inspo.pax, nights = inspo.nights) => `${pax} ${pax === 1 ? "Person" : "Personen"} · ${nights} Nächte`;
   const groupShort = () => `${inspo.pax} P. · ${inspo.nights} N.`;
-  const offSeason = (d) => d.off && [10, 11, 0, 1, 2].includes(inspo.month);
+  const offSeason = (d) => d.off && (d.offMonths || [11, 12, 1, 2, 3]).includes(inspo.month + 1);
   const rainy = (d, m = inspo.month) => !!d.rain?.includes(m + 1);
   const distOk = (d) => !inspo.dist || (inspo.dist === "near" ? d.flight <= 3 : inspo.dist === "mid" ? d.flight > 3 && d.flight < FAR : d.flight >= FAR);
   const shortName = (d) => d.name.replace(/ \(.*\)/, "");
@@ -367,7 +367,7 @@
           <button class="fav inspo-fav" type="button" data-inspo-fav="${esc(d.id)}" aria-pressed="${inspo.favs.has(d.id)}" aria-label="${esc(d.name)} merken">${ic("heart")}</button>
         </div>
         <div class="inspo-body">
-          <div class="inspo-name">${esc(d.name)}</div>
+          <div class="inspo-name">${esc(d.name)}${d.tags.includes("bucket") ? `<span class="bl" title="Bucket List">${ic("flag")}</span>` : ""}</div>
           <div class="inspo-meta">${esc(d.country)} · ${flightText(d.flight)}</div>
           ${tip ? `<p class="inspo-tip">${ic("sparkles")}${esc(tip)}</p>` : `<p class="inspo-pitch">${esc(d.pitch)}</p>`}
           <div class="inspo-foot">
@@ -384,11 +384,13 @@
     badge.textContent = act.length; badge.hidden = !act.length;
     $("#inspoView").querySelectorAll("[data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === inspo.view)));
     $("#inspoActive").innerHTML = [
+      inspo.tag !== "bucket" ? `<button class="chip chip-bl" type="button" data-quick="bucket">${ic("flag")}Bucket List</button>` : "",
       ...act.map(([k, label]) => `<button class="chip is-on" type="button" data-clear="${k}" aria-label="Filter ${esc(label)} entfernen">${esc(label)}${ic("x")}</button>`),
       act.length > 1 ? `<button class="chip" type="button" data-clear="all">Alle entfernen</button>` : "",
       inspo.favs.size >= 2 ? `<button class="chip chip-cmp" type="button" data-compare>${ic("columns-3")}Vergleichen (${inspo.favs.size})</button>` : ""
     ].join("");
     $("#inspoGroupBtn span").textContent = groupShort();
+    $("#inspoActive").scrollLeft = 0;
     $("#inspoCount").textContent = `${list.length} ${list.length === 1 ? "Ziel" : "Ziele"} · ${SORTS[inspo.sort]} · Höchstwerte im ${MONTHS[inspo.month]} · Preise gesamt für ${groupText()}${inspo.spend ? " inkl. vor Ort" : ""} (grobe Richtwerte)`;
     $("#inspoGrid").hidden = inspo.view !== "list";
     $("#inspoMapBox").hidden = inspo.view !== "map";
@@ -761,6 +763,7 @@
     let t;
     $("#inspoQ").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { inspo.q = e.target.value.trim(); renderInspo(); }, 120); });
     const onClear = (e) => {
+      const q = e.target.closest("[data-quick]"); if (q) { inspo.tag = q.dataset.quick; renderInspo(); return true; }
       const c = e.target.closest("[data-clear]"); if (c) { clearFilter(c.dataset.clear); renderInspo(); return true; }
       if (e.target.closest("[data-compare]")) { openCompare(); return true; }
       return false;
