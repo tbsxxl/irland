@@ -1511,5 +1511,38 @@
   "page": "https://en.wikipedia.org/wiki/Victoria_Falls",
   "s": "victoria-falls-s.jpg",
   "l": "victoria-falls-l.jpg"
+ },
+ "Cuernos del Paine": {
+  "page": "https://en.wikipedia.org/wiki/Cuernos_del_Paine",
+  "s": "cuernos-del-paine-s.jpg",
+  "l": "cuernos-del-paine-l.jpg"
+ },
+ "Haleakalā National Park": {
+  "page": "https://en.wikipedia.org/wiki/Haleakal%C4%81_National_Park",
+  "s": "haleakala-national-park-s.jpg",
+  "l": "haleakala-national-park-l.jpg"
+ },
+ "Lemaire Channel": {
+  "page": "https://en.wikipedia.org/wiki/Lemaire_Channel",
+  "s": "lemaire-channel-s.png",
+  "l": "lemaire-channel-l.png"
+ },
+ "Mount Otemanu": {
+  "page": "https://en.wikipedia.org/wiki/Mount_Otemanu",
+  "s": "mount-otemanu-s.jpg",
+  "l": "mount-otemanu-l.jpg"
+ },
+ "Old Man of Storr": {
+  "page": "https://en.wikipedia.org/wiki/The_Storr",
+  "s": "old-man-of-storr-s.jpg",
+  "l": "old-man-of-storr-l.jpg"
+ },
+ "Victoria Harbour": {
+  "page": "https://en.wikipedia.org/wiki/Victoria_Harbour",
+  "s": "victoria-harbour-s.jpg",
+  "l": "victoria-harbour-l.jpg"
+ },
+ "Walled City of Cartagena": {
+  "none": true
  }
 }
