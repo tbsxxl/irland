@@ -357,6 +357,36 @@ html.has-sheet{overflow:hidden}
 .inspo-filters{position:sticky;top:0;z-index:600;margin:0 -16px;padding:8px 16px;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:saturate(1.8) blur(20px);-webkit-backdrop-filter:saturate(1.8) blur(20px)}
 @media (max-width:719px){.inspo-filters{top:calc(44px + env(safe-area-inset-top))}}
 .inspo-filters .segmented{margin-top:10px}
+#inspoSort{grid-template-columns:repeat(4,1fr)}
+#inspoSort button{padding:5px 2px}
+.months{display:flex;gap:4px;overflow-x:auto;margin:0 -16px 10px;padding:0 16px 2px;scrollbar-width:none}
+.months::-webkit-scrollbar{display:none}
+.months button{flex:1 0 auto;min-width:46px;height:34px;border:0;border-radius:10px;background:var(--card);box-shadow:inset 0 0 0 .5px var(--sep);font-size:14px;font-weight:500;color:var(--label)}
+.months button[aria-pressed="true"]{background:var(--brand);color:#fff;font-weight:600;box-shadow:none}
+.inspo-tip{margin-top:6px;font-size:14px;font-weight:500;color:#8A3FB0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.inspo-tip .i{color:#AF52DE;font-size:13px;margin-right:4px;vertical-align:-1px}
+.inspo-price{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:8px;font-size:12px;font-weight:600;color:var(--label-2);font-variant-numeric:tabular-nums}
+.inspo-price span{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+.inspo-price .i{font-size:13px}
+.inspo-notice.tip{background:#F5EBFA}
+.inspo-notice.tip .i{color:#AF52DE}
+.inspo-costs .row{gap:12px}
+.inspo-costs .title{font-size:15px}
+.inspo-costs .trail b{color:var(--label);font-variant-numeric:tabular-nums}
+.inspo-costs small{font-weight:400;color:var(--label-2);font-size:12px}
+.cost-ic{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:var(--fill-2);color:var(--brand);font-size:16px;flex:0 0 auto}
+.inspo-fine{font-size:12px;color:var(--label-2);margin:6px 4px 0}
+.clim{display:grid;grid-template-columns:repeat(12,1fr);gap:3px;align-items:end;padding:10px 8px 6px;border-radius:12px;background:var(--fill-2)}
+.clim-m{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:3px;border:0;background:none;padding:2px 0;border-radius:8px;color:var(--label-2);font-variant-numeric:tabular-nums}
+.clim-m .v{font-size:10px;font-weight:600}
+.clim-m .bar{display:block;width:70%;max-width:18px;border-radius:4px 4px 2px 2px;opacity:.55}
+.clim-m .bar.hot{background:#FF9500}.clim-m .bar.mild{background:#3478F6}.clim-m .bar.cold{background:#8E96A8}
+.clim-m .m{font-size:11px;font-weight:600}
+.clim-m.tip .m{color:#AF52DE}
+.clim-m.on{background:var(--card);color:var(--label);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.clim-m.on .bar{opacity:1}
+.sheet-list.good li{align-items:flex-start}
+.sheet-list.good .i{color:#AF52DE;fill:none;margin-top:4px}
 .inspo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:6px}
 .inspo-card{display:flex;flex-direction:column;overflow:hidden;border-radius:var(--r-lg);background:var(--card);box-shadow:var(--shadow);cursor:pointer;transition:transform .2s var(--ease)}
 .inspo-card:active{transform:scale(.98)}
@@ -389,6 +419,8 @@ html.has-sheet{overflow:hidden}
   .inspo-name{font-size:16px}
   .inspo-meta{font-size:12px}
   .inspo-pitch{font-size:13px;-webkit-line-clamp:3}
+  .inspo-tip{font-size:13px;-webkit-line-clamp:3}
+  .inspo-price{font-size:11px;gap:2px 8px}
   .temp{left:8px;top:8px;font-size:12px;padding:3px 8px}
   .inspo-fav{width:30px;height:30px;font-size:16px}
 }
