@@ -1356,5 +1356,160 @@
  },
  "Ponta Preta": {
   "none": true
+ },
+ "Angkor Wat": {
+  "page": "https://en.wikipedia.org/wiki/Angkor_Wat",
+  "s": "angkor-wat-s.jpg",
+  "l": "angkor-wat-l.jpg"
+ },
+ "Anse Source d'Argent": {
+  "page": "https://en.wikipedia.org/wiki/Anse_Source_d'Argent",
+  "s": "anse-source-d-argent-s.jpg",
+  "l": "anse-source-d-argent-l.jpg"
+ },
+ "Antarctic Peninsula": {
+  "page": "https://en.wikipedia.org/wiki/Antarctic_Peninsula",
+  "s": "antarctic-peninsula-s.png",
+  "l": "antarctic-peninsula-l.png"
+ },
+ "Bora Bora": {
+  "page": "https://en.wikipedia.org/wiki/Bora_Bora",
+  "s": "bora-bora-s.jpg",
+  "l": "bora-bora-l.jpg"
+ },
+ "Cartagena, Colombia": {
+  "page": "https://en.wikipedia.org/wiki/Cartagena%2C_Colombia",
+  "s": "cartagena-colombia-s.jpg",
+  "l": "cartagena-colombia-l.jpg"
+ },
+ "El Nido, Palawan": {
+  "page": "https://en.wikipedia.org/wiki/El_Nido%2C_Palawan",
+  "s": "el-nido-palawan-s.jpg",
+  "l": "el-nido-palawan-l.jpg"
+ },
+ "Erg Chebbi": {
+  "page": "https://en.wikipedia.org/wiki/Erg_Chebbi",
+  "s": "erg-chebbi-s.jpg",
+  "l": "erg-chebbi-l.jpg"
+ },
+ "Galápagos Islands": {
+  "page": "https://en.wikipedia.org/wiki/Gal%C3%A1pagos_Islands",
+  "s": "galapagos-islands-s.jpg",
+  "l": "galapagos-islands-l.jpg"
+ },
+ "Giza pyramid complex": {
+  "page": "https://en.wikipedia.org/wiki/Giza_pyramid_complex",
+  "s": "giza-pyramid-complex-s.jpg",
+  "l": "giza-pyramid-complex-l.jpg"
+ },
+ "Grand Canyon": {
+  "page": "https://en.wikipedia.org/wiki/Grand_Canyon",
+  "s": "grand-canyon-s.jpg",
+  "l": "grand-canyon-l.jpg"
+ },
+ "Great Wall of China": {
+  "page": "https://en.wikipedia.org/wiki/Great_Wall_of_China",
+  "s": "great-wall-of-china-s.jpg",
+  "l": "great-wall-of-china-l.jpg"
+ },
+ "Gyeongbokgung": {
+  "page": "https://en.wikipedia.org/wiki/Gyeongbokgung",
+  "s": "gyeongbokgung-s.jpg",
+  "l": "gyeongbokgung-l.jpg"
+ },
+ "Gásadalur": {
+  "page": "https://en.wikipedia.org/wiki/G%C3%A1sadalur",
+  "s": "gasadalur-s.jpg",
+  "l": "gasadalur-l.jpg"
+ },
+ "Hong Kong": {
+  "page": "https://en.wikipedia.org/wiki/Hong_Kong",
+  "s": "hong-kong-s.png",
+  "l": "hong-kong-l.png"
+ },
+ "Iguazu Falls": {
+  "page": "https://en.wikipedia.org/wiki/Iguazu_Falls",
+  "s": "iguazu-falls-s.jpg",
+  "l": "iguazu-falls-l.jpg"
+ },
+ "Isle of Skye": {
+  "page": "https://en.wikipedia.org/wiki/Isle_of_Skye",
+  "s": "isle-of-skye-s.png",
+  "l": "isle-of-skye-l.png"
+ },
+ "Lofoten": {
+  "page": "https://en.wikipedia.org/wiki/Lofoten",
+  "s": "lofoten-s.jpg",
+  "l": "lofoten-l.jpg"
+ },
+ "Matterhorn": {
+  "page": "https://en.wikipedia.org/wiki/Matterhorn",
+  "s": "matterhorn-s.jpg",
+  "l": "matterhorn-l.jpg"
+ },
+ "Maui": {
+  "page": "https://en.wikipedia.org/wiki/Maui",
+  "s": "maui-s.jpg",
+  "l": "maui-l.jpg"
+ },
+ "Milford Sound": {
+  "page": "https://en.wikipedia.org/wiki/Milford_Sound",
+  "s": "milford-sound-s.jpg",
+  "l": "milford-sound-l.jpg"
+ },
+ "Mont-Saint-Michel": {
+  "page": "https://en.wikipedia.org/wiki/Mont-Saint-Michel",
+  "s": "mont-saint-michel-s.jpg",
+  "l": "mont-saint-michel-l.jpg"
+ },
+ "Moraine Lake": {
+  "page": "https://en.wikipedia.org/wiki/Moraine_Lake",
+  "s": "moraine-lake-s.jpg",
+  "l": "moraine-lake-l.jpg"
+ },
+ "Okavango Delta": {
+  "page": "https://en.wikipedia.org/wiki/Okavango_Delta",
+  "s": "okavango-delta-s.jpg",
+  "l": "okavango-delta-l.jpg"
+ },
+ "Pokhara": {
+  "page": "https://en.wikipedia.org/wiki/Pokhara",
+  "s": "pokhara-s.jpg",
+  "l": "pokhara-l.jpg"
+ },
+ "Serengeti National Park": {
+  "page": "https://en.wikipedia.org/wiki/Serengeti_National_Park",
+  "s": "serengeti-national-park-s.jpg",
+  "l": "serengeti-national-park-l.jpg"
+ },
+ "Sossusvlei": {
+  "page": "https://en.wikipedia.org/wiki/Sossusvlei",
+  "s": "sossusvlei-s.jpg",
+  "l": "sossusvlei-l.jpg"
+ },
+ "Taj Mahal": {
+  "page": "https://en.wikipedia.org/wiki/Taj_Mahal",
+  "s": "taj-mahal-s.jpg",
+  "l": "taj-mahal-l.jpg"
+ },
+ "Torres del Paine National Park": {
+  "page": "https://en.wikipedia.org/wiki/Torres_del_Paine_National_Park",
+  "s": "torres-del-paine-national-park-s.jpg",
+  "l": "torres-del-paine-national-park-l.jpg"
+ },
+ "Tre Cime di Lavaredo": {
+  "page": "https://en.wikipedia.org/wiki/Tre_Cime_di_Lavaredo",
+  "s": "tre-cime-di-lavaredo-s.jpg",
+  "l": "tre-cime-di-lavaredo-l.jpg"
+ },
+ "Uluru": {
+  "page": "https://en.wikipedia.org/wiki/Uluru",
+  "s": "uluru-s.jpg",
+  "l": "uluru-l.jpg"
+ },
+ "Victoria Falls": {
+  "page": "https://en.wikipedia.org/wiki/Victoria_Falls",
+  "s": "victoria-falls-s.jpg",
+  "l": "victoria-falls-l.jpg"
  }
 }
