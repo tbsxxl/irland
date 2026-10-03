@@ -1559,5 +1559,15 @@
   "page": "https://en.wikipedia.org/wiki/Victoria_Peak",
   "s": "victoria-peak-s.jpg",
   "l": "victoria-peak-l.jpg"
+ },
+ "Emperor penguin": {
+  "page": "https://en.wikipedia.org/wiki/Emperor_penguin",
+  "s": "emperor-penguin-s.jpg",
+  "l": "emperor-penguin-l.jpg"
+ },
+ "Tsim Sha Tsui": {
+  "page": "https://en.wikipedia.org/wiki/Tsim_Sha_Tsui",
+  "s": "tsim-sha-tsui-s.jpg",
+  "l": "tsim-sha-tsui-l.jpg"
  }
 }
