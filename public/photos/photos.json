@@ -1198,5 +1198,150 @@
   "page": "https://en.wikipedia.org/wiki/Vilnius",
   "s": "vilnius-s.jpg",
   "l": "vilnius-l.jpg"
+ },
+ "Arenal Volcano": {
+  "page": "https://en.wikipedia.org/wiki/Arenal_Volcano",
+  "s": "arenal-volcano-s.jpg",
+  "l": "arenal-volcano-l.jpg"
+ },
+ "Aurora": {
+  "page": "https://en.wikipedia.org/wiki/Aurora",
+  "s": "aurora-s.jpg",
+  "l": "aurora-l.jpg"
+ },
+ "Buenos Aires": {
+  "page": "https://en.wikipedia.org/wiki/Buenos_Aires",
+  "s": "buenos-aires-s.jpg",
+  "l": "buenos-aires-l.jpg"
+ },
+ "Chichen Itza": {
+  "page": "https://en.wikipedia.org/wiki/Chichen_Itza",
+  "s": "chichen-itza-s.jpg",
+  "l": "chichen-itza-l.jpg"
+ },
+ "Fushimi Inari-taisha": {
+  "page": "https://en.wikipedia.org/wiki/Fushimi_Inari-taisha",
+  "s": "fushimi-inari-taisha-s.jpg",
+  "l": "fushimi-inari-taisha-l.jpg"
+ },
+ "Gardens by the Bay": {
+  "page": "https://en.wikipedia.org/wiki/Gardens_by_the_Bay",
+  "s": "gardens-by-the-bay-s.jpg",
+  "l": "gardens-by-the-bay-l.jpg"
+ },
+ "Golden Gate Bridge": {
+  "page": "https://en.wikipedia.org/wiki/Golden_Gate_Bridge",
+  "s": "golden-gate-bridge-s.jpg",
+  "l": "golden-gate-bridge-l.jpg"
+ },
+ "Havana": {
+  "page": "https://en.wikipedia.org/wiki/Havana",
+  "s": "havana-s.jpg",
+  "l": "havana-l.jpg"
+ },
+ "Hạ Long Bay": {
+  "page": "https://en.wikipedia.org/wiki/H%E1%BA%A1_Long_Bay",
+  "s": "ha-long-bay-s.jpg",
+  "l": "ha-long-bay-l.jpg"
+ },
+ "Le Morne Brabant": {
+  "page": "https://en.wikipedia.org/wiki/Le_Morne_Brabant",
+  "s": "le-morne-brabant-s.jpg",
+  "l": "le-morne-brabant-l.jpg"
+ },
+ "Maasai Mara": {
+  "page": "https://en.wikipedia.org/wiki/Maasai_Mara",
+  "s": "maasai-mara-s.jpg",
+  "l": "maasai-mara-l.jpg"
+ },
+ "Machu Picchu": {
+  "page": "https://en.wikipedia.org/wiki/Machu_Picchu",
+  "s": "machu-picchu-s.jpg",
+  "l": "machu-picchu-l.jpg"
+ },
+ "Maldives": {
+  "page": "https://en.wikipedia.org/wiki/Maldives",
+  "s": "maldives-s.png",
+  "l": "maldives-l.png"
+ },
+ "Maspalomas": {
+  "page": "https://en.wikipedia.org/wiki/Maspalomas",
+  "s": "maspalomas-s.jpg",
+  "l": "maspalomas-l.jpg"
+ },
+ "Mexico City": {
+  "page": "https://en.wikipedia.org/wiki/Mexico_City",
+  "s": "mexico-city-s.jpg",
+  "l": "mexico-city-l.jpg"
+ },
+ "New York City": {
+  "page": "https://en.wikipedia.org/wiki/New_York_City",
+  "s": "new-york-city-s.jpg",
+  "l": "new-york-city-l.jpg"
+ },
+ "Oia, Greece": {
+  "page": "https://en.wikipedia.org/wiki/Oia%2C_Greece",
+  "s": "oia-greece-s.jpg",
+  "l": "oia-greece-l.jpg"
+ },
+ "Pedra de Lume": {
+  "page": "https://en.wikipedia.org/wiki/Pedra_de_Lume",
+  "s": "pedra-de-lume-s.jpg",
+  "l": "pedra-de-lume-l.jpg"
+ },
+ "Punta Cana": {
+  "page": "https://en.wikipedia.org/wiki/Punta_Cana",
+  "s": "punta-cana-s.jpg",
+  "l": "punta-cana-l.jpg"
+ },
+ "Railay Beach": {
+  "page": "https://en.wikipedia.org/wiki/Railay_Beach",
+  "s": "railay-beach-s.jpg",
+  "l": "railay-beach-l.jpg"
+ },
+ "Rio de Janeiro": {
+  "page": "https://en.wikipedia.org/wiki/Rio_de_Janeiro",
+  "s": "rio-de-janeiro-s.jpg",
+  "l": "rio-de-janeiro-l.jpg"
+ },
+ "Sigiriya": {
+  "page": "https://en.wikipedia.org/wiki/Sigiriya",
+  "s": "sigiriya-s.jpg",
+  "l": "sigiriya-l.jpg"
+ },
+ "Stone Town": {
+  "page": "https://en.wikipedia.org/wiki/Stone_Town",
+  "s": "stone-town-s.jpg",
+  "l": "stone-town-l.jpg"
+ },
+ "Sydney Opera House": {
+  "page": "https://en.wikipedia.org/wiki/Sydney_Opera_House",
+  "s": "sydney-opera-house-s.jpg",
+  "l": "sydney-opera-house-l.jpg"
+ },
+ "São Miguel Island": {
+  "page": "https://en.wikipedia.org/wiki/S%C3%A3o_Miguel_Island",
+  "s": "sao-miguel-island-s.jpg",
+  "l": "sao-miguel-island-l.jpg"
+ },
+ "Table Mountain": {
+  "page": "https://en.wikipedia.org/wiki/Table_Mountain",
+  "s": "table-mountain-s.jpg",
+  "l": "table-mountain-l.jpg"
+ },
+ "Tanah Lot": {
+  "page": "https://en.wikipedia.org/wiki/Tanah_Lot",
+  "s": "tanah-lot-s.jpg",
+  "l": "tanah-lot-l.jpg"
+ },
+ "Tokyo": {
+  "page": "https://en.wikipedia.org/wiki/Tokyo",
+  "s": "tokyo-s.jpg",
+  "l": "tokyo-l.jpg"
+ },
+ "Wat Arun": {
+  "page": "https://en.wikipedia.org/wiki/Wat_Arun",
+  "s": "wat-arun-s.jpg",
+  "l": "wat-arun-l.jpg"
  }
 }
