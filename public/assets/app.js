@@ -231,7 +231,16 @@
   }
 
   // ---------- Übersicht aller Reisen ----------
-  function renderHub() {
+  // Gemerkte Ziele aus der Inspiration als schmale Leiste auf der Übersicht
+  function ideasHtml() {
+    const favs = new Set(lsGet("inspo.favs", []));
+    const list = (window.INSPIRATION || []).filter((d) => favs.has(d.id));
+    if (!list.length) return "";
+    return `<div class="section"><div class="group-label">Gemerkte Ideen</div><div class="idea-row">${list.map((d) =>
+      `<a class="idea" href="#inspiration/${esc(d.id)}">${wikiSlot(d.wiki, "cover-photo", "thumb")}<div class="t">${esc(d.name)}</div><div class="m">${esc(d.country)}</div></a>`).join("")}
+      <a class="idea-more" href="#inspiration">Alle Ideen</a></div></div>`;
+  }
+  function renderHubList() {
     const order = { now: 0, soon: 1, past: 2 };
     const list = TRIPS.map((t) => ({ t, st: tripStatus(t) }))
       .sort((a, b) => order[a.st.kind] - order[b.st.kind] ||
@@ -259,9 +268,13 @@
     const upcoming = list.filter((x) => x.st.kind !== "past"), past = list.filter((x) => x.st.kind === "past");
     $("#hubList").innerHTML = !list.length ? `<div class="card empty">Noch keine Reise angelegt.</div>` : [
       upcoming.length ? `<div class="section"><div class="group-label">Anstehend</div><div class="hub-list">${upcoming.map(card).join("")}</div></div>` : "",
+      ideasHtml(),
       past.length ? `<div class="section"><div class="group-label">Vergangen</div><div class="hub-list">${past.map(card).join("")}</div></div>` : ""
     ].join("");
     observeWiki($("#hubList"));
+  }
+  function renderHub() {
+    renderHubList();
     initNavbar("Reisen", false);
     registerSW();
   }
@@ -276,8 +289,14 @@
   const SORTS = { tip: "Empfohlen", warm: "Wärmste", price: "Günstig", flight: "Kurzer Flug" };
   const DIST = { "": "Alle", near: "bis 3 Std.", mid: "3–7 Std.", far: "Fernreise" };
   const FAR = 7;              // ab 7 Std. Flug = Fernreise
-  const BUDGET_MAX = 8000;    // Regler ganz rechts = egal
-  const inspo = { q: "", tag: "", warm: false, fav: false, tip: false, dry: false, dist: "", budget: BUDGET_MAX, sort: "tip",
+  const BUDGET_MAX = 20000;   // Regler ganz rechts = egal
+  const saved = lsGet("inspo.prefs", {});
+  const clampInt = (v, lo, hi, d) => { v = Number(v); return Number.isInteger(v) && v >= lo && v <= hi ? v : d; };
+  const inspo = { q: "", tag: "", warm: false, fav: false, tip: false, dry: false,
+    dist: ["near", "mid", "far"].includes(saved.dist) ? saved.dist : "", budget: clampInt(saved.budget, 500, BUDGET_MAX, BUDGET_MAX),
+    sort: SORTS[saved.sort] ? saved.sort : "tip",
+    // Reisegruppe für alle Preise: Personen (Doppelzimmer je 2), Nächte, optional Ausgaben vor Ort
+    pax: clampInt(saved.pax, 1, 8, 2), nights: clampInt(saved.nights, 2, 21, 7), spend: !!saved.spend,
     view: lsGet("inspo.view", "list") === "map" ? "map" : "list",
     // Reisemonat (0–11): zuletzt gewählter, sonst der nächste Monat
     month: (() => { const m = Number(lsGet("inspo.month", NaN)); return Number.isInteger(m) && m >= 0 && m < 12 ? m : (new Date().getMonth() + 1) % 12; })(),
@@ -290,8 +309,20 @@
   const tipRank = (d) => { const i = Object.keys(INSPO_MONTHS[inspo.month + 1] || {}).indexOf(d.id); return i < 0 ? 99 : i; };
   const fmtEuro = (n) => n.toLocaleString("de-DE") + " €";
   const euro = (a, b) => `${a.toLocaleString("de-DE")}–${fmtEuro(b)}`;
-  // Woche zu zweit: 7 Nächte Hotel + 2 Flüge, auf 50 € gerundet
-  const weekCost = (d) => [d.hotel[0] * 7 + d.fly[0] * 2, d.hotel[1] * 7 + d.fly[1] * 2].map((x) => Math.round(x / 50) * 50);
+  const savePrefs = () => lsSet("inspo.prefs", { pax: inspo.pax, nights: inspo.nights, spend: inspo.spend, sort: inspo.sort, dist: inspo.dist, budget: inspo.budget });
+  // Ausgaben vor Ort (Essen, Nahverkehr, Eintritte) pro Person und Tag: grob aus dem Hotel-Preisniveau geschätzt
+  const dailySpend = (d) => d.daily || [Math.round(d.hotel[0] * 0.5 / 5) * 5, Math.round(d.hotel[1] * 0.6 / 5) * 5];
+  const r50 = (x) => Math.round(x / 50) * 50;
+  // Reisekosten für die gewählte Gruppe: Zimmer = Personen/2 aufgerundet, Flug pro Person, auf 50 € gerundet
+  function tripCost(d, pax = inspo.pax, nights = inspo.nights, spend = inspo.spend) {
+    const rooms = Math.ceil(pax / 2), sp = dailySpend(d);
+    const hotel = d.hotel.map((x) => x * rooms * nights), fly = d.fly.map((x) => x * pax);
+    const local = spend ? sp.map((x) => x * pax * nights) : [0, 0];
+    const total = [0, 1].map((i) => r50(hotel[i] + fly[i] + local[i]));
+    return { rooms, hotel: hotel.map(r50), fly: fly.map(r50), local: local.map(r50), daily: sp, total, perPax: total.map((x) => r50(x / pax)) };
+  }
+  const groupText = (pax = inspo.pax, nights = inspo.nights) => `${pax} ${pax === 1 ? "Person" : "Personen"} · ${nights} Nächte`;
+  const groupShort = () => `${inspo.pax} P. · ${inspo.nights} N.`;
   const offSeason = (d) => d.off && [10, 11, 0, 1, 2].includes(inspo.month);
   const rainy = (d, m = inspo.month) => !!d.rain?.includes(m + 1);
   const distOk = (d) => !inspo.dist || (inspo.dist === "near" ? d.flight <= 3 : inspo.dist === "mid" ? d.flight > 3 && d.flight < FAR : d.flight >= FAR);
@@ -303,14 +334,14 @@
       const text = fold([d.name, d.country, d.pitch, ...d.highlights, ...d.tags.map((t) => INSPO_TAGS[t]?.[0]), tipOf(d) || ""].join(" "));
       return terms.every((t) => text.includes(t)) && (!inspo.tag || d.tags.includes(inspo.tag)) &&
         (!inspo.warm || tempOf(d) >= 20) && (!inspo.fav || inspo.favs.has(d.id)) && (!inspo.tip || tipOf(d)) &&
-        (!inspo.dry || !rainy(d)) && distOk(d) && (inspo.budget >= BUDGET_MAX || weekCost(d)[0] <= inspo.budget);
+        (!inspo.dry || !rainy(d)) && distOk(d) && (inspo.budget >= BUDGET_MAX || tripCost(d).total[0] <= inspo.budget);
     });
     // Empfohlen: Monatstipps in ihrer Reihenfolge, danach angenehmstes Wetter (nahe 25 °C, Regenzeit hinten)
     const comfort = (d) => Math.abs(tempOf(d) - 25) + (rainy(d) ? 8 : 0);
     const by = {
       tip: (a, b) => tipRank(a) - tipRank(b) || comfort(a) - comfort(b) || a.flight - b.flight,
       warm: (a, b) => tempOf(b) - tempOf(a) || a.flight - b.flight,
-      price: (a, b) => weekCost(a)[0] + weekCost(a)[1] - weekCost(b)[0] - weekCost(b)[1] || a.flight - b.flight,
+      price: (a, b) => { const x = tripCost(a).total, y = tripCost(b).total; return x[0] + x[1] - y[0] - y[1] || a.flight - b.flight; },
       flight: (a, b) => a.flight - b.flight || tempOf(b) - tempOf(a)
     };
     return list.sort(by[inspo.sort]);
@@ -319,15 +350,16 @@
   const activeFilters = () => [
     inspo.tip && ["tip", `Tipps im ${MONTHS[inspo.month]}`], inspo.fav && ["fav", "Gemerkt"], inspo.warm && ["warm", "Warm ab 20°"],
     inspo.dry && ["dry", "Ohne Regenzeit"], inspo.dist && ["dist", "Flug " + DIST[inspo.dist]],
-    inspo.budget < BUDGET_MAX && ["budget", `Woche bis ${fmtEuro(inspo.budget)}`], inspo.tag && ["tag", INSPO_TAGS[inspo.tag][0]]
+    inspo.budget < BUDGET_MAX && ["budget", `Bis ${fmtEuro(inspo.budget)}`], inspo.tag && ["tag", INSPO_TAGS[inspo.tag][0]]
   ].filter(Boolean);
   function clearFilter(k) {
-    if (k === "all") { Object.assign(inspo, { tip: false, fav: false, warm: false, dry: false, dist: "", budget: BUDGET_MAX, tag: "" }); return; }
-    inspo[k] = k === "budget" ? BUDGET_MAX : k === "dist" || k === "tag" ? "" : false;
+    if (k === "all") Object.assign(inspo, { tip: false, fav: false, warm: false, dry: false, dist: "", budget: BUDGET_MAX, tag: "" });
+    else inspo[k] = k === "budget" ? BUDGET_MAX : k === "dist" || k === "tag" ? "" : false;
+    savePrefs();
   }
 
   function inspoCard(d) {
-    const t = tempOf(d), tip = tipOf(d), wk = weekCost(d);
+    const t = tempOf(d), tip = tipOf(d), c = tripCost(d);
     return `
       <article class="inspo-card" data-inspo="${esc(d.id)}" role="button" tabindex="0" aria-label="${esc(d.name)} – Details">
         <div class="inspo-photo">${wikiSlot(d.wiki, "cover-photo", "large")}
@@ -339,7 +371,7 @@
           <div class="inspo-meta">${esc(d.country)} · ${flightText(d.flight)}</div>
           ${tip ? `<p class="inspo-tip">${ic("sparkles")}${esc(tip)}</p>` : `<p class="inspo-pitch">${esc(d.pitch)}</p>`}
           <div class="inspo-foot">
-            <span class="inspo-price" title="Woche zu zweit: ${euro(...wk)} (Hotel ${euro(...d.hotel)}/Nacht, Flug ${euro(...d.fly)})">${ic("euro")}Woche ab ${fmtEuro(wk[0])}</span>
+            <span class="inspo-price" title="${esc(groupText())}: ${euro(...c.total)} (Hotel ${euro(...d.hotel)}/Nacht, Flug ${euro(...d.fly)} p. P.)">${ic("euro")}ab ${fmtEuro(c.total[0])}</span>
             ${rainy(d) ? `<span class="inspo-off rain">${ic("cloud-rain")}Regenzeit</span>` : offSeason(d) ? `<span class="inspo-off">${ic("info")}Nebensaison</span>` : ""}
           </div>
         </div>
@@ -356,7 +388,8 @@
       act.length > 1 ? `<button class="chip" type="button" data-clear="all">Alle entfernen</button>` : "",
       inspo.favs.size >= 2 ? `<button class="chip chip-cmp" type="button" data-compare>${ic("columns-3")}Vergleichen (${inspo.favs.size})</button>` : ""
     ].join("");
-    $("#inspoCount").textContent = `${list.length} ${list.length === 1 ? "Ziel" : "Ziele"} · ${SORTS[inspo.sort]} · Höchstwerte im ${MONTHS[inspo.month]} · Preise grobe Richtwerte`;
+    $("#inspoGroupBtn span").textContent = groupShort();
+    $("#inspoCount").textContent = `${list.length} ${list.length === 1 ? "Ziel" : "Ziele"} · ${SORTS[inspo.sort]} · Höchstwerte im ${MONTHS[inspo.month]} · Preise gesamt für ${groupText()}${inspo.spend ? " inkl. vor Ort" : ""} (grobe Richtwerte)`;
     $("#inspoGrid").hidden = inspo.view !== "list";
     $("#inspoMapBox").hidden = inspo.view !== "map";
     if (inspo.view === "map") { $("#inspoGrid").innerHTML = ""; renderWorldMap(list); return; }
@@ -434,9 +467,9 @@
       <h2 id="sheetTitle">Filter &amp; Sortierung</h2>
       <h3 class="sheet-h">Sortieren nach</h3>${seg("sort", SORTS, inspo.sort)}
       <h3 class="sheet-h">Flugzeit ab Deutschland</h3>${seg("dist", DIST, inspo.dist)}
-      <h3 class="sheet-h">Budget: Woche zu zweit <b class="f-val" id="fBudgetVal"></b></h3>
-      <input class="range" type="range" id="fBudget" min="1000" max="${BUDGET_MAX}" step="250" value="${inspo.budget}" aria-label="Budget für eine Woche zu zweit">
-      <p class="inspo-fine">7 Nächte Hotel (Mittelklasse) + 2 Flüge, jeweils günstiger Richtwert</p>
+      <h3 class="sheet-h">Budget gesamt <b class="f-val" id="fBudgetVal"></b></h3>
+      <input class="range" type="range" id="fBudget" min="500" max="${BUDGET_MAX}" step="250" value="${inspo.budget}" aria-label="Budget gesamt">
+      <p class="inspo-fine">Für ${esc(groupText())}${inspo.spend ? " inkl. Ausgaben vor Ort" : ""}, günstiger Richtwert · <button class="link" type="button" data-group>Reisende ändern</button></p>
       <h3 class="sheet-h">Anzeigen</h3>
       <div class="chips wrap">
         ${tog("tip", `Tipps im ${MONTHS[inspo.month]}`, "sparkles")}${tog("fav", "Gemerkt", "heart")}
@@ -470,7 +503,7 @@
     const ds = INSPO.filter((d) => inspo.favs.has(d.id));
     if (ds.length < 2) return;
     sheetMode = "compare";
-    const wk = Object.fromEntries(ds.map((d) => [d.id, weekCost(d)]));
+    const wk = Object.fromEntries(ds.map((d) => [d.id, tripCost(d).total]));
     const best = (fn, max) => { const v = ds.map(fn); const b = max ? Math.max(...v) : Math.min(...v); return (d) => fn(d) === b ? " best" : ""; };
     const bt = best((d) => tempOf(d), true), bf = best((d) => d.flight), bw = best((d) => wk[d.id][0]);
     const row = (label, cell) => `<tr><th scope="row">${label}</th>${ds.map(cell).join("")}</tr>`;
@@ -483,7 +516,7 @@
           ${row(`Temperatur`, (d) => `<td class="${bt(d)}">${tempOf(d)} °C</td>`)}
           ${row("Regenzeit", (d) => `<td>${rainy(d) ? `${ic("cloud-rain")}ja` : "–"}</td>`)}
           ${row("Flugzeit", (d) => `<td class="${bf(d)}">${num(d.flight)} Std.</td>`)}
-          ${row("Woche zu zweit", (d) => `<td class="${bw(d)}">${euro(...wk[d.id])}</td>`)}
+          ${row(`Gesamt (${inspo.pax} P., ${inspo.nights} N.)`, (d) => `<td class="${bw(d)}">${euro(...wk[d.id])}</td>`)}
           ${row("Hotel / Nacht", (d) => `<td>${euro(...d.hotel)}</td>`)}
           ${row("Flug p. P.", (d) => `<td>${euro(...d.fly)}</td>`)}
           ${row(`Tipp im ${MON[inspo.month]}`, (d) => `<td class="small">${esc(tipOf(d) || "–")}</td>`)}
@@ -499,7 +532,7 @@
   function openInspo(id) {
     const d = INSPO.find((x) => x.id === id); if (!d) return;
     inspoOpen = id; sheetMode = "inspo";
-    const t = tempOf(d), tip = tipOf(d), wk = weekCost(d);
+    const t = tempOf(d), tip = tipOf(d);
     const good = MONTHS.map((name, m) => [name, tipOf(d, m)]).filter(([, why]) => why);
     showSheet(`
       ${d.wiki ? `<div class="sheet-photo" data-wiki="${esc(d.wiki)}" data-size="large"><a data-credit href="https://wikipedia.org" target="_blank" rel="noopener">Foto: Wikipedia</a></div>` : ""}
@@ -520,11 +553,7 @@
         ${rainy(d) ? `<div class="notice inspo-notice rain">${ic("cloud-rain")}<span>Im ${MONTHS[inspo.month]} ist dort Regenzeit – oft kurze, kräftige Schauer, schwül, teils Stürme.</span></div>` : ""}
         ${offSeason(d) ? `<div class="notice inspo-notice">${ic("info")}<span>${esc(d.off)}</span></div>` : ""}
         <h3 class="sheet-h">Kosten (grobe Richtwerte)</h3>
-        <div class="list inspo-costs">
-          <div class="row"><span class="cost-ic">${ic("bed-double")}</span><div class="main"><div class="title">Hotel, Mittelklasse (DZ)</div></div><div class="trail"><b>${euro(...d.hotel)}<small> / Nacht</small></b></div></div>
-          <div class="row"><span class="cost-ic">${ic("plane")}</span><div class="main"><div class="title">Flug hin &amp; zurück</div></div><div class="trail"><b>${euro(...d.fly)}<small> p. P.</small></b></div></div>
-          <div class="row"><span class="cost-ic">${ic("euro")}</span><div class="main"><div class="title">Woche zu zweit</div><div class="text">7 Nächte Hotel + 2 Flüge</div></div><div class="trail"><b>${euro(...wk)}</b></div></div>
-        </div>
+        <div id="costBox">${costBoxHtml(d)}</div>
         <p class="inspo-fine">Je nach Saison, Ferien und Buchungszeitpunkt – aktuelle Preise über die Links unten.</p>
         <h3 class="sheet-h">Klima (Tageshöchstwerte)</h3>
         <div class="clim" role="img" aria-label="Höchsttemperaturen Januar bis Dezember: ${d.temps.join(", ")} Grad">
@@ -544,6 +573,51 @@
         </div>
       </div>`);
   }
+  // Kostenrechner im Detailblatt: Personen, Nächte, Ausgaben vor Ort – gilt auch für Karten, Filter und Vergleich
+  const stepper = (k, val, lo, hi, label) => `<div class="stepper" role="group" aria-label="${label}">
+    <button type="button" data-step="${k}" data-d="-1" aria-label="${label} weniger"${val <= lo ? " disabled" : ""}>−</button>
+    <b>${val}</b><button type="button" data-step="${k}" data-d="1" aria-label="${label} mehr"${val >= hi ? " disabled" : ""}>+</button></div>`;
+  function costBoxHtml(d) {
+    const c = tripCost(d);
+    return `<div class="list inspo-costs">
+      <div class="row"><span class="cost-ic">${ic("users")}</span><div class="main"><div class="title">Reisende</div></div>${stepper("pax", inspo.pax, 1, 8, "Personen")}</div>
+      <div class="row"><span class="cost-ic">${ic("moon")}</span><div class="main"><div class="title">Nächte</div></div>${stepper("nights", inspo.nights, 2, 21, "Nächte")}</div>
+      <label class="row"><span class="cost-ic">${ic("utensils")}</span><div class="main"><div class="title">Ausgaben vor Ort</div><div class="text">Essen, Nahverkehr, Eintritte · ca. ${euro(...c.daily)} p. P./Tag</div></div>
+        <input class="switch" type="checkbox" data-spend${inspo.spend ? " checked" : ""}></label>
+    </div>
+    <div class="list inspo-costs cost-sum">
+      <div class="row"><span class="cost-ic">${ic("bed-double")}</span><div class="main"><div class="title">Hotel</div><div class="text">${c.rooms} ${c.rooms === 1 ? "Doppelzimmer" : "Doppelzimmer"} × ${inspo.nights} Nächte à ${euro(...d.hotel)}</div></div><div class="trail"><b>${euro(...c.hotel)}</b></div></div>
+      <div class="row"><span class="cost-ic">${ic("plane")}</span><div class="main"><div class="title">Flüge</div><div class="text">${inspo.pax} × ${euro(...d.fly)} hin &amp; zurück</div></div><div class="trail"><b>${euro(...c.fly)}</b></div></div>
+      ${inspo.spend ? `<div class="row"><span class="cost-ic">${ic("utensils")}</span><div class="main"><div class="title">Vor Ort</div><div class="text">${inspo.pax} × ${inspo.nights} Tage</div></div><div class="trail"><b>${euro(...c.local)}</b></div></div>` : ""}
+      <div class="row total"><span class="cost-ic">${ic("euro")}</span><div class="main"><div class="title">Gesamt</div><div class="text">${inspo.pax > 1 ? `ca. ${euro(...c.perPax)} pro Person` : "für dich allein"}</div></div><div class="trail"><b>${euro(...c.total)}</b></div></div>
+    </div>`;
+  }
+  function changeGroup(k, delta) {
+    if (k === "pax") inspo.pax = Math.min(8, Math.max(1, inspo.pax + delta));
+    if (k === "nights") inspo.nights = Math.min(21, Math.max(2, inspo.nights + delta));
+    savePrefs(); renderInspo();
+    if ($("#costBox") && inspoOpen) $("#costBox").innerHTML = costBoxHtml(INSPO.find((x) => x.id === inspoOpen));
+    if ($("#groupBox")) $("#groupBox").innerHTML = groupBoxHtml();
+  }
+  // Eigenes Blatt „Reisende & Dauer“ (Knopf in der Leiste)
+  function groupBoxHtml() {
+    return `<div class="list inspo-costs">
+      <div class="row"><span class="cost-ic">${ic("users")}</span><div class="main"><div class="title">Reisende</div><div class="text">Je 2 Personen ein Doppelzimmer</div></div>${stepper("pax", inspo.pax, 1, 8, "Personen")}</div>
+      <div class="row"><span class="cost-ic">${ic("moon")}</span><div class="main"><div class="title">Nächte</div></div>${stepper("nights", inspo.nights, 2, 21, "Nächte")}</div>
+      <label class="row"><span class="cost-ic">${ic("utensils")}</span><div class="main"><div class="title">Ausgaben vor Ort einrechnen</div><div class="text">Essen, Nahverkehr, Eintritte (Schätzung)</div></div>
+        <input class="switch" type="checkbox" data-spend${inspo.spend ? " checked" : ""}></label>
+    </div>`;
+  }
+  function openGroupSheet() {
+    sheetMode = "group"; inspoOpen = null;
+    showSheet(`<div class="sheet-content">
+      <h2 id="sheetTitle">Reisende &amp; Dauer</h2>
+      <p class="sheet-note">Alle Preise, das Budget und der Vergleich rechnen damit.</p>
+      <div id="groupBox">${groupBoxHtml()}</div>
+      <div class="sheet-acts"><button class="btn btn-fill btn-lg" type="button" data-close style="grid-column:1/-1">Fertig</button></div>
+    </div>`);
+  }
+
   async function shareInspo(id) {
     const d = INSPO.find((x) => x.id === id); if (!d) return;
     const url = `${location.origin}/#inspiration/${encodeURIComponent(d.id)}`;
@@ -572,7 +646,8 @@
       <p class="sheet-note">Der Wochenplan wird als Entwurf übernommen – mit Tagesplan, Checklisten, Wetter und Karte. Buchungen kannst du danach unter „Infos“ eintragen.</p>
       <div class="list form">
         <label class="row"><span class="main title">Anreise</span><input type="date" id="planStart" value="${defaultStart()}" min="${isoDay(new Date())}"></label>
-        <label class="row"><span class="main title">Nächte</span><select id="planNights">${Array.from({ length: 12 }, (_, i) => i + 3).map((n) => `<option value="${n}"${n === 7 ? " selected" : ""}>${n}</option>`).join("")}</select></label>
+        <label class="row"><span class="main title">Nächte</span><select id="planNights">${Array.from({ length: 19 }, (_, i) => i + 2).map((n) => `<option value="${n}"${n === inspo.nights ? " selected" : ""}>${n}</option>`).join("")}</select></label>
+        <label class="row"><span class="main title">Personen</span><select id="planPax">${Array.from({ length: 8 }, (_, i) => i + 1).map((n) => `<option value="${n}"${n === inspo.pax ? " selected" : ""}>${n}</option>`).join("")}</select></label>
       </div>
       <p class="inspo-fine">Gespeichert nur in diesem Browser.</p>
       <div class="sheet-acts">
@@ -582,11 +657,11 @@
     </div>`);
   }
   function createMyTrip(destId) {
-    const start = $("#planStart").value, nights = Number($("#planNights").value) || 7;
+    const start = $("#planStart").value, nights = Number($("#planNights").value) || 7, pax = Number($("#planPax").value) || 2;
     if (!/^\d{4}-\d\d-\d\d$/.test(start)) { $("#planStart").focus(); return; }
     const id = `x-${destId}-${start}`;
     const list = lsGet("mytrips", []).filter((t) => t.id !== id);
-    list.push({ id, dest: destId, start, nights });
+    list.push({ id, dest: destId, start, nights, pax });
     lsSet("mytrips", list);
     location.href = `/${id}/`;
   }
@@ -594,7 +669,8 @@
     const d = INSPO.find((x) => x.id === t.dest);
     if (!d || !/^\d{4}-\d\d-\d\d$/.test(t.start)) return null;
     const n = Math.min(Math.max(Number(t.nights) || 7, 1), 30) + 1, s = dateOf(t.start), m = s.getMonth();
-    const name = shortName(d), far = d.flight >= FAR, temp = d.temps[m], wk = weekCost(d), tip = tipOf(d, m);
+    const pax = clampInt(t.pax, 1, 8, 2), cost = tripCost(d, pax, n - 1, true);
+    const name = shortName(d), far = d.flight >= FAR, temp = d.temps[m], tip = tipOf(d, m);
     const highlights = d.highlights.map((h, i) => ({ id: "h" + (i + 1), cats: ["highlight"], name: h, wiki: "" }));
     const match = (part) => highlights.find((h) => { const a = fold(h.name), b = fold(part); return a.includes(b) || b.includes(a.split(/[ (]/)[0]); });
     const days = Array.from({ length: n }, (_, i) => {
@@ -616,12 +692,13 @@
       subtitle: `${d.country} · eigener Entwurf`, start: t.start, end: isoDay(end),
       center: { lat: d.ll[0], lng: d.ll[1], zoom: 11, name }, near: 3,
       notice: "Eigener Entwurf aus der Inspiration – gespeichert nur in diesem Browser.",
-      cost: `ca. ${euro(...wk)} / Woche zu zweit`, hotel: null,
+      cost: `ca. ${euro(...cost.total)} für ${pax} ${pax === 1 ? "Person" : "Personen"}`, hotel: null,
       base: { name, label: "vom Zentrum", around: "um das Zentrum", lat: d.ll[0], lng: d.ll[1] },
       facts: [
         { label: "Dauer", value: `${n} Tage / ${n - 1} Nächte` },
         { label: `Wetter im ${MONTHS[m]}`, value: `ca. ${temp} °C tagsüber${rainy(d, m) ? ", Regenzeit" : ""}` },
-        { label: "Anreise", value: `ca. ${flightText(d.flight)}` }
+        { label: "Anreise", value: `ca. ${flightText(d.flight)}` },
+        { label: "Kosten (Richtwert)", value: `${euro(...cost.total)} für ${pax} ${pax === 1 ? "Person" : "Personen"} inkl. vor Ort` }
       ],
       images: {}, days,
       cats: { ort: { label: "Ziel", icon: "map-pin", color: "#34566f" }, highlight: { label: "Highlights", icon: "star", color: "#007AFF" } },
@@ -642,7 +719,7 @@
       infos: [
         { icon: "sun", title: `Wetter im ${MONTHS[m]}`, text: `Üblich ca. ${temp} °C tagsüber.${rainy(d, m) ? " Regenzeit: kurze, kräftige Schauer einplanen." : ""}` },
         ...(tip ? [{ icon: "sparkles", title: `Tipp im ${MONTHS[m]}`, text: tip }] : []),
-        { icon: "euro", title: "Kosten (Richtwerte)", text: `Hotel ${euro(...d.hotel)} pro Nacht, Flug ${euro(...d.fly)} hin & zurück pro Person.` },
+        { icon: "euro", title: "Kosten (Richtwerte)", text: `Hotel ${euro(...cost.hotel)} (${cost.rooms} DZ à ${euro(...d.hotel)}/Nacht), Flüge ${euro(...cost.fly)}, vor Ort ${euro(...cost.local)} (ca. ${euro(...cost.daily)} p. P./Tag). Gesamt ${euro(...cost.total)}.` },
         ...(d.off ? [{ icon: "info", title: "Nebensaison", text: d.off }] : [])
       ]
     };
@@ -659,12 +736,14 @@
       setInspoMonth(Number(c.dataset.clim)); openInspo(inspoOpen); panel.scrollTop = y;
       return;
     }
+    const st = t.closest("[data-step]"); if (st) return changeGroup(st.dataset.step, Number(st.dataset.d));
+    if (t.closest("[data-group]")) return openGroupSheet();
     const mp = t.closest("[data-month-pick]"); if (mp) { setInspoMonth(Number(mp.dataset.monthPick)); return closeSheet(); }
     const seg = t.closest("[data-f] [data-v]");
-    if (seg) { inspo[seg.parentElement.dataset.f] = seg.dataset.v; return redrawFilterSheet(); }
+    if (seg) { inspo[seg.parentElement.dataset.f] = seg.dataset.v; savePrefs(); return redrawFilterSheet(); }
     const ft = t.closest("[data-ft]"); if (ft) { inspo[ft.dataset.ft] = !inspo[ft.dataset.ft]; return redrawFilterSheet(); }
     const tg = t.closest("[data-ftag]"); if (tg) { inspo.tag = inspo.tag === tg.dataset.ftag ? "" : tg.dataset.ftag; return redrawFilterSheet(); }
-    if (t.closest("[data-freset]")) { clearFilter("all"); inspo.sort = "tip"; return redrawFilterSheet(); }
+    if (t.closest("[data-freset]")) { inspo.sort = "tip"; clearFilter("all"); return redrawFilterSheet(); }
     const op = t.closest("[data-inspo-open]"); if (op) return openInspo(op.dataset.inspoOpen);
     const sh = t.closest("[data-share-inspo]"); if (sh) return shareInspo(sh.dataset.shareInspo);
     const pl = t.closest("[data-plan]"); if (pl) return openPlanSheet(pl.dataset.plan);
@@ -704,11 +783,18 @@
       inspo.budget = Number(e.target.value);
       syncFilterSheet(); renderInspo();
     });
+    $("#sheetBody").addEventListener("change", (e) => {
+      if (e.target.id === "fBudget") savePrefs();
+      if (!e.target.matches("[data-spend]")) return;
+      inspo.spend = e.target.checked; changeGroup("", 0);
+    });
+    $("#inspoGroupBtn").addEventListener("click", openGroupSheet);
     renderInspo();
   }
   // Reiter der Startseite: Meine Reisen | Inspiration (#inspiration)
   function hubRoute() {
     const tab = location.hash.startsWith("#inspiration") ? "inspiration" : "reisen";
+    if (tab === "reisen" && inspoReady) renderHubList();  // gemerkte Ideen können sich geändert haben
     $("#hubList").hidden = tab !== "reisen";
     $("#inspo").hidden = tab !== "inspiration";
     $("#hubTabs").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.hubtab === tab)));
