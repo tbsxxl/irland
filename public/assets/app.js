@@ -118,6 +118,55 @@
   // Suche ohne Akzente: „Mimi“ findet „Mimì“, „cafe“ findet „Caffè“
   const fold = (t) => String(t || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 
+  const ext = (url, label, icon = "arrow-up-right", cls = "btn") =>
+    `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${ic(icon)}${esc(label)}</a>`;
+
+  // ---------- Detailblatt (allgemein): von unten, schließt per ×, Hintergrund, Wischen, Escape oder Zurück ----------
+  let sheetFrom = null, sheetHistory = false;
+  function showSheet(html) {
+    $("#sheetBody").innerHTML = html;
+    const sheet = $("#sheet"), panel = $(".sheet-panel");
+    sheetFrom = document.activeElement;
+    sheet.hidden = false;
+    panel.scrollTop = 0;
+    requestAnimationFrame(() => sheet.classList.add("is-open"));
+    document.documentElement.classList.add("has-sheet");
+    observeWiki($("#sheetBody"));
+    panel.focus({ preventScroll: true });
+    if (!sheetHistory) { history.pushState({ sheet: 1 }, ""); sheetHistory = true; }
+  }
+  function closeSheet(fromHistory = false) {
+    const sheet = $("#sheet");
+    if (sheet.hidden) return;
+    sheet.classList.remove("is-open");
+    document.documentElement.classList.remove("has-sheet");
+    setTimeout(() => { sheet.hidden = true; $(".sheet-panel").style.transform = ""; }, 260);
+    if (sheetHistory && !fromHistory) { sheetHistory = false; history.back(); }
+    sheetHistory = false;
+    sheetFrom && sheetFrom.focus && sheetFrom.focus({ preventScroll: true });
+  }
+  function initSheet(onClick) {
+    const sheet = $("#sheet"), panel = $(".sheet-panel");
+    sheet.addEventListener("click", (e) => {
+      if (e.target.closest("[data-close]")) return closeSheet();
+      onClick && onClick(e);
+    });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+    window.addEventListener("popstate", () => { if (sheetHistory) { sheetHistory = false; closeSheet(true); } });
+    let y0 = null, dy = 0;
+    panel.addEventListener("touchstart", (e) => { if (panel.scrollTop <= 0) { y0 = e.touches[0].clientY; dy = 0; } }, { passive: true });
+    panel.addEventListener("touchmove", (e) => {
+      if (y0 === null) return;
+      dy = Math.max(0, e.touches[0].clientY - y0);
+      panel.style.transform = dy ? `translateY(${dy}px)` : "";
+    }, { passive: true });
+    panel.addEventListener("touchend", () => {
+      if (y0 === null) return;
+      y0 = null;
+      if (dy > 90) closeSheet(); else panel.style.transform = "";
+    });
+  }
+
   // ---------- Kompakte Titelleiste: erscheint, sobald die große Überschrift aus dem Bild ist ----------
   function initNavbar(title, back) {
     $("#navTitle").textContent = title;
@@ -166,6 +215,136 @@
     registerSW();
   }
 
+  // ---------- Inspiration: andere mögliche Ziele (assets/inspiration.js) ----------
+  const INSPO = window.INSPIRATION || [];
+  const INSPO_TAGS = { strand: ["Strand", "waves"], kultur: ["Kultur & Geschichte", "landmark"], stadt: ["Großstadt", "building-2"],
+    natur: ["Natur", "mountain"], essen: ["Essen & Trinken", "utensils"], nacht: ["Nachtleben", "moon"] };
+  const inspo = { q: "", tag: "", warm: false, fav: false, sort: "warm",
+    favs: new Set((() => { try { return JSON.parse(localStorage.getItem("inspo.favs")) || []; } catch { return []; } })()) };
+  const tempClass = (t) => t >= 18 ? "hot" : t >= 13 ? "mild" : "cold";
+  const flightText = (h) => `${String(h).replace(".5", "½").replace(".25", "¼")} Std. Flug`;
+
+  function inspoVisible() {
+    const terms = fold(inspo.q).split(/\s+/).filter(Boolean);
+    const list = INSPO.filter((d) => {
+      const text = fold([d.name, d.country, d.pitch, ...d.highlights, ...d.tags.map((t) => INSPO_TAGS[t]?.[0])].join(" "));
+      return terms.every((t) => text.includes(t)) && (!inspo.tag || d.tags.includes(inspo.tag)) &&
+        (!inspo.warm || d.temp >= 18) && (!inspo.fav || inspo.favs.has(d.id));
+    });
+    const by = { warm: (a, b) => b.temp - a.temp || a.flight - b.flight, flight: (a, b) => a.flight - b.flight || b.temp - a.temp, az: (a, b) => a.name.localeCompare(b.name, "de") };
+    return list.sort(by[inspo.sort]);
+  }
+  function renderInspo() {
+    const list = inspoVisible();
+    $("#inspoCount").textContent = `${list.length} ${list.length === 1 ? "Ziel" : "Ziele"} · Temperatur = übliche Tageshöchstwerte im November`;
+    $("#inspoGrid").innerHTML = list.length ? list.map((d) => `
+      <article class="inspo-card" data-inspo="${esc(d.id)}" role="button" tabindex="0" aria-label="${esc(d.name)} – Details">
+        <div class="inspo-photo">${wikiSlot(d.wiki, "cover-photo", "large")}
+          <span class="temp ${tempClass(d.temp)}">${ic(d.temp >= 18 ? "sun" : d.temp >= 13 ? "cloud-sun" : "cloud")}${d.temp}°</span>
+          <button class="fav inspo-fav" type="button" data-inspo-fav="${esc(d.id)}" aria-pressed="${inspo.favs.has(d.id)}" aria-label="${esc(d.name)} merken">${ic("heart")}</button>
+        </div>
+        <div class="inspo-body">
+          <div class="inspo-name">${esc(d.name)}</div>
+          <div class="inspo-meta">${esc(d.country)} · ${flightText(d.flight)}</div>
+          <p class="inspo-pitch">${esc(d.pitch)}</p>
+          ${d.off ? `<div class="inspo-off">${ic("info")}Nebensaison</div>` : ""}
+        </div>
+      </article>`).join("") : `<div class="card empty">Kein Ziel passt zu den Filtern.</div>`;
+    observeWiki($("#inspoGrid"));
+  }
+  function syncInspoChips() {
+    $("#inspoChips").querySelectorAll(".chip").forEach((c) => {
+      const k = c.dataset.k;
+      c.setAttribute("aria-pressed", String(k === "all" ? !inspo.tag && !inspo.warm && !inspo.fav : k === "warm" ? inspo.warm : k === "fav" ? inspo.fav : inspo.tag === k));
+    });
+    $("#inspoChips [data-favcount]").textContent = inspo.favs.size ? ` ${inspo.favs.size}` : "";
+  }
+  function toggleInspoFav(id) {
+    const on = !inspo.favs.has(id);
+    on ? inspo.favs.add(id) : inspo.favs.delete(id);
+    try { localStorage.setItem("inspo.favs", JSON.stringify([...inspo.favs])); } catch { /* privat */ }
+    document.querySelectorAll(`[data-inspo-fav="${CSS.escape(id)}"]`).forEach((b) => {
+      b.setAttribute("aria-pressed", String(on));
+      const label = b.querySelector("span"); if (label) label.textContent = on ? "Gemerkt" : "Merken";
+    });
+    syncInspoChips();
+    if (inspo.fav) renderInspo();
+  }
+  function openInspo(id) {
+    const d = INSPO.find((x) => x.id === id); if (!d) return;
+    showSheet(`
+      ${d.wiki ? `<div class="sheet-photo" data-wiki="${esc(d.wiki)}" data-size="large"><a data-credit href="https://wikipedia.org" target="_blank" rel="noopener">Foto: Wikipedia</a></div>` : ""}
+      <div class="sheet-content">
+        <div class="sheet-cat">
+          <span class="t-${tempClass(d.temp)}">${ic("sun")}ca. ${d.temp} °C im November</span>
+          <span>${ic("plane")}ca. ${flightText(d.flight)}</span>
+          ${d.tags.map((t) => INSPO_TAGS[t] ? `<span>${ic(INSPO_TAGS[t][1])}${esc(INSPO_TAGS[t][0])}</span>` : "").join("")}
+        </div>
+        <h2 id="sheetTitle">${esc(d.name)}</h2>
+        <div class="meta"><span>${esc(d.country)}</span></div>
+        <p class="sheet-note">${esc(d.pitch)}</p>
+        ${d.off ? `<div class="notice inspo-notice">${ic("info")}<span>${esc(d.off)}</span></div>` : ""}
+        <h3 class="sheet-h">Highlights</h3>
+        <ul class="sheet-list">${d.highlights.map((h) => `<li>${ic("star")}${esc(h)}</li>`).join("")}</ul>
+        <h3 class="sheet-h">Eine Woche in ${esc(d.name)}</h3>
+        <ol class="week">${d.week.map((w, i) => `<li><b>Tag ${i + 1}</b><span>${esc(w)}</span></li>`).join("")}</ol>
+        <div class="sheet-acts">
+          ${ext("https://www.google.com/travel/flights?q=" + encodeURIComponent("Flüge nach " + d.name.replace(/ \(.*\)/, "")), "Flüge suchen", "plane", "btn btn-fill btn-lg")}
+          ${ext("https://www.google.com/travel/hotels/" + encodeURIComponent(d.name.replace(/ \(.*\)/, "")), "Unterkünfte", "bed-double", "btn btn-lg")}
+          ${ext("https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(d.name + ", " + d.country), "Karte", "map", "btn btn-lg")}
+          <button class="btn btn-lg fav-btn" type="button" data-inspo-fav="${esc(d.id)}" aria-pressed="${inspo.favs.has(d.id)}">${ic("heart")}<span>${inspo.favs.has(d.id) ? "Gemerkt" : "Merken"}</span></button>
+        </div>
+      </div>`);
+  }
+  function initInspo() {
+    $("#inspoChips").innerHTML = [
+      `<button class="chip" type="button" data-k="all" aria-pressed="true">Alle</button>`,
+      `<button class="chip chip-fav" type="button" data-k="fav">${ic("heart")}Gemerkt<span data-favcount></span></button>`,
+      `<button class="chip" type="button" data-k="warm" style="--c:#FF9500">${ic("sun")}Warm im Nov. (ab 18°)</button>`,
+      ...Object.entries(INSPO_TAGS).map(([k, [label, icon]]) => `<button class="chip" type="button" data-k="${k}">${ic(icon)}${esc(label)}</button>`)
+    ].join("");
+    $("#inspoQ").placeholder = `Suchen in ${INSPO.length} Zielen`;
+    syncInspoChips();
+    $("#inspoChips").addEventListener("click", (e) => {
+      const c = e.target.closest(".chip"); if (!c) return;
+      const k = c.dataset.k;
+      if (k === "all") { inspo.tag = ""; inspo.warm = false; inspo.fav = false; }
+      else if (k === "warm") inspo.warm = !inspo.warm;
+      else if (k === "fav") inspo.fav = !inspo.fav;
+      else inspo.tag = inspo.tag === k ? "" : k;
+      syncInspoChips(); renderInspo();
+    });
+    let t;
+    $("#inspoQ").addEventListener("input", (e) => { clearTimeout(t); t = setTimeout(() => { inspo.q = e.target.value.trim(); renderInspo(); }, 120); });
+    $("#inspoSort").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-sort]"); if (!b) return;
+      inspo.sort = b.dataset.sort;
+      $("#inspoSort").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+      renderInspo();
+    });
+    $("#inspoGrid").addEventListener("click", (e) => {
+      const f = e.target.closest("[data-inspo-fav]");
+      if (f) { toggleInspoFav(f.dataset.inspoFav); return; }
+      const c = e.target.closest("[data-inspo]");
+      if (c) openInspo(c.dataset.inspo);
+    });
+    $("#inspoGrid").addEventListener("keydown", (e) => {
+      const c = e.target.closest("[data-inspo]");
+      if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openInspo(c.dataset.inspo); }
+    });
+    renderInspo();
+  }
+  // Reiter der Startseite: Meine Reisen | Inspiration (#inspiration)
+  function hubRoute() {
+    const tab = location.hash.startsWith("#inspiration") ? "inspiration" : "reisen";
+    $("#hubList").hidden = tab !== "reisen";
+    $("#inspo").hidden = tab !== "inspiration";
+    $("#hubTabs").querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.hubtab === tab)));
+    if (tab === "inspiration" && !$("#inspoGrid").childElementCount) initInspo();
+    const id = location.hash.split("/")[1];
+    if (id) openInspo(decodeURIComponent(id));
+  }
+
   // ---------- Welche Seite? ----------
   const slug = decodeURIComponent(location.pathname.split("/").filter(Boolean)[0] || "");
   const TRIP = TRIPS.find((t) => t.id === slug);
@@ -179,8 +358,15 @@
     };
     if (!slug && legacy()) return;
     if (slug) history.replaceState(null, "", "/");
-    window.addEventListener("hashchange", legacy);
+    window.addEventListener("hashchange", () => { if (!legacy()) { if (!$("#sheet").hidden) { sheetHistory = false; closeSheet(true); } hubRoute(); } });
     renderHub();
+    initSheet((e) => { const f = e.target.closest("[data-inspo-fav]"); if (f) toggleInspoFav(f.dataset.inspoFav); });
+    $("#hubTabs").addEventListener("click", (e) => {
+      const b = e.target.closest("[data-hubtab]"); if (!b) return;
+      history.replaceState(null, "", b.dataset.hubtab === "inspiration" ? "#inspiration" : location.pathname);
+      hubRoute();
+    });
+    hubRoute();
     return;
   }
 
@@ -218,8 +404,6 @@
     setTimeout(() => t.classList.add("out"), 1800);
     setTimeout(() => t.remove(), 2200);
   }
-  const ext = (url, label, icon = "arrow-up-right", cls = "btn") =>
-    `<a class="${cls}" href="${esc(url)}" target="_blank" rel="noopener">${ic(icon)}${esc(label)}</a>`;
   const linkIcon = (label) => /ticket/i.test(label) ? "ticket" : /reserv/i.test(label) ? "utensils" : /karte/i.test(label) ? "map" : "arrow-up-right";
 
   // Bezugspunkt für Entfernungen: eigener Standort, sonst Hotel, sonst ein fester Punkt der Reise (z. B. der Dom)
@@ -635,8 +819,7 @@
     toast(on ? "Gemerkt" : "Nicht mehr gemerkt");
   }
 
-  // ---------- Detailblatt (wie in Apple Karten): Foto, Infos, alle Aktionen ----------
-  let sheetFrom = null, sheetHistory = false;
+  // ---------- Detailblatt eines Orts (wie in Apple Karten): Foto, Infos, alle Aktionen ----------
   function openSheet(id) {
     const p = byId[id]; if (!p) return;
     const cats = catsOf(p);
@@ -646,7 +829,7 @@
       p.kind ? `<span>${esc(p.kind)}</span>` : "", p.price ? `<span>${esc(p.price)}</span>` : "",
       p.free ? `<span class="free">FREI</span>` : ""
     ].filter(Boolean).join("");
-    $("#sheetBody").innerHTML = `
+    showSheet(`
       ${p.wiki ? `<div class="sheet-photo" data-wiki="${esc(p.wiki)}" data-size="large"><a data-credit href="https://wikipedia.org" target="_blank" rel="noopener">Foto: Wikipedia</a></div>` : ""}
       <div class="sheet-content">
         <div class="sheet-cat">${cats.map((c) => `<span style="--c:${esc(c.color)}">${ic(c.icon)}${esc(c.label)}</span>`).join("")}${p.city ? `<span>${ic("map-pin")}${esc(p.city)}</span>` : ""}</div>
@@ -660,55 +843,18 @@
           ${p.url ? ext(p.url, /tripadvisor/.test(p.url) ? "Tripadvisor" : "Website", "globe", "btn btn-lg") : ""}
           <button class="btn btn-lg fav-btn" type="button" data-fav="${esc(p.id)}" aria-pressed="${state.favs.has(p.id)}">${ic("heart")}<span>${state.favs.has(p.id) ? "Gemerkt" : "Merken"}</span></button>
         </div>
-      </div>`;
-    const sheet = $("#sheet");
-    sheetFrom = document.activeElement;
-    sheet.hidden = false;
-    requestAnimationFrame(() => sheet.classList.add("is-open"));
-    document.documentElement.classList.add("has-sheet");
-    observeWiki($("#sheetBody"));
-    $(".sheet-panel").focus({ preventScroll: true });
-    if (!sheetHistory) { history.pushState({ sheet: 1 }, ""); sheetHistory = true; }
+      </div>`);
   }
-  function closeSheet(fromHistory = false) {
-    const sheet = $("#sheet");
-    if (sheet.hidden) return;
-    sheet.classList.remove("is-open");
-    document.documentElement.classList.remove("has-sheet");
-    setTimeout(() => { sheet.hidden = true; $(".sheet-panel").style.transform = ""; }, 260);
-    if (sheetHistory && !fromHistory) { sheetHistory = false; history.back(); }
-    sheetHistory = false;
-    sheetFrom && sheetFrom.focus && sheetFrom.focus({ preventScroll: true });
-  }
-  function initSheet() {
-    const sheet = $("#sheet"), panel = $(".sheet-panel");
-    sheet.addEventListener("click", (e) => {
-      if (e.target.closest("[data-close]")) return closeSheet();
-      const f = e.target.closest("[data-fav]");
-      if (f) return toggleFav(f.dataset.fav);
-      const m = e.target.closest("[data-sheet-map]");
-      if (m) {
-        closeSheet();
-        const id = m.dataset.sheetMap;
-        if (location.hash.startsWith("#entdecken")) setTimeout(() => showOnMap(id), 50);
-        else setTimeout(() => { location.hash = "entdecken/" + id; }, 300);  // erst history.back() abwarten
-      }
-    });
-    document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
-    window.addEventListener("popstate", () => { if (sheetHistory) { sheetHistory = false; closeSheet(true); } });
-    // Nach unten wischen schließt
-    let y0 = null, dy = 0;
-    panel.addEventListener("touchstart", (e) => { if (panel.scrollTop <= 0) { y0 = e.touches[0].clientY; dy = 0; } }, { passive: true });
-    panel.addEventListener("touchmove", (e) => {
-      if (y0 === null) return;
-      dy = Math.max(0, e.touches[0].clientY - y0);
-      panel.style.transform = dy ? `translateY(${dy}px)` : "";
-    }, { passive: true });
-    panel.addEventListener("touchend", () => {
-      if (y0 === null) return;
-      y0 = null;
-      if (dy > 90) closeSheet(); else panel.style.transform = "";
-    });
+  function onTripSheetClick(e) {
+    const f = e.target.closest("[data-fav]");
+    if (f) return toggleFav(f.dataset.fav);
+    const m = e.target.closest("[data-sheet-map]");
+    if (m) {
+      closeSheet();
+      const id = m.dataset.sheetMap;
+      if (location.hash.startsWith("#entdecken")) setTimeout(() => showOnMap(id), 50);
+      else setTimeout(() => { location.hash = "entdecken/" + id; }, 300);  // erst history.back() abwarten
+    }
   }
 
   // ---------- Kalender-Export (.ics) & Teilen ----------
@@ -857,7 +1003,7 @@
     const b = e.target.closest("[data-open]");
     if (b) openSheet(b.dataset.open);
   });
-  initSheet();
+  initSheet(onTripSheetClick);
   initNavbar(TRIP.title, true);
   if (dayIndex(TRIP) >= 0 && dayIndex(TRIP) < DAYS.length) setInterval(() => { renderNow(); renderDays(); }, 60e3);
   initDiscover();

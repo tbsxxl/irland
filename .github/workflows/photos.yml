@@ -10,7 +10,7 @@ on:
         default: false
   push:
     branches: [main]
-    paths: ["public/assets/trips/**", "tools/fetch-photos.js"]
+    paths: ["public/assets/trips/**", "public/assets/inspiration.js", "tools/fetch-photos.js"]
 
 permissions:
   contents: write

@@ -14,7 +14,9 @@ const sandbox = { window: {} };
 vm.createContext(sandbox);
 const tripDir = path.join(ROOT, "public/assets/trips");
 for (const f of fs.readdirSync(tripDir).filter((f) => f.endsWith(".js"))) vm.runInContext(fs.readFileSync(path.join(tripDir, f), "utf8"), sandbox);
+vm.runInContext(fs.readFileSync(path.join(ROOT, "public/assets/inspiration.js"), "utf8"), sandbox);
 const big = new Set(), small = new Set();
+(sandbox.window.INSPIRATION || []).forEach((d) => d.wiki && big.add(d.wiki));
 for (const t of sandbox.window.TRIPS) {
   if (t.wiki) big.add(t.wiki);
   t.days.forEach((d) => d.wiki && big.add(d.wiki));
