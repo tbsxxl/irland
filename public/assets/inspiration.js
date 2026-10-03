@@ -413,7 +413,7 @@ window.INSPIRATION = [
     pitch: "Felsenstadt Petra, Wüste Wadi Rum und Baden im Toten Meer.",
     highlights: ["Petra", "Wadi Rum", "Totes Meer"],
     week: ["Ankommen (Amman)", "Jerash", "Petra", "Petra by Night & Little Petra", "Wadi Rum", "Totes Meer", "Abschied"] },
-  { id: "kapverden", name: "Kapverden (Sal)", country: "Kap Verde", wiki: "Ponta Preta", temps: [25, 25, 26, 26, 27, 28, 29, 30, 30, 30, 28, 26], hotel: [80, 180], fly: [400, 700], flight: 6, tags: ["strand"],
+  { id: "kapverden", name: "Kapverden (Sal)", country: "Kap Verde", wiki: "Pedra de Lume", temps: [25, 25, 26, 26, 27, 28, 29, 30, 30, 30, 28, 26], hotel: [80, 180], fly: [400, 700], flight: 6, tags: ["strand"],
     pitch: "Ganzjährig Sonne: weiße Strände, Kitesurfen und gemütliche Morabeza.",
     highlights: ["Strand Santa Maria", "Salinen von Pedra de Lume", "Kitesurfen"],
     week: ["Ankommen", "Strand Santa Maria", "Salzsee Pedra de Lume", "Inselrundfahrt", "Haie in Shark Bay", "Bootstour", "Abschied"] },
