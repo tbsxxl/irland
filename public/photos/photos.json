@@ -1343,5 +1343,18 @@
   "page": "https://en.wikipedia.org/wiki/Wat_Arun",
   "s": "wat-arun-s.jpg",
   "l": "wat-arun-l.jpg"
+ },
+ "Lagoa do Fogo": {
+  "page": "https://en.wikipedia.org/wiki/Lagoa_do_Fogo",
+  "s": "lagoa-do-fogo-s.jpg",
+  "l": "lagoa-do-fogo-l.jpg"
+ },
+ "Malé": {
+  "page": "https://en.wikipedia.org/wiki/Mal%C3%A9",
+  "s": "male-s.jpg",
+  "l": "male-l.jpg"
+ },
+ "Ponta Preta": {
+  "none": true
  }
 }
