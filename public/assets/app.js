@@ -907,6 +907,66 @@
   const googleRoute = (pts) => "https://www.google.com/maps/dir/?api=1&travelmode=walking" +
     `&origin=${pts[0].lat},${pts[0].lng}&destination=${pts[pts.length - 1].lat},${pts[pts.length - 1].lng}` +
     (pts.length > 2 ? "&waypoints=" + encodeURIComponent(pts.slice(1, -1).slice(0, 9).map((p) => `${p.lat},${p.lng}`).join("|")) : "");
+  // ---------- Tagesroute auf der Karte (im Tagesplan aufklappbar) ----------
+  // Fußweg über das OSM-Routing von FOSSGIS (routing.openstreetmap.de), Ergebnis wird gespeichert; ohne Netz gestrichelte Luftlinie.
+  const dayMaps = new Map();
+  const ROUTER = "https://routing.openstreetmap.de/routed-foot/route/v1/foot/";
+  async function walkingRoute(pts) {
+    const coords = pts.map((p) => `${p.lng.toFixed(5)},${p.lat.toFixed(5)}`).join(";");
+    const key = "route." + coords;
+    const cached = store.get(key);
+    if (cached) return cached;
+    const res = await fetch(`${ROUTER}${coords}?overview=full&geometries=geojson`);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const j = await res.json();
+    const rt = j.routes && j.routes[0];
+    if (!rt) throw new Error("keine Route");
+    const v = { line: rt.geometry.coordinates.map(([lng, lat]) => [Math.round(lat * 1e5) / 1e5, Math.round(lng * 1e5) / 1e5]), m: rt.distance, s: rt.duration };
+    store.set(key, v);
+    return v;
+  }
+  const fmtDur = (sec) => { const m = Math.round(sec / 60); return m < 60 ? `${m} Min.` : `${Math.floor(m / 60)} Std. ${m % 60} Min.`; };
+  function openDayMap(i, fromRender = false) {
+    const box = $("#daymap-" + i), btn = $(`[data-daymap="${i}"]`);
+    if (!box) return;
+    box.hidden = false;
+    btn?.setAttribute("aria-expanded", "true");
+    if (btn) btn.innerHTML = `${ic("x")}Karte schließen`;
+    const pts = dayPoints(dayStops(i));
+    (leafletLoading || loadLeaflet()).then(() => {
+      if (box.hidden || dayMaps.has(i)) return;
+      const m = L.map(box, { scrollWheelZoom: false, zoomControl: false, tap: true });
+      L.control.zoom({ position: "bottomright" }).addTo(m);
+      tiles().addTo(m);
+      m.attributionControl.setPrefix(false).setPosition("bottomleft");
+      dayMaps.set(i, m);
+      const ll = pts.map((p) => [p.lat, p.lng]);
+      const brand = getComputedStyle(document.documentElement).getPropertyValue("--brand").trim() || "#007AFF";
+      let line = L.polyline(ll, { color: brand, weight: 4, opacity: .7, dashArray: "2 8", lineCap: "round" }).addTo(m);
+      pts.forEach((p, k) => {
+        const cat = CATS[p.cats[0]];
+        L.marker([p.lat, p.lng], { title: p.name, keyboard: true, icon: pinIcon(String(k + 1), "pin pin-num", 28, cat && cat.color) })
+          .bindTooltip(`${k + 1}. ${esc(p.name)}`, { direction: "top", offset: [0, -14] })
+          .on("click", () => openSheet(p.id)).addTo(m);
+      });
+      m.fitBounds(L.latLngBounds(ll).pad(0.15), { maxZoom: 16 });
+      if (!fromRender) box.scrollIntoView({ behavior: "smooth", block: "nearest" });
+      walkingRoute(pts).then((r) => {
+        if (!dayMaps.has(i)) return;
+        line.remove();
+        line = L.polyline(r.line, { color: brand, weight: 5, opacity: .85, lineJoin: "round" }).addTo(m);
+        const info = $(`[data-routeinfo="${i}"]`);
+        if (info) info.textContent = `${pts.length} Stopps · ${fmtKm(r.m / 1000)} · ca. ${fmtDur(r.s)} zu Fuß`;
+      }).catch(() => { /* offline oder Dienst nicht erreichbar: Luftlinie bleibt */ });
+    }).catch(() => { box.innerHTML = `<div class="empty">Karte konnte nicht geladen werden.</div>`; });
+  }
+  function closeDayMap(i) {
+    const box = $("#daymap-" + i), btn = $(`[data-daymap="${i}"]`);
+    dayMaps.get(i)?.remove(); dayMaps.delete(i);
+    if (box) { box.hidden = true; box.innerHTML = ""; box.className = "day-map"; }
+    if (btn) { btn.setAttribute("aria-expanded", "false"); btn.innerHTML = `${ic("map")}Auf der Karte`; }
+  }
+
   // Schlechtwetter-Ideen: Orte „drinnen“ (TRIP.indoor = Kategorien) nahe den Orten des Tages
   function indoorIdeas(pts) {
     if (!TRIP.indoor || !pts.length) return [];
@@ -924,6 +984,8 @@
       `<a href="#tag-${i + 1}" class="${i === today ? "is-today" : ""}"><small>${esc(d.date.split(" ")[0])}</small><b>${esc(parseInt(d.date.split(" ")[1], 10) || i + 1)}</b></a>`).join("");
 
     const openRain = new Set([...document.querySelectorAll(".rainbox[open]")].map((x) => x.dataset.rain));
+    const openMaps = [...dayMaps.keys()];
+    openMaps.forEach((k) => { dayMaps.get(k).remove(); dayMaps.delete(k); });
     $("#days").innerHTML = DAYS.map((d, i) => {
       const isToday = i === today;
       const all = dayStops(i);
@@ -971,7 +1033,11 @@
           ${tags ? `<div class="day-meta">${tags}</div>` : ""}
         </div>
         <ol class="timeline">${stops}</ol>
-        ${pts.length >= 2 ? `<div class="day-route">${ext(googleRoute(pts), `Route des Tages · ${pts.length} Stopps`, "route", "btn")}<span class="muted">ca. ${fmtKm(total)} Luftlinie</span></div>` : ""}
+        ${pts.length >= 2 ? `<div class="day-route">
+          <button class="btn btn-fill" type="button" data-daymap="${i}" aria-expanded="false" aria-controls="daymap-${i}">${ic("map")}Auf der Karte</button>
+          ${ext(googleRoute(pts), "In Google Maps", "route", "btn")}
+          <span class="muted" data-routeinfo="${i}">${pts.length} Stopps · ca. ${fmtKm(total)} Luftlinie</span></div>
+          <div class="day-map" id="daymap-${i}" hidden></div>` : ""}
         ${d.extras && d.extras.length ? `<div class="extras">
           <div class="extras-head">${ic("sparkles")}Falls noch Zeit ist</div>
           <ul>${d.extras.map((x) => `<li class="extra"><div class="tile">${ic(x.icon || "sparkles")}</div>
@@ -990,6 +1056,7 @@
     document.querySelectorAll(".day-img img").forEach((im) => im.addEventListener("error", () => im.parentElement.remove(), { once: true }));
     observeWiki($("#days"));
     openRain.forEach((k) => { const x = $(`.rainbox[data-rain="${k}"]`); if (x) x.open = true; });
+    openMaps.forEach((k) => openDayMap(k, true));
     if (wxData) markRainDays(wxData);
   }
   // Regen in der Vorhersage für einen Reisetag → Schlechtwetter-Ideen aufklappen und hervorheben
@@ -1610,6 +1677,8 @@
   renderDays();
   $("#days").addEventListener("click", (e) => {
     const k = e.target.closest("[data-booking]"); if (k) return openBooking(k.dataset.booking);
+    const dm = e.target.closest("[data-daymap]");
+    if (dm) { const i = Number(dm.dataset.daymap); return dayMaps.has(i) || !$("#daymap-" + i).hidden ? closeDayMap(i) : openDayMap(i); }
     const b = e.target.closest("[data-open]");
     if (b) openSheet(b.dataset.open);
   });

@@ -27,6 +27,9 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Buchungen (Flug, Hotel, Zug, Mietwagen, Ticket): fest in der Reisedatei als `bookings: [{type, title, date, time, info, ref, url}]`
   oder selbst unter Infos eingetragen (`<id>.bookings`). Sie erscheinen im Tagesplan (nach Uhrzeit), im Kalender-Export,
   vor der Reise als „Nächste Buchung“ und am Vortag/Tag selbst in der Status-Zeile (auch auf der Übersicht).
+- Tagesroute: „Auf der Karte“ klappt im Tag eine Karte mit nummerierten Stopps auf; der Fußweg kommt vom OSM-Routing
+  (`routing.openstreetmap.de/routed-foot`, FOSSGIS, in der CSP erlaubt) und wird pro Strecke gespeichert (`<id>.route.<koordinaten>`),
+  ohne Netz bleibt die gestrichelte Luftlinie. Im Smoke-Test ist der Dienst gemockt.
 - Tagesplan: Fußweg zwischen aufeinanderfolgenden Orten, „Route des Tages“ (Google Maps, zu Fuß, alle Orte der Hauptstadt des Tages)
   und „Bei Regen: Ideen für drinnen“ (Orte aus den Kategorien `indoor` der Reise, nahe dem Tagesprogramm). Sagt die
   Vorhersage (16 Tage) für einen Reisetag Regen an (≥ 60 % oder Regen-Code), klappt der Kasten auf.
