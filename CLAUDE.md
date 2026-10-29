@@ -40,6 +40,16 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Design: hell (kein Dunkelmodus), Apple-Stil – Systemschrift (SF Pro, sonst Inter), große Überschrift, iOS-Listen
   (`.list` > `.row`, farbige `.tile`), Segmented Control, Tab-Leiste unten auf dem Handy. Akzentfarbe je Reise über
   `[data-theme="<id>"], .t-<id>` in `app.css` (`--brand`, `--grad-a/b`). Keine Emojis in der Oberfläche.
+- Apple-Richtlinien (HIG), bei Änderungen einhalten:
+  Tippflächen mind. 44 × 44 pt (optisch kleinere Elemente per durchsichtigem Rand + `background-clip:padding-box`,
+  Karten/Zeilen über einen Namen-Knopf `.hit` mit aufgespannter Fläche statt `role="button"` um Bedienelemente herum,
+  Kartenmarker über `pinIcon`/`.pin-hit` mit 44-pt-Fläche); Text mind. 11 px; Kontrast mind. 4,5:1
+  (`--label-2` #636366, Akzentfarben dunkler als Apples Systemfarben); sichtbarer Text muss im Namen für VoiceOver
+  enthalten sein (kein abweichendes `aria-label`); bei offenem Blatt ist der Rest `inert`; Löschen nur nach Rückfrage;
+  Safe Areas auch links/rechts (Querformat); `prefers-reduced-motion` wird beachtet.
+  Prüfen: axe-core per Playwright (Ansichten wie in `tools/smoke.js`) + Messung der Tippflächen.
+  Bewusste Ausnahmen: Monate im Klima-Diagramm (12 Spalten, Alternative: Monats-Blatt), Weltkarte weit herausgezoomt
+  (Punkte, ab Zoom 4 volle Marker), Textlinks im Fließtext (Fußzeile).
 - Icons: Lucide-Sprite `public/assets/icons.svg`, eingebunden per `ic("name")` in `app.js`. `icon:` in den Reisedaten
   sind Lucide-Namen. Neue Icons: `tools/build-icons.js` neu ausführen (Anleitung im Kopf der Datei).
   App-Icons der Reisen als SVG in `public/icons/` (Verlauf + weiße Linien), `reisen.svg` → PNGs fürs Manifest.
