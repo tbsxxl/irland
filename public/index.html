@@ -7,24 +7,25 @@
   <meta name="description" content="Alle Reisen: Tagesplan, Karte mit allen Tipps, Wetter und Checklisten.">
   <meta name="theme-color" content="#F2F2F7">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Reisen">
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/app.css?v=18">
+  <link rel="stylesheet" href="/assets/app.css?v=19">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=18" defer></script>
-  <script src="/assets/trips/irland.js?v=18" defer></script>
-  <script src="/assets/inspiration.js?v=18" defer></script>
-  <script src="/assets/app.js?v=18" defer></script>
+  <script src="/assets/trips/florenz.js?v=19" defer></script>
+  <script src="/assets/trips/irland.js?v=19" defer></script>
+  <script src="/assets/inspiration.js?v=19" defer></script>
+  <script src="/assets/app.js?v=19" defer></script>
 </head>
 <body>
   <!-- Kompakte Titelleiste (Handy), erscheint beim Scrollen -->
-  <div class="navbar" id="navbar" aria-hidden="true">
+  <nav class="navbar" id="navbar" aria-label="Titelleiste" inert>
     <a class="nav-back" id="navBack" href="/" hidden><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#chevron-left"/></svg>Reisen</a>
     <div class="nav-title" id="navTitle">Reisen</div>
-  </div>
+  </nav>
 
   <header class="top">
     <div class="wrap">
@@ -52,7 +53,7 @@
       <div id="inspo" hidden>
         <div class="inspo-filters">
           <div class="inspo-bar">
-            <button class="pill" type="button" id="inspoMonthBtn" aria-haspopup="dialog" aria-label="Reisemonat wählen"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#calendar"/></svg><span>November</span><svg class="i chev" aria-hidden="true"><use href="/assets/icons.svg#chevron-down"/></svg></button>
+            <button class="pill" type="button" id="inspoMonthBtn" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#calendar"/></svg><span class="visually-hidden">Reisemonat: </span><span id="inspoMonthVal">November</span><svg class="i chev" aria-hidden="true"><use href="/assets/icons.svg#chevron-down"/></svg></button>
             <div class="search">
               <svg class="i" aria-hidden="true"><use href="/assets/icons.svg#search"/></svg>
               <label class="visually-hidden" for="inspoQ">Ziele suchen</label>
@@ -65,7 +66,7 @@
               <button type="button" data-view="list" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#list"/></svg>Liste</button>
               <button type="button" data-view="map" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#globe"/></svg>Weltkarte</button>
             </div>
-            <button class="pill pill-soft" type="button" id="inspoGroupBtn" aria-haspopup="dialog" aria-label="Reisende und Dauer"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#users"/></svg><span>2 P. · 7 N.</span></button>
+            <button class="pill pill-soft" type="button" id="inspoGroupBtn" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#users"/></svg><span class="visually-hidden">Reisende und Nächte: </span><span id="inspoGroupVal">2 P. · 7 N.</span></button>
             <div class="chips" id="inspoActive"></div>
           </div>
         </div>

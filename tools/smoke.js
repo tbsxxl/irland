@@ -57,7 +57,7 @@ const SHOTS = process.argv[3];
     if ((await page.locator("#sheet .cost-sum .row").count()) < 3) errors.push("Kosten im Detailblatt fehlen");
     if ((await page.locator("#sheet .clim-m").count()) !== 12) errors.push("Klima-Diagramm fehlt");
     await page.locator('#sheet [data-clim="0"]').click(); await page.waitForTimeout(200);
-    if ((await page.locator("#inspoMonthBtn span").textContent()) !== "Januar" || !(await page.locator('#sheet [data-clim="0"]').getAttribute("class")).includes("on"))
+    if ((await page.locator("#inspoMonthVal").textContent()) !== "Januar" || !(await page.locator('#sheet [data-clim="0"]').getAttribute("class")).includes("on"))
       errors.push("Monat im Klima-Diagramm wechselt den Reisemonat nicht");
     if (SHOTS) await page.screenshot({ path: `${SHOTS}/${name}-inspo-sheet.png` });
     await page.keyboard.press("Escape"); await page.waitForTimeout(300);

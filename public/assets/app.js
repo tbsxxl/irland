@@ -173,9 +173,15 @@
 
   // ---------- Detailblatt (allgemein): von unten, schließt per ×, Hintergrund, Wischen, Escape oder Zurück ----------
   let sheetFrom = null, sheetHistory = false;
+  // Solange ein Blatt offen ist, ist der Rest der Seite gesperrt (VoiceOver und Tastatur bleiben im Blatt)
+  const setBackgroundInert = (on) => [...document.body.children].forEach((el) => {
+    if (el.id === "sheet" || el.classList.contains("toast") || el.tagName === "SCRIPT") return;
+    el.inert = on || (el.id === "navbar" && !el.classList.contains("is-visible"));
+  });
   function showSheet(html) {
     $("#sheetBody").innerHTML = html;
     const sheet = $("#sheet"), panel = $(".sheet-panel");
+    setBackgroundInert(true);
     sheetFrom = document.activeElement;
     sheet.hidden = false;
     panel.scrollTop = 0;
@@ -190,6 +196,7 @@
     if (sheet.hidden) return;
     sheet.classList.remove("is-open");
     document.documentElement.classList.remove("has-sheet");
+    setBackgroundInert(false);
     setTimeout(() => { sheet.hidden = true; $(".sheet-panel").style.transform = ""; }, 260);
     if (sheetHistory && !fromHistory) { sheetHistory = false; history.back(); }
     sheetHistory = false;
@@ -226,7 +233,7 @@
     new IntersectionObserver(([e]) => {
       const show = !e.isIntersecting && e.boundingClientRect.top < 0;
       bar.classList.toggle("is-visible", show);
-      bar.setAttribute("aria-hidden", String(!show));
+      bar.inert = !show;
     }).observe($(".top h1"));
   }
 
@@ -361,13 +368,13 @@
   function inspoCard(d) {
     const t = tempOf(d), tip = tipOf(d), c = tripCost(d);
     return `
-      <article class="inspo-card" data-inspo="${esc(d.id)}" role="button" tabindex="0" aria-label="${esc(d.name)} – Details">
+      <article class="inspo-card" data-inspo="${esc(d.id)}">
         <div class="inspo-photo">${wikiSlot(d.wiki, "cover-photo", "large")}
           <span class="temp ${tempClass(t)}">${ic(tempIcon(t))}${t}°</span>
           <button class="fav inspo-fav" type="button" data-inspo-fav="${esc(d.id)}" aria-pressed="${inspo.favs.has(d.id)}" aria-label="${esc(d.name)} merken">${ic("heart")}</button>
         </div>
         <div class="inspo-body">
-          <div class="inspo-name">${esc(d.name)}${d.tags.includes("bucket") ? `<span class="bl" title="Bucket List">${ic("flag")}</span>` : ""}</div>
+          <h2 class="inspo-name"><button class="hit" type="button">${esc(d.name)}</button>${d.tags.includes("bucket") ? `<span class="bl" title="Bucket List" role="img" aria-label="Bucket List">${ic("flag")}</span>` : ""}</h2>
           <div class="inspo-meta">${esc(d.country)} · ${flightText(d.flight)}</div>
           ${tip ? `<p class="inspo-tip">${ic("sparkles")}${esc(tip)}</p>` : `<p class="inspo-pitch">${esc(d.pitch)}</p>`}
           <div class="inspo-foot">
@@ -379,7 +386,7 @@
   }
   function renderInspo() {
     const list = inspoVisible(), act = activeFilters();
-    $("#inspoMonthBtn span").textContent = MONTHS[inspo.month];
+    $("#inspoMonthVal").textContent = MONTHS[inspo.month];
     const badge = $("#inspoFilterBtn .badge");
     badge.textContent = act.length; badge.hidden = !act.length;
     $("#inspoView").querySelectorAll("[data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === inspo.view)));
@@ -389,7 +396,7 @@
       act.length > 1 ? `<button class="chip" type="button" data-clear="all">Alle entfernen</button>` : "",
       inspo.favs.size >= 2 ? `<button class="chip chip-cmp" type="button" data-compare>${ic("columns-3")}Vergleichen (${inspo.favs.size})</button>` : ""
     ].join("");
-    $("#inspoGroupBtn span").textContent = groupShort();
+    $("#inspoGroupVal").textContent = groupShort();
     $("#inspoActive").scrollLeft = 0;
     $("#inspoCount").textContent = `${list.length} ${list.length === 1 ? "Ziel" : "Ziele"} · ${SORTS[inspo.sort]} · Höchstwerte im ${MONTHS[inspo.month]} · Preise gesamt für ${groupText()}${inspo.spend ? " inkl. vor Ort" : ""} (grobe Richtwerte)`;
     $("#inspoGrid").hidden = inspo.view !== "list";
@@ -408,7 +415,7 @@
     (leafletLoading || loadLeaflet()).then(() => {
       if (!wmap) {
         wmap = L.map(box, { zoomControl: false, worldCopyJump: true, minZoom: 1, zoomSnap: 0.5 }).setView([30, 10], 2);
-        L.control.zoom({ position: "bottomright" }).addTo(wmap);
+        L.control.zoom({ position: "bottomright", zoomInTitle: "Vergrößern", zoomOutTitle: "Verkleinern" }).addTo(wmap);
         tiles().addTo(wmap);
         wmap.attributionControl.setPrefix(false).setPosition("bottomleft");
         wlayer = L.layerGroup().addTo(wmap);
@@ -422,8 +429,8 @@
         const t = tempOf(d), tip = tipOf(d);
         L.marker(d.ll, {
           title: d.name, riseOnHover: true, zIndexOffset: tip ? 500 : 0, keyboard: true,
-          icon: L.divIcon({ className: "", html: `<div class="wpin ${tempClass(t)}${tip ? " tip" : ""}${rainy(d) ? " rain" : ""}${inspo.favs.has(d.id) ? " fav" : ""}">${t}°</div>`, iconSize: [38, 24], iconAnchor: [19, 12] })
-        }).bindTooltip(`<b>${esc(d.name)}</b>${tip ? `<br>${esc(tip)}` : ""}`, { direction: "top", offset: [0, -12] })
+          icon: L.divIcon({ className: "pin-hit", html: `<div class="wpin ${tempClass(t)}${tip ? " tip" : ""}${rainy(d) ? " rain" : ""}${inspo.favs.has(d.id) ? " fav" : ""}">${t}°</div>`, iconSize: [44, 44], iconAnchor: [22, 22] })
+        }).bindTooltip(`<b>${esc(d.name)}</b>${tip ? `<br>${esc(tip)}` : ""}`, { direction: "top", offset: [0, -14] })
           .on("click", () => openInspo(d.id)).addTo(wlayer);
       });
       // Ausschnitt nur anpassen, wenn sich die Auswahl geändert hat (nicht beim Monatswechsel)
@@ -558,8 +565,8 @@
         <div id="costBox">${costBoxHtml(d)}</div>
         <p class="inspo-fine">Je nach Saison, Ferien und Buchungszeitpunkt – aktuelle Preise über die Links unten.</p>
         <h3 class="sheet-h">Klima (Tageshöchstwerte)</h3>
-        <div class="clim" role="img" aria-label="Höchsttemperaturen Januar bis Dezember: ${d.temps.join(", ")} Grad">
-          ${d.temps.map((x, m) => `<button type="button" class="clim-m${m === inspo.month ? " on" : ""}${tipOf(d, m) ? " tip" : ""}${rainy(d, m) ? " rain" : ""}" data-clim="${m}" aria-label="${MONTHS[m]}"><span class="v">${x}°</span><span class="bar ${tempClass(x)}" style="height:${Math.round(6 + 54 * (Math.min(42, Math.max(-10, x)) + 10) / 52)}px"></span><span class="m">${MON[m].slice(0, 1)}</span></button>`).join("")}
+        <div class="clim" role="group" aria-label="Höchsttemperaturen je Monat – antippen wechselt den Reisemonat">
+          ${d.temps.map((x, m) => `<button type="button" class="clim-m${m === inspo.month ? " on" : ""}${tipOf(d, m) ? " tip" : ""}${rainy(d, m) ? " rain" : ""}" data-clim="${m}" aria-label="${MONTHS[m]}: ${x} Grad${tipOf(d, m) ? ", Reisetipp" : ""}${rainy(d, m) ? ", Regenzeit" : ""}" aria-pressed="${m === inspo.month}"><span class="v">${x}°</span><span class="bar ${tempClass(x)}" style="height:${Math.round(6 + 54 * (Math.min(42, Math.max(-10, x)) + 10) / 52)}px"></span><span class="m">${MON[m].slice(0, 1)}</span></button>`).join("")}
         </div>
         <p class="inspo-fine">Monat antippen zum Wechseln · <span class="lg-tip">lila</span> = Reisetipp${d.rain ? " · gestreift = Regenzeit" : ""}</p>
         ${good.length ? `<h3 class="sheet-h">Besonders gut im</h3><ul class="sheet-list good">${good.map(([name, why]) => `<li>${ic("sparkles")}<span><b>${name}:</b> ${esc(why)}</span></li>`).join("")}</ul>` : ""}
@@ -776,10 +783,6 @@
       const c = e.target.closest("[data-inspo]");
       if (c) openInspo(c.dataset.inspo);
     });
-    $("#inspoGrid").addEventListener("keydown", (e) => {
-      const c = e.target.closest("[data-inspo]");
-      if (c && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openInspo(c.dataset.inspo); }
-    });
     // Budget-Regler im Filterblatt: live filtern, Blatt nicht neu zeichnen (sonst reißt das Ziehen ab)
     $("#sheetBody").addEventListener("input", (e) => {
       if (e.target.id !== "fBudget") return;
@@ -939,7 +942,7 @@
     (leafletLoading || loadLeaflet()).then(() => {
       if (box.hidden || dayMaps.has(i)) return;
       const m = L.map(box, { scrollWheelZoom: false, zoomControl: false, tap: true });
-      L.control.zoom({ position: "bottomright" }).addTo(m);
+      L.control.zoom({ position: "bottomright", zoomInTitle: "Vergrößern", zoomOutTitle: "Verkleinern" }).addTo(m);
       tiles().addTo(m);
       m.attributionControl.setPrefix(false).setPosition("bottomleft");
       dayMaps.set(i, m);
@@ -1228,10 +1231,10 @@
       p.price ? `<span>${esc(p.price)}</span>` : "",
       d !== null ? `<span>${fmtKm(d)} ${esc(refLabel())}${d < 4 ? ` · ${walk(d)} zu Fuß` : ""}</span>` : ""
     ].filter(Boolean).join("");
-    return `<div class="row has-tile place ${state.focus === p.id ? "is-focus" : ""}" id="p-${esc(p.id)}" data-open="${esc(p.id)}" role="button" tabindex="0" aria-label="${esc(p.name)} – Details">
+    return `<div class="row has-tile place ${state.focus === p.id ? "is-focus" : ""}" id="p-${esc(p.id)}" data-open="${esc(p.id)}">
       <div class="tile" style="--c:${esc(cat.color)}">${ic(cat.icon)}</div>
       <div class="main">
-        <div class="head"><div class="title">${esc(p.name)}${p.free ? `<span class="free">FREI</span>` : ""}</div>
+        <div class="head"><div class="title"><button class="hit" type="button">${esc(p.name)}</button>${p.free ? `<span class="free">FREI</span>` : ""}</div>
           <button class="fav" type="button" data-fav="${esc(p.id)}" aria-pressed="${state.favs.has(p.id)}" aria-label="${esc(p.name)} merken">${ic("heart")}</button></div>
         ${meta ? `<div class="meta">${meta}</div>` : ""}
         ${p.note ? `<div class="note">${esc(p.note)}</div>` : ""}
@@ -1285,17 +1288,18 @@
     });
   }
 
-  const pinIcon = (html, cls, size, color = "") => L.divIcon({
-    className: "", html: `<div class="${cls}"${color ? ` style="--c:${esc(color)}"` : ""}>${html}</div>`,
-    iconSize: [size, size], iconAnchor: [size / 2, size / 2], popupAnchor: [0, -size / 2]
-  });
+  // Symbol in der gewünschten Größe, Tippfläche mindestens 44 × 44 (Apple HIG)
+  const pinIcon = (html, cls, size, color = "") => { const hit = Math.max(size, 44); return L.divIcon({
+    className: "pin-hit", html: `<div class="${cls}"${color ? ` style="--c:${esc(color)}"` : ""}>${html}</div>`,
+    iconSize: [hit, hit], iconAnchor: [hit / 2, hit / 2], popupAnchor: [0, -size / 2]
+  }); };
 
   const ensureMap = () => (leafletLoading || loadLeaflet()).then(() => { initMap(); map.invalidateSize(); });
 
   function initMap() {
     if (map || !window.L) return;
     map = L.map("map", { scrollWheelZoom: false, zoomControl: false }).setView([TRIP.center.lat, TRIP.center.lng], TRIP.center.zoom || 14);
-    L.control.zoom({ position: "bottomright" }).addTo(map);
+    L.control.zoom({ position: "bottomright", zoomInTitle: "Vergrößern", zoomOutTitle: "Verkleinern" }).addTo(map);
     tiles().addTo(map);
     map.attributionControl.setPrefix(false).setPosition("bottomleft");
 
@@ -1386,10 +1390,6 @@
       if (more) { more.dataset.more === "*" ? (state.limit += 40) : state.open.add(more.dataset.more); refresh(); return; }
       const row = e.target.closest("[data-open]");
       if (row) openSheet(row.dataset.open);
-    });
-    $("#list").addEventListener("keydown", (e) => {
-      const row = e.target.closest("[data-open]");
-      if (row && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); openSheet(row.dataset.open); }
     });
     refresh();
   }
@@ -1580,6 +1580,7 @@
     closeSheet(); afterBookings(); toast("Gespeichert");
   }
   function deleteBooking(id) {
+    if (!confirm("Buchung löschen?")) return;
     store.set("bookings", store.get("bookings", []).filter((x) => x.id !== id));
     closeSheet(); afterBookings(); toast("Gelöscht");
   }
