@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Reisen</title>
   <meta name="description" content="Alle Reisen: Tagesplan, Karte mit allen Tipps, Wetter und Checklisten.">
-  <meta name="theme-color" content="#F2F2F7">
+  <meta name="theme-color" content="#F2F2F7" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#000000" media="(prefers-color-scheme: dark)">
+  <meta name="color-scheme" content="light dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -13,12 +15,12 @@
   <link rel="manifest" href="/manifest.webmanifest">
   <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png">
   <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">
-  <link rel="stylesheet" href="/assets/app.css?v=19">
+  <link rel="stylesheet" href="/assets/app.css?v=20">
   <!-- Neue Reise: Datei in assets/trips/ anlegen und hier + in sw.js (PRECACHE) eintragen -->
-  <script src="/assets/trips/florenz.js?v=19" defer></script>
-  <script src="/assets/trips/irland.js?v=19" defer></script>
-  <script src="/assets/inspiration.js?v=19" defer></script>
-  <script src="/assets/app.js?v=19" defer></script>
+  <script src="/assets/trips/florenz.js?v=20" defer></script>
+  <script src="/assets/trips/irland.js?v=20" defer></script>
+  <script src="/assets/inspiration.js?v=20" defer></script>
+  <script src="/assets/app.js?v=20" defer></script>
 </head>
 <body>
   <!-- Kompakte Titelleiste (Handy), erscheint beim Scrollen -->
@@ -63,8 +65,8 @@
           </div>
           <div class="inspo-sub">
             <div class="segmented seg-view" id="inspoView" role="group" aria-label="Ansicht">
-              <button type="button" data-view="list" aria-pressed="true"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#list"/></svg>Liste</button>
-              <button type="button" data-view="map" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#globe"/></svg>Weltkarte</button>
+              <button type="button" data-view="list" aria-pressed="true">Liste</button>
+              <button type="button" data-view="map" aria-pressed="false">Weltkarte</button>
             </div>
             <button class="pill pill-soft" type="button" id="inspoGroupBtn" aria-haspopup="dialog"><svg class="i" aria-hidden="true"><use href="/assets/icons.svg#users"/></svg><span class="visually-hidden">Reisende und Nächte: </span><span id="inspoGroupVal">2 P. · 7 N.</span></button>
             <div class="chips" id="inspoActive"></div>
