@@ -37,9 +37,19 @@ keine npm-Abhängigkeiten. Cloudflare baut jeden Push auf `main` automatisch.
 - Alte Links `/#entdecken` usw. leiten nach `/irland/#…` weiter.
 - Reiter über die Adresse: `#plan`, `#entdecken`, `#entdecken/<ort-id>`, `#infos`, `#tag-3`.
 - Florenz ist ein Entwurf: `hotel: null`, Entfernungen ab `base` (Dom); Flugzeiten fehlen noch.
-- Design: hell (kein Dunkelmodus), Apple-Stil – Systemschrift (SF Pro, sonst Inter), große Überschrift, iOS-Listen
+- Design: Apple-Stil, hell und dunkel nach iPhone-Einstellung (keine eigene Umschaltung), – Systemschrift (SF Pro, sonst Inter), große Überschrift, iOS-Listen
   (`.list` > `.row`, farbige `.tile`), Segmented Control, Tab-Leiste unten auf dem Handy. Akzentfarbe je Reise über
   `[data-theme="<id>"], .t-<id>` in `app.css` (`--brand`, `--grad-a/b`). Keine Emojis in der Oberfläche.
+- Apple-Richtlinien: Review mit dem Skill `apple-design` (im Kochbuch-Repo unter `.claude/skills/apple-design`,
+  `npx skills add dickwu/apple-design-skill`). Stand Nov. 2026 umgesetzt:
+  Dynamic Type (`html{font:-apple-system-body}` nur auf Touch-Geräten, sonst 17px; alle Schriften in rem, 1rem = 17px;
+  fest bleiben nur Symbole in festen Kreisen, Tab-Leiste, Titelleiste, Kartenmarker, Klima-Diagramm; bis 200 % ohne
+  seitliches Scrollen prüfen); Dunkelmodus per `prefers-color-scheme` mit Rollenfarben (`--on-brand`, `--warn`, `--tip`,
+  `--danger` …, Abschnitt „Dunkelmodus“ am Ende von `app.css`), dunkle Kartenkacheln (CARTO dark_all, wechseln live);
+  „Kontrast erhöhen“ (`prefers-contrast:more`) und „Transparenz reduzieren“ (`prefers-reduced-transparency`);
+  Tab-Leiste auf dem Handy als schwebende Glas-Kapsel, Glas (`backdrop-filter`) nur in Leisten/Bedienelementen,
+  nie auf wiederholten Inhalten; Formular-Blätter mit Leiste „Abbrechen | Titel | Sichern“ (`#sheet.is-form`)
+  und Rückfrage „Änderungen verwerfen?“ bei ungesicherten Eingaben; Segmente nur Text oder nur Symbole.
 - Apple-Richtlinien (HIG), bei Änderungen einhalten:
   Tippflächen mind. 44 × 44 pt (optisch kleinere Elemente per durchsichtigem Rand + `background-clip:padding-box`,
   Karten/Zeilen über einen Namen-Knopf `.hit` mit aufgespannter Fläche statt `role="button"` um Bedienelemente herum,

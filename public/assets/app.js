@@ -166,13 +166,22 @@
     document.head.append(js);
     return (leafletLoading ||= done);
   }
-  const tiles = () => L.tileLayer(`https://basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`, {
-    maxZoom: 19,
-    attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>'
-  });
+  // Hell: Voyager, dunkel: Dark Matter – wechselt mit der iPhone-Darstellung
+  const darkQuery = matchMedia("(prefers-color-scheme: dark)");
+  const tileUrl = () => `https://basemaps.cartocdn.com/rastertiles/${darkQuery.matches ? "dark_all" : "voyager"}/{z}/{x}/{y}{r}.png?key=${CARTO_KEY}`;
+  const tileLayers = [];
+  darkQuery.addEventListener?.("change", () => tileLayers.forEach((l) => l.setUrl(tileUrl())));
+  const tiles = () => {
+    const l = L.tileLayer(tileUrl(), {
+      maxZoom: 19,
+      attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> © <a href="https://carto.com/attributions">CARTO</a>'
+    });
+    tileLayers.push(l);
+    return l;
+  };
 
   // ---------- Detailblatt (allgemein): von unten, schließt per ×, Hintergrund, Wischen, Escape oder Zurück ----------
-  let sheetFrom = null, sheetHistory = false;
+  let sheetFrom = null, sheetHistory = false, sheetDirty = false;
   // Solange ein Blatt offen ist, ist der Rest der Seite gesperrt (VoiceOver und Tastatur bleiben im Blatt)
   const setBackgroundInert = (on) => [...document.body.children].forEach((el) => {
     if (el.id === "sheet" || el.classList.contains("toast") || el.tagName === "SCRIPT") return;
@@ -180,6 +189,7 @@
   });
   function showSheet(html) {
     $("#sheetBody").innerHTML = html;
+    $("#sheet").classList.remove("is-form"); sheetDirty = false;
     const sheet = $("#sheet"), panel = $(".sheet-panel");
     setBackgroundInert(true);
     sheetFrom = document.activeElement;
@@ -194,6 +204,9 @@
   function closeSheet(fromHistory = false) {
     const sheet = $("#sheet");
     if (sheet.hidden) return;
+    // Ungesicherte Eingaben in einem Formular-Blatt: erst nachfragen (Apple HIG „Sheets“)
+    if (!fromHistory && sheetDirty && !confirm("Änderungen verwerfen?")) { $(".sheet-panel").style.transform = ""; return; }
+    sheetDirty = false;
     sheet.classList.remove("is-open");
     document.documentElement.classList.remove("has-sheet");
     setBackgroundInert(false);
@@ -204,6 +217,7 @@
   }
   function initSheet(onClick) {
     const sheet = $("#sheet"), panel = $(".sheet-panel");
+    sheet.addEventListener("input", () => { if (sheet.classList.contains("is-form")) sheetDirty = true; });
     sheet.addEventListener("click", (e) => {
       if (e.target.closest("[data-close]")) return closeSheet();
       onClick && onClick(e);
@@ -1548,7 +1562,11 @@
     const v = (k) => esc(b ? b[k] || "" : "");
     const ro = b && b.fixed ? " readonly" : "";
     showSheet(`<div class="sheet-content">
-      <h2 id="sheetTitle">${b ? "Buchung" : "Neue Buchung"}</h2>
+      <div class="sheet-bar">
+        <button class="bar-btn" type="button" data-close>${ro ? "Fertig" : "Abbrechen"}</button>
+        <h2 id="sheetTitle">${b ? "Buchung" : "Neue Buchung"}</h2>
+        ${ro ? "<span></span>" : `<button class="bar-btn strong" type="button" data-bk-save="${esc(b ? b.id : "new")}">Sichern</button>`}
+      </div>
       <div class="chips wrap bk-types" role="group" aria-label="Art">${Object.entries(BOOK_TYPES).map(([k, [label, icon]]) =>
         `<button class="chip" type="button" data-bk-type="${k}" aria-pressed="${k === bkType}"${ro ? " disabled" : ""}>${ic(icon)}${label}</button>`).join("")}</div>
       <div class="list form">
@@ -1563,9 +1581,9 @@
         ${b && b.ref ? `<button class="btn btn-lg" type="button" data-copy="${v("ref")}">${ic("copy")}Nr. kopieren</button>` : ""}
         ${b && b.url ? ext(b.url, "Öffnen", "arrow-up-right", "btn btn-lg") : ""}
         ${b && !b.fixed ? `<button class="btn btn-lg btn-danger" type="button" data-bk-del="${esc(b.id)}">${ic("trash-2")}Löschen</button>` : ""}
-        ${ro ? "" : `<button class="btn btn-fill btn-lg" type="button" data-bk-save="${esc(b ? b.id : "new")}">${ic("check")}Speichern</button>`}
       </div>
     </div>`);
+    $("#sheet").classList.add("is-form");
   }
   function saveBooking(id) {
     const val = (s) => $(s).value.trim();
@@ -1577,12 +1595,12 @@
     const list = store.get("bookings", []).filter((x) => x.id !== b.id);
     list.push(b);
     store.set("bookings", list);
-    closeSheet(); afterBookings(); toast("Gespeichert");
+    sheetDirty = false; closeSheet(); afterBookings(); toast("Gesichert");
   }
   function deleteBooking(id) {
     if (!confirm("Buchung löschen?")) return;
     store.set("bookings", store.get("bookings", []).filter((x) => x.id !== id));
-    closeSheet(); afterBookings(); toast("Gelöscht");
+    sheetDirty = false; closeSheet(); afterBookings(); toast("Gelöscht");
   }
   function afterBookings() { renderBookings(); renderDays(); renderNow(); setStatus(bookingStatus(TRIP) || tripStatus(TRIP)); }
 
